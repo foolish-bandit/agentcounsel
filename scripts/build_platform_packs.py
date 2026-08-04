@@ -32,8 +32,8 @@ PROFILES_DIR = REPO_ROOT / "practice-profiles"
 COMMANDS_FILE = REPO_ROOT / "COMMANDS.md"
 DIST = REPO_ROOT / "dist"
 PACKS_METADATA = REPO_ROOT / "metadata" / "packs.json"
-PACK_SCHEMA_VERSION = "1.0"
-PACK_SOURCE_DATE = "2026-05-28"
+PACK_SCHEMA_VERSION = "1.1"
+PACK_SOURCE_DATE = "2026-08-04"
 
 # The required H2 sections (bare titles) are defined once in _shared.
 from _shared import REQUIRED_SECTIONS
@@ -161,6 +161,13 @@ def load_commands() -> dict:
     return commands
 
 
+def is_safe_module_id(value: object) -> bool:
+    """Return whether an ID is safe in manifests and archive member names."""
+    return isinstance(value, str) and re.fullmatch(
+        r"[a-z0-9][a-z0-9-]*", value
+    ) is not None
+
+
 def load_areas() -> dict:
     areas: dict[str, dict] = {}
     for area_dir in sorted(p for p in SKILLS_DIR.iterdir() if p.is_dir()):
@@ -176,6 +183,10 @@ def load_areas() -> dict:
             sk["slug"] = sd.name
             sk["area"] = area
             sk["path"] = f"skills/{area}/{sd.name}/SKILL.md"
+            sk["spec_path"] = None
+            sk["spec_raw"] = ""
+            sk["spec"] = {}
+            sk["module_resources"] = []
             for required in REQUIRED_SECTIONS:
                 if required not in sk["section_names"]:
                     err(f"skill {sk['path']} is missing required section "
@@ -192,6 +203,53 @@ def load_areas() -> dict:
                     if f.is_file():
                         templates.append((f.name, f.read_text(encoding="utf-8")))
             sk["templates"] = templates
+
+            spec_path = sd / "SPEC.json"
+            if spec_path.is_file():
+                spec_rel = spec_path.relative_to(REPO_ROOT).as_posix()
+                spec_raw = spec_path.read_text(encoding="utf-8")
+                try:
+                    spec = json.loads(spec_raw)
+                except json.JSONDecodeError as exc:
+                    err(f"skill {sk['path']} has invalid {spec_rel}: {exc}")
+                    spec = {}
+                if not isinstance(spec, dict):
+                    err(f"skill {sk['path']} has a non-object {spec_rel}")
+                    spec = {}
+                sk["spec_path"] = spec_rel
+                sk["spec_raw"] = spec_raw
+                sk["spec"] = spec
+                for module in spec.get("modules", []):
+                    if not isinstance(module, dict):
+                        err(f"skill {sk['path']} has a non-object module record")
+                        continue
+                    module_id = module.get("id")
+                    module_path = module.get("path")
+                    if not is_safe_module_id(module_id):
+                        err(
+                            f"skill {sk['path']} has an unsafe module id: "
+                            f"{module_id!r}"
+                        )
+                        continue
+                    if not isinstance(module_path, str) or not module_path:
+                        err(f"skill {sk['path']} module '{module_id}' has no path")
+                        continue
+                    resolved = (REPO_ROOT / module_path).resolve()
+                    if not resolved.is_relative_to(REPO_ROOT.resolve()):
+                        err(
+                            f"skill {sk['path']} module '{module_id}' escapes "
+                            f"the repository root: {module_path}"
+                        )
+                        continue
+                    if not resolved.is_file():
+                        err(
+                            f"skill {sk['path']} module '{module_id}' target "
+                            f"is missing: {module_path}"
+                        )
+                        continue
+                    resource = dict(module)
+                    resource["content"] = resolved.read_text(encoding="utf-8")
+                    sk["module_resources"].append(resource)
             skills.append(sk)
         references = []
         rdir = area_dir / "references"
@@ -223,6 +281,24 @@ def area_template_paths(area_info: dict) -> list[str]:
     for rname, _ in area_info["references"]:
         paths.append(f"skills/{area_info['skills'][0]['area']}/references/{rname}")
     return sorted(paths)
+
+
+def area_spec_paths(area_info: dict) -> list[str]:
+    return sorted(
+        sk["spec_path"]
+        for sk in area_info["skills"]
+        if sk.get("spec_path")
+    )
+
+
+def area_spec_resource_paths(area_info: dict) -> list[str]:
+    return sorted(
+        {
+            module["path"]
+            for sk in area_info["skills"]
+            for module in sk.get("module_resources", [])
+        }
+    )
 
 
 def markdown_title(path: Path) -> str:
@@ -269,6 +345,8 @@ def build_pack_registry(areas: dict) -> dict:
         info = areas[area]
         skills = [s["path"] for s in info["skills"]]
         templates = area_template_paths(info)
+        skill_specs = area_spec_paths(info)
+        spec_resources = area_spec_resource_paths(info)
         matter_packs = files_referencing_area(REPO_ROOT / "matter-packs", area)
         workspaces = files_referencing_area(REPO_ROOT / "matter-workspaces", area)
         playbooks = files_referencing_area(REPO_ROOT / "playbooks", area)
@@ -291,6 +369,8 @@ def build_pack_registry(areas: dict) -> dict:
             "included_skills": skills,
             "included_core_rules": core_rules,
             "included_templates": templates,
+            "included_skill_specs": skill_specs,
+            "included_spec_resources": spec_resources,
             "included_quality_checks": quality_checks,
             "included_matter_packs": matter_packs,
             "included_matter_workspace_templates": workspaces,
@@ -334,6 +414,8 @@ def build_pack_registry(areas: dict) -> dict:
         "included_skills": [],
         "included_core_rules": core_rules,
         "included_templates": [],
+        "included_skill_specs": [],
+        "included_spec_resources": [],
         "included_quality_checks": sorted(QUALITY_CHECK_FILES),
         "included_matter_packs": [],
         "included_matter_workspace_templates": [],
@@ -378,7 +460,8 @@ def validate_pack_registry(registry: dict, check_outputs: bool = False) -> list[
         pid = pack.get("pack_id", "<missing>")
         for field in (
             "pack_id", "platform", "practice_area", "included_skills",
-            "included_core_rules", "included_quality_checks",
+            "included_core_rules", "included_skill_specs",
+            "included_spec_resources", "included_quality_checks",
             "setup_instructions", "safety_disclaimer",
             "attorney_review_requirements", "version", "date",
         ):
@@ -393,6 +476,12 @@ def validate_pack_registry(registry: dict, check_outputs: bool = False) -> list[
         for path in pack.get("included_templates", []):
             if not (REPO_ROOT / path).is_file():
                 problems.append(f"{pid}: template/reference missing: {path}")
+        for path in pack.get("included_skill_specs", []):
+            if not (REPO_ROOT / path).is_file():
+                problems.append(f"{pid}: skill spec missing: {path}")
+        for path in pack.get("included_spec_resources", []):
+            if not (REPO_ROOT / path).is_file():
+                problems.append(f"{pid}: spec resource missing: {path}")
         for path in pack.get("included_matter_packs", []):
             if not (REPO_ROOT / path).is_file():
                 problems.append(f"{pid}: matter pack missing: {path}")
@@ -471,6 +560,72 @@ def skill_block(sk: dict, base_level: int) -> str:
             f"*Agent trigger:* {sk['description']}\n\n"
             f"*Canonical path:* `{sk['path']}`\n\n"
             f"{body}\n")
+
+
+def _resource_markdown(content: str) -> str:
+    if content.startswith("---\n"):
+        _, body = split_frontmatter_text(content)
+        return body.strip()
+    return content.strip()
+
+
+def selective_context_markdown(info: dict, base_level: int = 3) -> str:
+    """Render custom contracts and every resource they may selectively load."""
+    custom = [sk for sk in info["skills"] if sk.get("spec_path")]
+    if not custom:
+        return (
+            "No skill in this practice-area pack currently declares a custom "
+            "typed execution contract. Use each skill's core workflow directly.\n"
+        )
+
+    contract_heading = "#" * base_level
+    module_heading = "#" * min(base_level + 1, 6)
+    parts = [
+        "Choose an execution mode, require every non-inferable input, and "
+        "evaluate each module's machine-readable `activation` object exactly. "
+        "Missing activation inputs fail closed: do not load every conditional "
+        "module. Modules without `activation` are not auto-selected unless "
+        "they are required or explicitly requested. Load only selected "
+        "resources, preserve the stated selection reason, and keep all parent "
+        "safety rules active.\n\n"
+        "This consolidated pack includes all possible resources so it remains "
+        "portable as one file. Logical selection still matters, but true "
+        "prompt-size reduction requires an MCP or repo-agent client that calls "
+        "`get_skill_context` and sends only the returned bundle.\n"
+    ]
+    for sk in custom:
+        parts.append(f"{contract_heading} Contract: {sk['name']}\n")
+        parts.append(f"*Canonical sidecar:* `{sk['spec_path']}`\n")
+        parts.append("```json\n" + sk["spec_raw"].strip() + "\n```\n")
+        for module in sk.get("module_resources", []):
+            parts.append(f"{module_heading} Module: {module['id']}\n")
+            parts.append(
+                f"*Kind:* `{module.get('kind', 'resource')}`  \n"
+                f"*Canonical path:* `{module['path']}`  \n"
+                f"*Load when:* {module.get('load_when', 'explicit selection')}\n"
+            )
+            parts.append(
+                demote(_resource_markdown(module["content"]), base_level)
+            )
+    return "\n".join(parts).strip() + "\n"
+
+
+def claude_selective_context_members(sk: dict) -> list[tuple[str, str]]:
+    """Return flat-upload-safe contract and module members for one skill."""
+    if not sk.get("spec_path"):
+        return []
+    slug = sk["slug"]
+    members: list[tuple[str, str]] = [
+        (f"contracts/{slug}--SPEC.json", sk["spec_raw"])
+    ]
+    for module in sk.get("module_resources", []):
+        members.append(
+            (
+                f"modules/{slug}--{module['id']}.md",
+                module["content"],
+            )
+        )
+    return members
 
 
 def profile_text(area: str) -> str:
@@ -566,10 +721,12 @@ def chatgpt_pack(area: str, info: dict, commands: dict) -> str:
              f"produces draft legal work product for attorney review.\n")
     for sk in skills:
         p.append(skill_block(sk, 3))
-    p.append("## 6. Attorney review checklist\n")
+    p.append("## 6. Selective execution contracts and modules\n")
+    p.append(selective_context_markdown(info, 3))
+    p.append("## 7. Attorney review checklist\n")
     p.append(demote((CORE_DIR / CORE_CHECKLIST_FILE).read_text(encoding="utf-8"),
                     2))
-    p.append("## 7. One-off usage examples\n")
+    p.append("## 8. One-off usage examples\n")
     p.append(usage_examples(area, skills))
     return "\n".join(p) + "\n"
 
@@ -627,10 +784,16 @@ def claude_md(nm: str) -> str:
         "placeholders such as `[CONFIRM: ...]`.\n"
         "2. Use `commands.md` and the skill files in `skills/` to pick the "
         "narrowest skill for the task.\n"
-        "3. Read that skill's `SKILL.md` and any matching file in "
-        "`templates/`.\n"
-        "4. Follow the skill's Workflow and Output Format.\n"
-        "5. Complete the skill's Attorney Verification Checklist before the "
+        "3. Read that skill file and any matching file in `templates/`. When "
+        "a matching `<skill-slug>--SPEC.json` exists, choose a declared mode, "
+        "require every non-inferable input, and evaluate module activation "
+        "exactly. Missing activation inputs fail closed. A module without "
+        "activation loads only when required or explicitly requested.\n"
+        "4. Load only the matching `<skill-slug>--<module-id>.md` resources. "
+        "Preserve why each resource was selected and keep the parent skill's "
+        "safety rules active.\n"
+        "5. Follow the skill's Workflow and Output Format.\n"
+        "6. Complete the skill's Attorney Verification Checklist before the "
         "work product is relied upon.\n\n"
         "## Practice profile\n\n"
         "`practice-profile-template.md` configures agent behavior for this "
@@ -650,6 +813,10 @@ def claude_readme(nm: str, skills: list) -> str:
              "profile.",
              "- `commands.md` — slash-style commands for this practice area.",
              "- `skills/` — one `<skill-slug>.md` file per skill.",
+             "- `contracts/` — typed execution contracts named "
+             "`<skill-slug>--SPEC.json`.",
+             "- `modules/` — selectively loaded resources named "
+             "`<skill-slug>--<module-id>.md`.",
              "- `templates/` — copyable, attorney-review-ready templates, "
              "named `<skill-slug>--<template-name>`.",
              "- `README.md` — this file.\n",
@@ -660,7 +827,7 @@ def claude_readme(nm: str, skills: list) -> str:
              "the whole archive (skills are `<skill-slug>.md`, not "
              "`SKILL.md`), so nothing collides. You can safely upload every "
              "file in this archive flat, without recreating the "
-             "`skills/`/`templates/` folders.\n",
+             "`skills/`/`contracts/`/`modules/`/`templates/` folders.\n",
              "## Install\n",
              "1. Create a new Project in Claude.",
              "2. Add every file in this archive to the Project knowledge — "
@@ -718,13 +885,20 @@ def gemini_core_source() -> str:
     return "\n".join(p) + "\n"
 
 
-def gemini_skills_source(nm: str, skills: list) -> str:
+def gemini_skills_source(nm: str, info: dict) -> str:
+    skills = info["skills"]
     p = [f"# AgentCounsel — {nm} Skills (Source 3)\n", GEN_NOTICE,
          f"\nAll {len(skills)} skills in the {nm} practice area. Each is a "
          f"workflow that produces draft legal work product for attorney "
-         f"review.\n"]
+         f"review. Custom execution contracts and their selectable modules "
+         f"follow the core skills. Because this source consolidates every "
+         f"resource, true prompt-size reduction requires an MCP or repo-agent "
+         f"client that calls `get_skill_context`; within this file, evaluate "
+         f"activation exactly and use only the selected module sections.\n"]
     for sk in skills:
         p.append(skill_block(sk, 2))
+    p.append("## Selective execution contracts and modules\n")
+    p.append(selective_context_markdown(info, 3))
     return "\n".join(p) + "\n"
 
 
@@ -963,6 +1137,9 @@ def run_write() -> int:
         for sk in skills:
             members.append((f"skills/{sk['slug']}.md", sk["raw"]))
             used_basenames.add(f"{sk['slug']}.md")
+            for arcname, content in claude_selective_context_members(sk):
+                members.append((arcname, content))
+                used_basenames.add(arcname.rsplit("/", 1)[-1])
             for tname, tcontent in sk["templates"]:
                 basename = f"{sk['slug']}--{tname}"
                 members.append((f"templates/{basename}", tcontent))
@@ -994,7 +1171,7 @@ def run_write() -> int:
             ("source-2-practice-profile.md",
              f"# AgentCounsel — {nm} Practice Profile (Source 2)\n\n"
              + GEN_NOTICE + "\n" + profile_text(area)),
-            ("source-3-skills.md", gemini_skills_source(nm, info["skills"])),
+            ("source-3-skills.md", gemini_skills_source(nm, info)),
             ("source-4-templates.md", gemini_templates_source(nm, info)),
         ]
         check_safety(f"gemini/{area}.zip:source-1-core-rules.md",

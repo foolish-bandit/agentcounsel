@@ -1130,10 +1130,10 @@
       "path": "skills/ip/infringement-triage/SKILL.md",
       "practice_area": "ip",
       "risk_level": "medium",
-      "characters": 24457,
-      "estimated_tokens": 6115,
-      "context_pressure": "large",
-      "output_section_count": 7,
+      "characters": 8508,
+      "estimated_tokens": 2127,
+      "context_pressure": "compact",
+      "output_section_count": 8,
       "reference_link_count": 0,
       "template_link_count": 0,
       "related_skill_count": 5
@@ -1592,10 +1592,10 @@
       "path": "skills/litigation/motion-opposition-drafter/SKILL.md",
       "practice_area": "litigation",
       "risk_level": "high",
-      "characters": 25381,
-      "estimated_tokens": 6346,
-      "context_pressure": "large",
-      "output_section_count": 18,
+      "characters": 9646,
+      "estimated_tokens": 2412,
+      "context_pressure": "compact",
+      "output_section_count": 3,
       "reference_link_count": 0,
       "template_link_count": 0,
       "related_skill_count": 4
@@ -3005,9 +3005,9 @@
       "pack_id": "chatgpt/contracts",
       "platform": "chatgpt",
       "practice_area": "contracts",
-      "included_file_count": 32,
-      "characters": 341912,
-      "estimated_tokens": 85478,
+      "included_file_count": 34,
+      "characters": 359584,
+      "estimated_tokens": 89896,
       "context_pressure": "large"
     },
     {
@@ -3059,9 +3059,9 @@
       "pack_id": "chatgpt/ip",
       "platform": "chatgpt",
       "practice_area": "ip",
-      "included_file_count": 21,
-      "characters": 157823,
-      "estimated_tokens": 39456,
+      "included_file_count": 29,
+      "characters": 161050,
+      "estimated_tokens": 40263,
       "context_pressure": "large"
     },
     {
@@ -3086,18 +3086,18 @@
       "pack_id": "chatgpt/legal-research",
       "platform": "chatgpt",
       "practice_area": "legal-research",
-      "included_file_count": 28,
-      "characters": 244513,
-      "estimated_tokens": 61129,
+      "included_file_count": 31,
+      "characters": 282009,
+      "estimated_tokens": 70503,
       "context_pressure": "large"
     },
     {
       "pack_id": "chatgpt/litigation",
       "platform": "chatgpt",
       "practice_area": "litigation",
-      "included_file_count": 36,
-      "characters": 320624,
-      "estimated_tokens": 80156,
+      "included_file_count": 40,
+      "characters": 316095,
+      "estimated_tokens": 79024,
       "context_pressure": "large"
     },
     {
@@ -3113,9 +3113,9 @@
       "pack_id": "chatgpt/privacy",
       "platform": "chatgpt",
       "practice_area": "privacy",
-      "included_file_count": 35,
-      "characters": 372334,
-      "estimated_tokens": 93084,
+      "included_file_count": 39,
+      "characters": 423605,
+      "estimated_tokens": 105902,
       "context_pressure": "large"
     },
     {
@@ -3212,9 +3212,9 @@
       "pack_id": "claude/contracts",
       "platform": "claude",
       "practice_area": "contracts",
-      "included_file_count": 32,
-      "characters": 341912,
-      "estimated_tokens": 85478,
+      "included_file_count": 34,
+      "characters": 359584,
+      "estimated_tokens": 89896,
       "context_pressure": "large"
     },
     {
@@ -3266,9 +3266,9 @@
       "pack_id": "claude/ip",
       "platform": "claude",
       "practice_area": "ip",
-      "included_file_count": 21,
-      "characters": 157823,
-      "estimated_tokens": 39456,
+      "included_file_count": 29,
+      "characters": 161050,
+      "estimated_tokens": 40263,
       "context_pressure": "large"
     },
     {
@@ -3293,18 +3293,18 @@
       "pack_id": "claude/legal-research",
       "platform": "claude",
       "practice_area": "legal-research",
-      "included_file_count": 28,
-      "characters": 244513,
-      "estimated_tokens": 61129,
+      "included_file_count": 31,
+      "characters": 282009,
+      "estimated_tokens": 70503,
       "context_pressure": "large"
     },
     {
       "pack_id": "claude/litigation",
       "platform": "claude",
       "practice_area": "litigation",
-      "included_file_count": 36,
-      "characters": 320624,
-      "estimated_tokens": 80156,
+      "included_file_count": 40,
+      "characters": 316095,
+      "estimated_tokens": 79024,
       "context_pressure": "large"
     },
     {
@@ -3320,9 +3320,9 @@
       "pack_id": "claude/privacy",
       "platform": "claude",
       "practice_area": "privacy",
-      "included_file_count": 35,
-      "characters": 372334,
-      "estimated_tokens": 93084,
+      "included_file_count": 39,
+      "characters": 423605,
+      "estimated_tokens": 105902,
       "context_pressure": "large"
     },
     {
@@ -3419,9 +3419,9 @@
       "pack_id": "gemini/contracts",
       "platform": "gemini",
       "practice_area": "contracts",
-      "included_file_count": 32,
-      "characters": 341912,
-      "estimated_tokens": 85478,
+      "included_file_count": 34,
+      "characters": 359584,
+      "estimated_tokens": 89896,
       "context_pressure": "large"
     },
     {
@@ -3473,9 +3473,9 @@
       "pack_id": "gemini/ip",
       "platform": "gemini",
       "practice_area": "ip",
-      "included_file_count": 21,
-      "characters": 157823,
-      "estimated_tokens": 39456,
+      "included_file_count": 29,
+      "characters": 161050,
+      "estimated_tokens": 40263,
       "context_pressure": "large"
     },
     {
@@ -3500,18 +3500,18 @@
       "pack_id": "gemini/legal-research",
       "platform": "gemini",
       "practice_area": "legal-research",
-      "included_file_count": 28,
-      "characters": 244513,
-      "estimated_tokens": 61129,
+      "included_file_count": 31,
+      "characters": 282009,
+      "estimated_tokens": 70503,
       "context_pressure": "large"
     },
     {
       "pack_id": "gemini/litigation",
       "platform": "gemini",
       "practice_area": "litigation",
-      "included_file_count": 36,
-      "characters": 320624,
-      "estimated_tokens": 80156,
+      "included_file_count": 40,
+      "characters": 316095,
+      "estimated_tokens": 79024,
       "context_pressure": "large"
     },
     {
@@ -3527,9 +3527,9 @@
       "pack_id": "gemini/privacy",
       "platform": "gemini",
       "practice_area": "privacy",
-      "included_file_count": 35,
-      "characters": 372334,
-      "estimated_tokens": 93084,
+      "included_file_count": 39,
+      "characters": 423605,
+      "estimated_tokens": 105902,
       "context_pressure": "large"
     },
     {

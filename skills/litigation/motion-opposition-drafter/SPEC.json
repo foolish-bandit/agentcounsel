@@ -1,0 +1,85 @@
+{
+  "schema_version": "2.0",
+  "skill_id": "litigation/motion-opposition-drafter",
+  "modules": [
+    {
+      "id": "motion-deconstruction",
+      "kind": "workflow-module",
+      "path": "skills/litigation/motion-opposition-drafter/modules/motion-deconstruction.md",
+      "required": false,
+      "load_when": "standard or deep-review mode",
+      "activation": {
+        "modes": [
+          "standard",
+          "deep-review"
+        ],
+        "operator": "always"
+      }
+    },
+    {
+      "id": "opposition-drafting",
+      "kind": "workflow-module",
+      "path": "skills/litigation/motion-opposition-drafter/modules/opposition-drafting.md",
+      "required": false,
+      "load_when": "standard or deep-review mode",
+      "activation": {
+        "modes": [
+          "standard",
+          "deep-review"
+        ],
+        "operator": "always"
+      }
+    },
+    {
+      "id": "expanded-verification",
+      "kind": "quality-check",
+      "path": "skills/litigation/motion-opposition-drafter/modules/expanded-verification.md",
+      "required": false,
+      "load_when": "deep-review mode",
+      "activation": {
+        "modes": [
+          "deep-review"
+        ],
+        "operator": "always"
+      }
+    }
+  ],
+  "context_scenarios": [
+    {
+      "id": "quick-triage",
+      "mode": "quick-triage",
+      "inputs": {
+        "movants-motion-memorandum-and-any-supporting-declarations-or-exhibits": "Provided complete motion papers",
+        "case-theory-and-the-clients-position-in-opposition": "The motion should be denied on the supplied record",
+        "relevant-record-materials-that-support-the-opposition": "Provided record materials",
+        "response-deadline-as-stated-on-the-docket-or-scheduling-order": "User-supplied date [deadline verification required]"
+      },
+      "baseline_estimated_tokens": 6346,
+      "max_ratio": 0.4
+    },
+    {
+      "id": "standard",
+      "mode": "standard",
+      "inputs": {
+        "movants-motion-memorandum-and-any-supporting-declarations-or-exhibits": "Provided complete motion papers",
+        "case-theory-and-the-clients-position-in-opposition": "The motion should be denied on the supplied record",
+        "relevant-record-materials-that-support-the-opposition": "Provided record materials",
+        "response-deadline-as-stated-on-the-docket-or-scheduling-order": "User-supplied date [deadline verification required]"
+      },
+      "baseline_estimated_tokens": 6346,
+      "max_ratio": 0.75
+    },
+    {
+      "id": "deep-review",
+      "mode": "deep-review",
+      "inputs": {
+        "movants-motion-memorandum-and-any-supporting-declarations-or-exhibits": "Provided complete motion papers",
+        "case-theory-and-the-clients-position-in-opposition": "The motion should be denied on the supplied record",
+        "relevant-record-materials-that-support-the-opposition": "Provided record materials",
+        "response-deadline-as-stated-on-the-docket-or-scheduling-order": "User-supplied date [deadline verification required]"
+      },
+      "baseline_estimated_tokens": 6346,
+      "max_ratio": 1.1
+    }
+  ]
+}

@@ -6746,13 +6746,13 @@
       "path": "skills/ip/infringement-triage/SKILL.md",
       "summary": "Use when a client needs a first-pass, structured triage of a potential intellectual property infringement issue — identifying the key factors, flagging their direction, and routing to IP counsel — without concluding whether infringement occurred.",
       "use_when": [
-        "A client believes someone may be infringing its intellectual property right and wants a preliminary read of the situation before engaging IP counsel for an enforcement action.",
-        "A client has received an informal infringement complaint, a demand, or internal notice that its own product or conduct may infringe a third party's intellectual property, and wants a preliminary structured assessment before engaging IP counsel.",
-        "A user asks to \"triage this IP issue,\" \"does this look like infringement,\" \"what are the key factors,\" or similar first-pass framing.",
-        "A client wants a structured briefing document to share with outside IP counsel to frame the engagement efficiently."
+        "A client believes its trademark, copyright, patent, or trade secret may be infringed and needs structured intake before enforcement counsel acts.",
+        "A client may be accused of infringement and needs a privileged first-pass organization of facts and issues.",
+        "The user needs a briefing memo for IP counsel rather than a definitive conclusion.",
+        "More than one IP right may apply and each needs a separate, inspectable analysis."
       ],
       "required_inputs": [
-        "The intellectual property right or rights at issue",
+        "IP rights at issue",
         "The parties' posture and relationship",
         "The available evidence of potential infringement"
       ],
@@ -6796,7 +6796,7 @@
       "risk_level": "medium",
       "requires_attorney_review": true,
       "inputs": [
-        "The intellectual property right or rights at issue",
+        "IP rights at issue",
         "The parties' posture and relationship",
         "The available evidence of potential infringement"
       ],
@@ -9394,11 +9394,10 @@
       "path": "skills/litigation/motion-opposition-drafter/SKILL.md",
       "summary": "Use when organizing and drafting a DRAFT opposition or response brief to a pending motion — deconstructing the movant's arguments into a point-by-point response outline, mapping the movant's cited authorities to verification placeholders, and assembling a source-cited opposition draft for attorney review before filing.",
       "use_when": [
-        "Counsel has received a motion (dispositive or non-dispositive — e.g., a motion to dismiss, motion for summary judgment, motion to compel, motion for sanctions, motion in limine, or similar) and needs a first-draft opposition or response brief.",
-        "A user asks to \"draft an opposition to this motion,\" \"respond to their motion for summary judgment,\" \"outline our response to the motion to dismiss,\" or \"help me push back on this motion.\"",
-        "The movant's motion papers and the record materials needed to answer it are available and can be provided as inputs.",
-        "The matter is in active litigation, a motion has been filed against the client, and a response is due or anticipated.",
-        "The draft is for a written opposition or response brief, or, with appropriate scope adjustment, a structured outline for oral argument in opposition to the motion."
+        "An opposing party has filed a dispositive or non-dispositive motion and counsel needs a first-draft opposition, response outline, or structured oral-argument outline.",
+        "The complete motion papers and enough record material to answer them are available.",
+        "The user needs drafting around authority already supplied or directed by counsel, not independent legal research.",
+        "The matter is active litigation and the output will remain within attorney review."
       ],
       "required_inputs": [
         "The movant's motion, memorandum, and any supporting declarations or exhibits",

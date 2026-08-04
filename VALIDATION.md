@@ -5,8 +5,13 @@ AgentCounsel ships a lightweight validation script, `scripts/validate_repo.py`, 
 ## Running it
 
 ```
+python scripts/check_all.py
+
+# Or run the core generators individually:
 python scripts/validate_repo.py
 python scripts/build_skill_index.py --check
+python scripts/build_skill_specs.py --check
+python scripts/generate_selective_context_metrics.py --check
 python scripts/build_platform_packs.py --check
 ```
 
@@ -54,11 +59,20 @@ Run it from anywhere; the script locates the repository root relative to its own
 - Every expected plugin skill is present — the eight curated skills plus the hand-maintained `legal-core`.
 - Each curated plugin skill under `adapters/claude-code-plugin/skills/` matches its canonical source in `/skills`, including templates. If they differ, the validator reports drift; run `python scripts/sync_plugin_skills.py` to regenerate the bundle. See `PLUGIN_SYNC.md`.
 
+**Typed contracts and selective context**
+
+- `metadata/skill_specs.json` matches all canonical skills and preserves non-weakening Skill Specification v2 invariants.
+- Every declared module path resolves inside the repository.
+- Module activation uses only supported, validated operators and modes.
+- `metadata/selective_context_metrics.json` and `reports/selective-context.md` are current.
+- Every declared scenario supplies its required inputs, resolves required modules, and stays within its explicit context ratio.
+- Bundle fingerprints and complete module-selection traces are deterministic.
+
 **Platform pack registry**
 
 - `metadata/packs.json` exists and matches `scripts/build_platform_packs.py`.
-- Every pack manifest has a pack ID, platform, practice area or use case, included skills, included core rules, quality checks, setup instructions, safety disclaimer, attorney-review requirements, version, and date.
-- Every referenced skill, core rule, template, matter pack, matter-workspace template, and quality-check target exists.
+- Every pack manifest has a pack ID, platform, practice area or use case, included skills, included core rules, custom skill specs, selectable spec resources, quality checks, setup instructions, safety disclaimer, attorney-review requirements, version, and date.
+- Every referenced skill, core rule, skill spec, spec resource, template, matter pack, matter-workspace template, and quality-check target exists.
 - High-risk generated metadata must recommend the attorney-review gate and assumption audit; high-risk authority-heavy skills must also recommend citation integrity.
 - Generated pack manifests preserve the draft-work-product and attorney-review posture.
 
@@ -77,7 +91,8 @@ The script validates structure and consistency — not legal accuracy. It cannot
 - Before opening or updating a pull request.
 - After adding, renaming, or moving a skill, template, or adapter file.
 - After editing a skill's frontmatter — then run `python scripts/build_skill_index.py` to regenerate `metadata/index.json` and `metadata/router.json` (see `docs/SKILL_METADATA_STANDARD.md`).
-- After changing platform pack inputs — then run `python scripts/build_platform_packs.py` to regenerate `metadata/packs.json` and `dist/` locally.
+- After changing a `SPEC.json`, module, or modularized core, run `python scripts/build_skill_specs.py`, `python scripts/generate_selective_context_metrics.py`, and `python scripts/build_platform_packs.py`.
+- After changing platform pack inputs, run `python scripts/build_platform_packs.py` to regenerate `metadata/packs.json` and `dist/` locally.
 - After editing `SKILLS_INDEX.md` or `WORKFLOW_ROUTER.md`.
 - After running `python scripts/sync_plugin_skills.py` to regenerate the plugin bundle (see `PLUGIN_SYNC.md`).
 

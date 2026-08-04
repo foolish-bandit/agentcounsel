@@ -12,7 +12,7 @@ A library of **legal skills** — structured Markdown workflows that help an AI 
 
 ### What is a "skill"?
 
-A skill is a single folder under `skills/` containing one `SKILL.md` file (and sometimes a `templates/` folder). The `SKILL.md` is plain Markdown with a fixed structure. There is no code and nothing to install — a skill is a file an AI model reads as context.
+A skill is a folder under `skills/` containing one canonical `SKILL.md` file and, when useful, templates, references, a typed `SPEC.json`, or selectable Markdown modules. There is no executable code in a skill and nothing to install. Ordinary skills are one-file workflows; modularized skills are portable folders whose compact core and selected resources are read together.
 
 ### Is AgentCounsel legal advice?
 
@@ -34,7 +34,7 @@ Any model or assistant that can read Markdown. The repository includes thin adap
 
 ### Do I need to install anything?
 
-No. AgentCounsel is plain Markdown with no runtime and no dependencies. You copy a skill file into your assistant and follow it. The optional helper scripts in `scripts/` use only the Python standard library; you do not need them to use a skill.
+No runtime is required. AgentCounsel remains usable as plain files: copy an ordinary skill directly, or use the complete folder/catalog package when `SPEC.json` is present. The optional helper scripts are standard-library-first, and the optional MCP catalog adds typed routing and true selective context retrieval for clients that need it.
 
 ### Does it cost anything?
 

@@ -6,7 +6,7 @@ from __future__ import annotations
 import unittest
 
 from tests.test_skill_spec_v2 import SpecFixture
-from scripts.skill_spec_v2 import SpecValidationError
+from skill_spec_v2 import SpecValidationError
 
 
 class TestSelectiveModuleSchema(unittest.TestCase):
@@ -69,6 +69,24 @@ class TestSelectiveModuleSchema(unittest.TestCase):
         self.assertEqual(spec["modules"][0]["activation"]["operator"], "contains-any")
         self.assertEqual(spec["context_scenarios"][0]["mode"], "standard")
 
+    def test_rejects_unsafe_module_identity_and_repository_escape(self):
+        overlay = self._overlay()
+        overlay["modules"][0]["id"] = "../trademark"
+        self.fixture.write_spec(overlay)
+        with self.assertRaises(SpecValidationError):
+            self.fixture.compile()
+
+        escaped = self.fixture.root.parent / f"{self.fixture.root.name}-escaped.md"
+        escaped.write_text("# Outside repository\n", encoding="utf-8")
+        try:
+            overlay = self._overlay()
+            overlay["modules"][0]["path"] = f"../{escaped.name}"
+            self.fixture.write_spec(overlay)
+            with self.assertRaises(SpecValidationError):
+                self.fixture.compile()
+        finally:
+            escaped.unlink(missing_ok=True)
+
     def test_rejects_invalid_activation_and_scenario_shapes(self):
         invalid: list[dict] = []
 
@@ -98,6 +116,35 @@ class TestSelectiveModuleSchema(unittest.TestCase):
 
         overlay = self._overlay()
         overlay["input_schema"][0]["items"] = ["trademark", "trademark"]
+        invalid.append(overlay)
+
+        overlay = self._overlay()
+        overlay["input_schema"][0]["items"] = ["trademark", "Trademark"]
+        invalid.append(overlay)
+
+        overlay = self._overlay()
+        overlay["input_schema"].append(
+            {
+                "id": "posture",
+                "label": "Posture",
+                "type": "enum",
+                "required": False,
+                "description": "Controlled posture.",
+                "source_requirement": "user-provided",
+                "may_infer": False,
+                "sensitive": False,
+                "enum": ["plaintiff", "Plaintiff"],
+            }
+        )
+        invalid.append(overlay)
+
+        overlay = self._overlay()
+        del overlay["input_schema"][0]["items"]
+        overlay["modules"][0]["activation"]["values"] = ["trademark", "Trademark"]
+        invalid.append(overlay)
+
+        overlay = self._overlay()
+        overlay["context_scenarios"][0]["max_ratio"] = float("inf")
         invalid.append(overlay)
 
         for candidate in invalid:

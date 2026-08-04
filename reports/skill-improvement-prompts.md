@@ -1298,7 +1298,7 @@ TARGET SKILL
 - Current skill name: Motion Opposition Drafter
 - Practice area: Litigation
 - Current description: Use when organizing and drafting a DRAFT opposition or response brief to a pending motion — deconstructing the movant's arguments into a point-by-point response outline, mapping the movant's cited authorities to verification placeholders, and assembling a source-cited opposition draft for attorney review before filing.
-- Core purpose (must not change): Produce a first draft of an opposition or response brief to a pending motion, for attorney review, revision, and sign-off.
+- Core purpose (must not change): Produce a disciplined first draft of an opposition or response brief for attorney review.
 
 CONTEXT TO READ FIRST
 - Read skills/litigation/motion-opposition-drafter/SKILL.md in full.
@@ -5714,7 +5714,7 @@ TARGET SKILL
 - Current skill name: Infringement Triage
 - Practice area: Intellectual Property
 - Current description: Use when a client needs a first-pass, structured triage of a potential intellectual property infringement issue — identifying the key factors, flagging their direction, and routing to IP counsel — without concluding whether infringement occurred.
-- Core purpose (must not change): Produce a structured first-pass triage memo for a potential intellectual property infringement issue.
+- Core purpose (must not change): Produce a structured first-pass triage memo for a potential intellectual-property dispute.
 
 CONTEXT TO READ FIRST
 - Read skills/ip/infringement-triage/SKILL.md in full.

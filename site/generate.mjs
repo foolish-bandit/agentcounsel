@@ -10,7 +10,7 @@ import {
   readFileSync, writeFileSync, readdirSync, mkdirSync,
   rmSync, existsSync, statSync, copyFileSync,
 } from 'node:fs';
-import { join, dirname } from 'node:path';
+import { join, dirname, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const SITE_DIR = dirname(fileURLToPath(import.meta.url));
@@ -314,6 +314,7 @@ function firstUseWhenBullet(skill) {
 
 function loadSkills() {
   const skills = [];
+  const repoPrefix = resolve(REPO_ROOT) + sep;
   for (const area of readdirSync(SKILLS_DIR)) {
     const areaDir = join(SKILLS_DIR, area);
     if (!statSync(areaDir).isDirectory()) continue;
@@ -324,9 +325,46 @@ function loadSkills() {
       if (!existsSync(mdPath)) continue;
       const raw = readFileSync(mdPath, 'utf8');
       const parsed = parseSkill(raw);
+      const specFile = join(sd, 'SPEC.json');
+      let specPath = '';
+      let specRaw = '';
+      let spec = null;
+      const specResources = [];
+      if (existsSync(specFile)) {
+        specPath = 'skills/' + area + '/' + slug + '/SPEC.json';
+        specRaw = readFileSync(specFile, 'utf8');
+        try {
+          spec = JSON.parse(specRaw);
+        } catch (err) {
+          throw new Error('Invalid JSON in ' + specPath + ': ' + err.message);
+        }
+        if (!spec || Array.isArray(spec) || typeof spec !== 'object') {
+          throw new Error(specPath + ' must contain a JSON object');
+        }
+        for (const module of spec.modules || []) {
+          if (!module || typeof module !== 'object' || Array.isArray(module)) {
+            throw new Error(specPath + ' contains a non-object module record');
+          }
+          if (!module.id || typeof module.id !== 'string') {
+            throw new Error(specPath + ' contains a module without an id');
+          }
+          if (!module.path || typeof module.path !== 'string') {
+            throw new Error(specPath + ' module ' + module.id + ' has no path');
+          }
+          const resourceFile = resolve(REPO_ROOT, module.path);
+          if (!resourceFile.startsWith(repoPrefix)) {
+            throw new Error(specPath + ' module ' + module.id + ' escapes the repository root');
+          }
+          if (!existsSync(resourceFile) || !statSync(resourceFile).isFile()) {
+            throw new Error(specPath + ' module ' + module.id + ' is missing: ' + module.path);
+          }
+          specResources.push({ ...module, content: readFileSync(resourceFile, 'utf8') });
+        }
+      }
       skills.push({
         area, slug, raw,
         path: 'skills/' + area + '/' + slug + '/SKILL.md',
+        specPath, specRaw, spec, specResources,
         ...parsed,
       });
     }
@@ -611,8 +649,42 @@ ${cards}`;
   });
 }
 
+function fullSkillPackage(skill) {
+  if (!skill.spec) return skill.raw;
+  const parts = [
+    `AgentCounsel selective execution package for ${skill.name}.
+
+The core skill always applies. Choose one declared execution mode and evaluate each module's machine-readable activation object exactly. Missing activation inputs fail closed: do not load every conditional module. A module without activation is not selected unless it is required or explicitly requested. Use only the selected resources, preserve why each resource was selected, and keep every parent safety rule active.
+
+This portable package contains every possible resource. For true prompt-size reduction, use the MCP get_skill_context tool or another client that sends only the selected bundle.
+
+=== BEGIN AGENTCOUNSEL CORE SKILL ===
+${skill.raw}
+=== END AGENTCOUNSEL CORE SKILL ===
+
+=== BEGIN AGENTCOUNSEL SPEC ===
+Canonical path: ${skill.specPath}
+${skill.specRaw}
+=== END AGENTCOUNSEL SPEC ===`,
+  ];
+  for (const resource of skill.specResources) {
+    parts.push(`=== BEGIN AGENTCOUNSEL MODULE: ${resource.id} ===
+Kind: ${resource.kind || 'resource'}
+Canonical path: ${resource.path}
+Load when: ${resource.load_when || 'explicit selection'}
+
+${resource.content}
+=== END AGENTCOUNSEL MODULE: ${resource.id} ===`);
+  }
+  return parts.join('\n\n');
+}
+
 function oneOffPrompt(skill) {
-  return `You are assisting with a legal task using AgentCounsel, a platform-agnostic legal skills library. Use the skill provided below and follow it exactly.
+  const packageText = fullSkillPackage(skill);
+  const selectiveRule = skill.spec
+    ? `\n- This skill has a typed execution contract. Choose a declared mode, evaluate every module activation exactly, and treat missing activation inputs as unresolved rather than loading all modules.`
+    : '';
+  return `You are assisting with a legal task using AgentCounsel, a platform-agnostic legal skills library. Use the skill package provided below and follow it exactly.
 
 Operating rules (these always apply):
 - Produce draft legal work product for review by a licensed attorney. This is not legal advice and not a final answer.
@@ -620,13 +692,78 @@ Operating rules (these always apply):
 - Identify jurisdiction, governing law, posture, and the relevant date — or flag them as unknown. Never compute a deadline.
 - Keep facts, assumptions, analysis, strategy, and verification items visibly separate.
 - Follow the skill's Workflow and Output Format. Complete its Attorney Verification Checklist.
-- If a Required Input is missing, stop and ask for it. Do not guess.
+- If a Required Input is missing, stop and ask for it. Do not guess.${selectiveRule}
 
-=== BEGIN SKILL: ${skill.name} ===
-${skill.raw}
-=== END SKILL ===
+=== BEGIN AGENTCOUNSEL EXECUTION PACKAGE: ${skill.name} ===
+${packageText}
+=== END AGENTCOUNSEL EXECUTION PACKAGE ===
 
 First, confirm which Required Inputs you have and ask me for any that are missing. Then proceed with the Workflow.`;
+}
+
+function activationSummary(module) {
+  const activation = module.activation;
+  if (!activation || typeof activation !== 'object') {
+    return module.required
+      ? 'Required; no conditional activation.'
+      : 'Explicit selection only; no machine-readable activation.';
+  }
+  const modes = Array.isArray(activation.modes) ? activation.modes.join(', ') : 'none';
+  if (activation.operator === 'always') return 'Modes: ' + modes + '; always within an allowed mode.';
+  if (activation.operator === 'present') {
+    return 'Modes: ' + modes + '; when ' + activation.input_id + ' is present.';
+  }
+  if (activation.operator === 'equals') {
+    return 'Modes: ' + modes + '; when ' + activation.input_id + ' equals ' + activation.value + '.';
+  }
+  if (activation.operator === 'contains-any') {
+    return 'Modes: ' + modes + '; when ' + activation.input_id + ' contains any of: '
+      + (activation.values || []).join(', ') + '.';
+  }
+  return 'Unsupported activation operator: ' + String(activation.operator || 'missing') + '.';
+}
+
+function selectiveExecutionPanel(skill) {
+  if (!skill.spec) return '';
+  const modes = (skill.spec.execution_modes || [])
+    .filter((mode) => mode && mode.enabled !== false)
+    .map((mode) => mode.id)
+    .filter(Boolean);
+  const scenarioCount = Array.isArray(skill.spec.context_scenarios)
+    ? skill.spec.context_scenarios.length : 0;
+  let rows = '';
+  let details = '';
+  for (const resource of skill.specResources) {
+    rows += `<tr>
+<td><code>${esc(resource.id)}</code></td>
+<td>${esc(resource.kind || 'resource')}</td>
+<td>${esc(activationSummary(resource))}</td>
+<td><code>${esc(resource.path)}</code></td>
+</tr>\n`;
+    details += `<details class="module-detail">
+<summary>Module: ${esc(resource.id)}</summary>
+<p class="path">Canonical path: <code>${esc(resource.path)}</code></p>
+${mdToHtml(resource.content)}
+</details>\n`;
+  }
+  return `<section class="skill-section selective-package" id="selective-execution-package">
+<h2>Selective execution package</h2>
+<p>This skill has a typed execution contract at <code>${esc(skill.specPath)}</code>. Its compact core is suitable for routing and quick triage. Standard or deep execution also needs the resources selected by the contract.</p>
+<p><strong>Selection rule:</strong> choose a declared mode and evaluate each module's machine-readable activation object exactly. Missing activation inputs fail closed. Do not load every conditional module merely because an input is absent.</p>
+<div class="package-facts">
+<p><span class="label">Declared modes:</span> ${esc(modes.join(', ') || 'See the compiled contract')}</p>
+<p><span class="label">Budget scenarios:</span> ${scenarioCount}</p>
+<p><span class="label">Portable copy:</span> “Copy Full Package” includes every possible resource, so it is complete but not context-minimal. Use MCP <code>get_skill_context</code> for the exact selected bundle.</p>
+</div>
+<table class="module-table">
+<thead><tr><th>Module</th><th>Kind</th><th>Activation</th><th>Canonical path</th></tr></thead>
+<tbody>${rows}</tbody>
+</table>
+<details class="module-detail">
+<summary>Typed contract: SPEC.json</summary>
+<pre class="code"><code>${esc(skill.specRaw)}</code></pre>
+</details>
+${details}</section>\n`;
 }
 
 // --- examples --------------------------------------------------------------
@@ -729,13 +866,22 @@ ${summaryLines.join('\n')}
 `;
   }
 
+  const copyToolbar = skill.spec
+    ? `<button class="btn" type="button" data-copy="raw">Copy Core Skill</button>
+<button class="btn" type="button" data-copy="package">Copy Full Package</button>
+<button class="btn" type="button" data-copy="oneoff">Copy One-Off Prompt</button>`
+    : `<button class="btn" type="button" data-copy="raw">Copy Full Skill</button>
+<button class="btn" type="button" data-copy="oneoff">Copy One-Off Prompt</button>`;
+  const packageText = fullSkillPackage(skill);
+  const packagePanel = selectiveExecutionPanel(skill);
+  const rawTitle = skill.spec ? 'Core raw SKILL.md' : 'Full raw SKILL.md';
+
   const body = `<nav class="breadcrumb"><a href="../../index.html">Home</a> / <a href="../../practice-areas/${a}.html">${esc(areaName(a))}</a> / <span>${esc(skill.name)}</span></nav>
 <h1>${esc(skill.name)}</h1>
 <p class="path">Canonical path: <code>${esc(skill.path)}</code></p>
 
 <div class="toolbar">
-<button class="btn" type="button" data-copy="raw">Copy Full Skill</button>
-<button class="btn" type="button" data-copy="oneoff">Copy One-Off Prompt</button>
+${copyToolbar}
 </div>
 
 <div class="trigger">
@@ -743,12 +889,13 @@ ${summaryLines.join('\n')}
 <p>${inline(skill.description)}</p>
 </div>
 
-${summaryBlock}${skillFactsPanel(meta)}${exampleBlock}
+${summaryBlock}${skillFactsPanel(meta)}${exampleBlock}${packagePanel}
 ${sections}<section class="skill-section" id="raw-skill">
-<h2>Full raw SKILL.md</h2>
+<h2>${rawTitle}</h2>
 <pre id="raw" class="raw">${esc(skill.raw)}</pre>
 </section>
 
+<pre id="package" hidden>${esc(packageText)}</pre>
 <pre id="oneoff" hidden>${esc(oneOffPrompt(skill))}</pre>`;
   return page({
     title: skill.name, depth: 2,
@@ -766,7 +913,7 @@ const PLATFORMS = [
     steps: [
       'Create a new Project in ChatGPT.',
       'Attach AgentCounsel’s operating rules: copy the six files from the repository’s <code>core/</code> directory into the Project files, or paste them into the Project’s custom instructions. These safety rules apply to every skill.',
-      'For a task, open the skill you need from the <a href="../skill-index.html">skill index</a>, use the <strong>Copy Full Skill</strong> button on its page, and paste the skill into a new chat in the Project.',
+      'For a task, open the skill you need from the <a href="../skill-index.html">skill index</a>. Use <strong>Copy Full Skill</strong> for an ordinary skill. When the page offers a typed package, use <strong>Copy Full Package</strong> for standard or deep work; <strong>Copy Core Skill</strong> is the compact routing and quick triage path.',
       'Give ChatGPT the skill’s Required Inputs — the document, the facts, the client role, the jurisdiction.',
       'Follow the skill’s Workflow, then review the result against its Attorney Verification Checklist before relying on it.',
     ],
@@ -783,7 +930,7 @@ const PLATFORMS = [
     steps: [
       'Create a new Project in Claude.',
       'Add AgentCounsel’s operating rules to the Project knowledge: upload the six files from the repository’s <code>core/</code> directory.',
-      'Open the skill you need from the <a href="../skill-index.html">skill index</a>, copy its full <code>SKILL.md</code> with the <strong>Copy Full Skill</strong> button, and paste it into a chat — or add it to the Project knowledge.',
+      'Open the skill you need from the <a href="../skill-index.html">skill index</a>. Use <strong>Copy Full Skill</strong> for an ordinary skill. When a typed package is shown, use <strong>Copy Full Package</strong> for standard or deep work; the compact <strong>Copy Core Skill</strong> option is for routing and quick triage.',
       'Provide the skill’s Required Inputs and ask Claude to follow the skill’s Workflow.',
       'Review the output against the skill’s Attorney Verification Checklist.',
     ],
@@ -799,7 +946,7 @@ const PLATFORMS = [
     steps: [
       'Create a notebook or workspace in your Gemini environment.',
       'Add AgentCounsel’s operating rules as sources: the six files from the repository’s <code>core/</code> directory.',
-      'Add the <code>SKILL.md</code> for the skill you need as another source — copy it with the <strong>Copy Full Skill</strong> button from its catalog page.',
+      'Add the skill you need as another source. Use <strong>Copy Full Skill</strong> for an ordinary skill. When a typed package is shown, use <strong>Copy Full Package</strong> for standard or deep work; <strong>Copy Core Skill</strong> is the compact quick triage path.',
       'Ask Gemini to follow the skill’s Workflow and Output Format, and provide the Required Inputs.',
       'Review the output against the skill’s Attorney Verification Checklist.',
     ],
@@ -830,14 +977,14 @@ const PLATFORMS = [
     lead: 'For a single task in any AI assistant — no Project, no setup — paste one skill as a self-contained prompt.',
     steps: [
       'Open the page for the skill you need from the <a href="../skill-index.html">skill index</a>.',
-      'Click <strong>Copy One-Off Prompt</strong>. The copied text wraps the skill with AgentCounsel’s operating rules.',
+      'Click <strong>Copy One-Off Prompt</strong>. The copied text wraps the skill with AgentCounsel’s operating rules and, when present, its typed contract plus every selectable resource.',
       'Paste it into any AI assistant.',
       'Provide the Required Inputs the skill asks for.',
       'Follow the Workflow, then review the output against the Attorney Verification Checklist.',
     ],
     tips: [
       'For repeated work, prefer a Project or notebook so the operating rules persist across tasks.',
-      'Use the <strong>Copy Full Skill</strong> button instead if you want only the raw <code>SKILL.md</code>.',
+      'Use <strong>Copy Full Skill</strong> for an ordinary raw <code>SKILL.md</code>. On typed pages, <strong>Copy Core Skill</strong> copies only the compact core and <strong>Copy Full Package</strong> includes the contract and resources.',
     ],
   },
 ];

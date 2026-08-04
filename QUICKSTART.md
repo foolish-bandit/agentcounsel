@@ -92,7 +92,7 @@ requires no technical setup.
 
 ### Local / Markdown-only (no AI tool required)
 
-1. **Get the files.** Clone the repository, or copy the single `SKILL.md` (and its `templates/`) you need.
+1. **Get the files.** Clone the repository. For an ordinary skill, you may instead copy its `SKILL.md` and templates. When the skill folder contains `SPEC.json`, copy the complete folder or use **Copy Full Package** on the catalog page so every selectable resource remains available.
 2. **Read the rules.** Read [`core/`](core/) once — the operating rules every skill inherits.
 3. **Start a matter (optional).** `python scripts/init_matter_workspace.py "<matter name>"` scaffolds a workspace from [`matter-workspaces/_template/`](matter-workspaces/_template/). Everything is plain Markdown you can fill in by hand.
 4. **Run a skill.** Follow the chosen skill's Workflow and produce its Output Format — with any model, or as a structured worksheet for a person.
@@ -106,7 +106,7 @@ requires no technical setup.
 
 1. **Route.** `WORKFLOW_ROUTER.md` → "Review this NDA" → `skills/contracts/nda-review/SKILL.md`. (In a Contracts pack, just say "review this NDA" in chat. If you review NDAs the same way every week, use [`playbooks/nda-review.md`](playbooks/nda-review.md).)
 2. **Read.** Required Inputs: the NDA text, your client's role (disclosing, receiving, or mutual), and the business context.
-3. **Run.** With a pack: state the task and provide the NDA + role. With files: paste `core/` + the skill + the NDA text into your assistant.
+3. **Run.** With a pack: state the task and provide the NDA + role. With files: paste `core/` plus the skill package and the NDA text into your assistant. If the catalog shows **Copy Full Package**, use it for standard or deep work.
 4. **Get back.** A triage rating, a key-terms table, a risk table, prioritized redline points, and an Attorney Verification Checklist.
 5. **Quality + review.** Run citation/source checks if any authority is cited; resolve every `[CONFIRM: ...]` placeholder; have an attorney confirm the triage rating and redline priorities before negotiating or signing.
 

@@ -13,8 +13,6 @@ Context pressure bands for individual files are: compact (up to 2,500 estimated 
 
 | Skill | Practice area | Risk | Estimated tokens | Output items | References | Templates | Pressure |
 |---|---|---|---:|---:|---:|---:|---|
-| `litigation/motion-opposition-drafter` | litigation | high | 6,346 | 18 | 0 | 0 | large |
-| `ip/infringement-triage` | ip | medium | 6,115 | 7 | 0 | 0 | large |
 | `privacy/breach-response-workflow` | privacy | critical | 5,700 | 13 | 0 | 0 | moderate |
 | `ai-governance/ai-vendor-terms-review` | ai-governance | medium | 5,477 | 10 | 2 | 0 | moderate |
 | `contracts/contract-risk-review` | contracts | medium | 5,457 | 13 | 8 | 0 | moderate |
@@ -38,35 +36,37 @@ Context pressure bands for individual files are: compact (up to 2,500 estimated 
 | `real-estate/psa-review` | real-estate | medium | 4,619 | 11 | 1 | 0 | moderate |
 | `financial-crime/transaction-monitoring-alert-triage` | financial-crime | high | 4,550 | 15 | 0 | 0 | moderate |
 | `privacy/childrens-privacy-review` | privacy | critical | 4,451 | 11 | 0 | 0 | moderate |
+| `corporate/closing-checklist` | corporate | medium | 4,422 | 4 | 0 | 0 | moderate |
+| `employment/wage-hour-qa` | employment | high | 4,413 | 9 | 0 | 0 | moderate |
 
 ## Largest generated packs
 
 | Pack | Platform | Practice area | Files | Estimated tokens | Pressure |
 |---|---|---|---:|---:|---|
-| `chatgpt/privacy` | chatgpt | privacy | 35 | 93,084 | large |
-| `claude/privacy` | claude | privacy | 35 | 93,084 | large |
-| `gemini/privacy` | gemini | privacy | 35 | 93,084 | large |
+| `chatgpt/privacy` | chatgpt | privacy | 39 | 105,902 | large |
+| `claude/privacy` | claude | privacy | 39 | 105,902 | large |
+| `gemini/privacy` | gemini | privacy | 39 | 105,902 | large |
 | `chatgpt/legal-methodology` | chatgpt | legal-methodology | 49 | 92,345 | large |
 | `claude/legal-methodology` | claude | legal-methodology | 49 | 92,345 | large |
 | `gemini/legal-methodology` | gemini | legal-methodology | 49 | 92,345 | large |
-| `chatgpt/contracts` | chatgpt | contracts | 32 | 85,478 | large |
-| `claude/contracts` | claude | contracts | 32 | 85,478 | large |
-| `gemini/contracts` | gemini | contracts | 32 | 85,478 | large |
-| `chatgpt/litigation` | chatgpt | litigation | 36 | 80,156 | large |
-| `claude/litigation` | claude | litigation | 36 | 80,156 | large |
-| `gemini/litigation` | gemini | litigation | 36 | 80,156 | large |
+| `chatgpt/contracts` | chatgpt | contracts | 34 | 89,896 | large |
+| `claude/contracts` | claude | contracts | 34 | 89,896 | large |
+| `gemini/contracts` | gemini | contracts | 34 | 89,896 | large |
+| `chatgpt/litigation` | chatgpt | litigation | 40 | 79,024 | large |
+| `claude/litigation` | claude | litigation | 40 | 79,024 | large |
+| `gemini/litigation` | gemini | litigation | 40 | 79,024 | large |
 | `chatgpt/employment` | chatgpt | employment | 30 | 78,713 | large |
 | `claude/employment` | claude | employment | 30 | 78,713 | large |
 | `gemini/employment` | gemini | employment | 30 | 78,713 | large |
 | `chatgpt/setup` | chatgpt | setup | 32 | 76,273 | large |
 | `claude/setup` | claude | setup | 32 | 76,273 | large |
 | `gemini/setup` | gemini | setup | 32 | 76,273 | large |
+| `chatgpt/legal-research` | chatgpt | legal-research | 31 | 70,503 | large |
+| `claude/legal-research` | claude | legal-research | 31 | 70,503 | large |
+| `gemini/legal-research` | gemini | legal-research | 31 | 70,503 | large |
 | `chatgpt/m-and-a` | chatgpt | m-and-a | 28 | 66,098 | large |
 | `claude/m-and-a` | claude | m-and-a | 28 | 66,098 | large |
 | `gemini/m-and-a` | gemini | m-and-a | 28 | 66,098 | large |
-| `chatgpt/legal-research` | chatgpt | legal-research | 28 | 61,129 | large |
-| `claude/legal-research` | claude | legal-research | 28 | 61,129 | large |
-| `gemini/legal-research` | gemini | legal-research | 28 | 61,129 | large |
 | `chatgpt/securities-capital-markets` | chatgpt | securities-capital-markets | 26 | 60,980 | large |
 
 The complete per-skill and per-pack dataset is in `metadata/context_metrics.json`.

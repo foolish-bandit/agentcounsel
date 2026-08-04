@@ -3,7 +3,7 @@
 A deterministic, offline checklist for cutting an AgentCounsel release. Everything
 here uses the Python standard library and one Node script — no network calls, no
 API keys. Replace `vX.Y.Z` with the version you are cutting (the first public
-release is `v0.2.0`).
+release is `v0.3.0`).
 
 ## 1. Regenerate derived artifacts
 
@@ -72,8 +72,8 @@ or `ai-lawyer`).
 ## 6. Tag and push the release
 
 ```
-git tag -a v0.2.0 -m "AgentCounsel v0.2.0 — first public release"
-git push origin v0.2.0
+git tag -a v0.3.0 -m "AgentCounsel v0.3.0: deterministic selective context"
+git push origin v0.3.0
 ```
 
 (Do not force-push tags. If a tag is wrong, delete and recreate it deliberately.)
@@ -81,8 +81,8 @@ git push origin v0.2.0
 ## 7. Draft the GitHub release
 
 1. Go to the repository's **Releases** → **Draft a new release**.
-2. Choose the `v0.2.0` tag.
-3. Title: `AgentCounsel v0.2.0 — First public release`.
+2. Choose the `v0.3.0` tag.
+3. Title: `AgentCounsel v0.3.0: Deterministic selective context`.
 4. Paste the body of [`../RELEASE_NOTES.md`](../RELEASE_NOTES.md) (or summarize it
    and link to the file).
 5. Keep the safety framing in the description: draft legal work product for

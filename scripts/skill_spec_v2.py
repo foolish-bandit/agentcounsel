@@ -9,6 +9,7 @@ The compiler always preserves baseline legal-safety controls.
 from __future__ import annotations
 
 import json
+import math
 import re
 from copy import deepcopy
 from pathlib import Path
@@ -45,6 +46,7 @@ INPUT_TYPES = {
     "number",
     "jurisdiction",
     "object",
+    "string-list",
 }
 OUTPUT_TYPES = {
     "section",
@@ -73,6 +75,7 @@ CUSTOM_GATE_ACTIONS = {
     "stop-and-escalate",
     "require-attorney-confirmation",
 }
+MODULE_ACTIVATION_OPERATORS = {"always", "present", "equals", "contains-any"}
 
 
 class SpecValidationError(ValueError):
@@ -420,6 +423,10 @@ def _merge_custom(
         result["output_schema"], custom.get("output_schema")
     )
     result["modules"] = _merge_records(result["modules"], custom.get("modules"))
+    if "context_scenarios" in custom:
+        result["context_scenarios"] = _merge_records(
+            result.get("context_scenarios", []), custom.get("context_scenarios")
+        )
 
     evidence = custom.get("evidence_schema")
     if isinstance(evidence, dict):
@@ -455,6 +462,22 @@ def _duplicate_ids(records: Any) -> list[str]:
         if record_id in seen:
             duplicates.append(record_id)
         seen.add(record_id)
+    return duplicates
+
+
+def _casefold_duplicates(values: Any) -> list[str]:
+    """Return later values that collide after runtime normalization."""
+    if not isinstance(values, list):
+        return []
+    seen: set[str] = set()
+    duplicates: list[str] = []
+    for value in values:
+        if not isinstance(value, str):
+            continue
+        normalized = value.strip().casefold()
+        if normalized in seen:
+            duplicates.append(value)
+        seen.add(normalized)
     return duplicates
 
 
@@ -572,9 +595,25 @@ def validate_compiled_spec(spec: dict[str, Any], root: Path) -> list[str]:
         if field.get("type") == "enum":
             enum = field.get("enum")
             if not isinstance(enum, list) or not enum or any(
-                not isinstance(item, str) or not item for item in enum
+                not isinstance(item, str) or not item.strip() for item in enum
             ):
                 errors.append(f"enum input {field.get('id')} needs string values")
+            elif _casefold_duplicates(enum):
+                errors.append(
+                    f"enum input {field.get('id')} values must be unique after normalization"
+                )
+        if field.get("type") == "string-list" and "items" in field:
+            items = field.get("items")
+            if not isinstance(items, list) or not items or any(
+                not isinstance(item, str) or not item.strip() for item in items
+            ):
+                errors.append(
+                    f"string-list input {field.get('id')} items must be non-empty strings"
+                )
+            elif _casefold_duplicates(items):
+                errors.append(
+                    f"string-list input {field.get('id')} items must be unique after normalization"
+                )
 
     outputs = spec.get("output_schema")
     if not isinstance(outputs, list):
@@ -630,6 +669,11 @@ def validate_compiled_spec(spec: dict[str, Any], root: Path) -> list[str]:
     module_duplicates = _duplicate_ids(modules)
     if module_duplicates:
         errors.append("duplicate module ids: " + ", ".join(module_duplicates))
+    input_fields = {
+        field.get("id"): field
+        for field in inputs
+        if isinstance(field, dict) and isinstance(field.get("id"), str)
+    }
     for module in modules:
         if not isinstance(module, dict):
             errors.append("modules must be objects")
@@ -639,13 +683,167 @@ def validate_compiled_spec(spec: dict[str, Any], root: Path) -> list[str]:
                 errors.append(
                     f"module {module.get('id', '<unknown>')} missing {field}"
                 )
+        module_id = module.get("id")
+        if not isinstance(module_id, str) or not re.fullmatch(
+            r"[a-z0-9][a-z0-9-]*", module_id
+        ):
+            errors.append("module needs a slug-form id")
         if module.get("kind") not in MODULE_KINDS:
             errors.append(f"invalid module kind: {module.get('kind')}")
         path = module.get("path")
-        if not isinstance(path, str) or not (root / path).is_file():
+        if not isinstance(path, str) or not path:
             errors.append(f"module path does not resolve: {path}")
+        else:
+            resolved_path = (root / path).resolve()
+            if not resolved_path.is_relative_to(root.resolve()):
+                errors.append(f"module path escapes repository root: {path}")
+            elif not resolved_path.is_file():
+                errors.append(f"module path does not resolve: {path}")
         if not isinstance(module.get("required"), bool):
             errors.append(f"module {module.get('id')} required must be boolean")
+        activation = module.get("activation")
+        if activation is not None:
+            if not isinstance(activation, dict):
+                errors.append(
+                    f"module {module.get('id')} activation must be an object"
+                )
+                continue
+            modes = activation.get("modes")
+            if not isinstance(modes, list) or not modes or any(
+                not isinstance(mode, str) or mode not in MODE_IDS for mode in modes
+            ):
+                errors.append(
+                    f"module {module.get('id')} activation modes must be known modes"
+                )
+            elif len(modes) != len(set(modes)):
+                errors.append(
+                    f"module {module.get('id')} activation modes must be unique"
+                )
+
+            operator = activation.get("operator")
+            if operator not in MODULE_ACTIVATION_OPERATORS:
+                errors.append(
+                    f"module {module.get('id')} has invalid activation operator: {operator}"
+                )
+                continue
+
+            has_input_id = "input_id" in activation
+            has_value = "value" in activation
+            has_values = "values" in activation
+            input_id = activation.get("input_id")
+
+            if operator == "always":
+                if has_input_id or has_value or has_values:
+                    errors.append(
+                        f"module {module.get('id')} always activation may not declare input fields"
+                    )
+                continue
+
+            if not isinstance(input_id, str) or not input_id:
+                errors.append(
+                    f"module {module.get('id')} activation needs a non-empty input_id"
+                )
+                continue
+            if input_id not in input_fields:
+                errors.append(
+                    f"module {module.get('id')} activation references unknown input: {input_id}"
+                )
+                continue
+
+            if operator == "present":
+                if has_value or has_values:
+                    errors.append(
+                        f"module {module.get('id')} present activation may not declare values"
+                    )
+                continue
+
+            if operator == "equals":
+                value = activation.get("value")
+                if not isinstance(value, str) or not value or has_values:
+                    errors.append(
+                        f"module {module.get('id')} equals activation needs one non-empty value"
+                    )
+                    continue
+                activation_values = [value]
+            else:
+                values = activation.get("values")
+                if (
+                    not isinstance(values, list)
+                    or not values
+                    or any(not isinstance(value, str) or not value.strip() for value in values)
+                    or has_value
+                ):
+                    errors.append(
+                        f"module {module.get('id')} contains-any activation needs non-empty string values"
+                    )
+                    continue
+                if _casefold_duplicates(values):
+                    errors.append(
+                        f"module {module.get('id')} activation values must be unique after normalization"
+                    )
+                activation_values = values
+
+            input_field = input_fields[input_id]
+            allowed_values = input_field.get("enum") or input_field.get("items")
+            if isinstance(allowed_values, list):
+                unknown_values = [
+                    value for value in activation_values if value not in allowed_values
+                ]
+                if unknown_values:
+                    errors.append(
+                        f"module {module.get('id')} activation values are not allowed by input {input_id}: "
+                        + ", ".join(unknown_values)
+                    )
+
+    context_scenarios = spec.get("context_scenarios", [])
+    if not isinstance(context_scenarios, list):
+        errors.append("context_scenarios must be a list")
+        context_scenarios = []
+    scenario_duplicates = _duplicate_ids(context_scenarios)
+    if scenario_duplicates:
+        errors.append(
+            "duplicate context scenario ids: " + ", ".join(scenario_duplicates)
+        )
+    for scenario in context_scenarios:
+        if not isinstance(scenario, dict):
+            errors.append("context scenarios must be objects")
+            continue
+        scenario_id = scenario.get("id")
+        if not isinstance(scenario_id, str) or not re.fullmatch(
+            r"[a-z0-9][a-z0-9-]*", scenario_id
+        ):
+            errors.append("context scenario needs a slug-form id")
+        if scenario.get("mode") not in MODE_IDS:
+            errors.append(
+                f"context scenario {scenario_id or '<unknown>'} has invalid mode"
+            )
+        scenario_inputs = scenario.get("inputs")
+        if not isinstance(scenario_inputs, dict):
+            errors.append(
+                f"context scenario {scenario_id or '<unknown>'} inputs must be an object"
+            )
+        else:
+            unknown_inputs = sorted(set(scenario_inputs) - set(input_fields))
+            if unknown_inputs:
+                errors.append(
+                    f"context scenario {scenario_id or '<unknown>'} references unknown inputs: "
+                    + ", ".join(unknown_inputs)
+                )
+        baseline = scenario.get("baseline_estimated_tokens")
+        if isinstance(baseline, bool) or not isinstance(baseline, int) or baseline <= 0:
+            errors.append(
+                f"context scenario {scenario_id or '<unknown>'} baseline_estimated_tokens must be a positive integer"
+            )
+        max_ratio = scenario.get("max_ratio")
+        if (
+            isinstance(max_ratio, bool)
+            or not isinstance(max_ratio, (int, float))
+            or not math.isfinite(max_ratio)
+            or max_ratio <= 0
+        ):
+            errors.append(
+                f"context scenario {scenario_id or '<unknown>'} max_ratio must be positive"
+            )
 
     quality_checks = spec.get("quality_checks")
     if not isinstance(quality_checks, list) or any(
@@ -663,6 +861,7 @@ def _raw_overlay_duplicate_errors(custom: dict[str, Any]) -> list[str]:
         ("input", custom.get("input_schema")),
         ("output", custom.get("output_schema")),
         ("module", custom.get("modules")),
+        ("context scenario", custom.get("context_scenarios")),
     ]
     gates = custom.get("gates")
     if isinstance(gates, dict):

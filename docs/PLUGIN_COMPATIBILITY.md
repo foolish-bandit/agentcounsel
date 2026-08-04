@@ -3,8 +3,7 @@
 AgentCounsel is a Markdown-native legal skills library. Platform support is
 file-based: generated packs and thin adapter files help each AI environment
 find the canonical `skills/`, `core/`, `practice-profiles/`, `matter-packs/`,
-and `matter-workspaces/` content. AgentCounsel does not ship a runtime plugin
-server and does not position any model as a lawyer.
+and `matter-workspaces/` content. No runtime is required. AgentCounsel also ships an optional local MCP catalog for clients that want typed routing and selective context retrieval; it does not position any model as a lawyer.
 
 Every platform path preserves the same rule: outputs are draft legal work
 product for review by a licensed attorney, not legal advice.
@@ -18,7 +17,8 @@ product for review by a licensed attorney, not legal advice.
 | Cursor | Use the repo-agent generated `.cursorrules` file with a checkout that contains `skills/` and `core/`. | `dist/repo-agents/.cursorrules` |
 | Codex / repo agents | Put generated `AGENTS.md` at the repository root, or use `adapters/codex/AGENTS.md` in this repo. | `dist/repo-agents/AGENTS.md` |
 | Gemini | Add the generated notebook source files from the Gemini ZIP as sources and follow `notebook-instructions.md`. | `dist/gemini/<area>.zip` |
-| Generic Markdown | Open a single `SKILL.md` and the relevant `core/` rules directly. | `adapters/generic-md/` |
+| Generic Markdown | Open an ordinary `SKILL.md` and the relevant `core/` rules directly. For a custom typed skill, use its complete folder or the catalog's full execution package. | `adapters/generic-md/` |
+| MCP clients | Run the optional local catalog and call `get_skill_context` to receive only the selected core and modules, with a complete decision trace, inherited-rule hashes, a compiled-contract fingerprint, and a bundle fingerprint. | `agentcounsel_mcp.py`, `mcp_server.py` |
 
 ## How Packs Are Generated
 
@@ -55,6 +55,8 @@ Each manifest entry in `metadata/packs.json` includes:
 - included skills
 - included core rules
 - included templates and references
+- included custom Skill Specification v2 sidecars
+- included selectable spec resources
 - included quality checks
 - included matter packs and workspace templates when applicable
 - setup instructions
@@ -81,6 +83,10 @@ decide between:
 - matter workspace
 - quality check
 - review panel pattern when one is added
+
+## Selective-context behavior by surface
+
+Claude ZIP packs preserve custom contracts and modules as separate, uniquely named files. ChatGPT and Gemini practice-area packs deliberately consolidate all possible resources for portability and file-limit compatibility. Those consolidated formats can follow activation rules logically, but the complete source is still present in the model context. True prompt-size reduction requires the MCP `get_skill_context` path or another client that sends only the returned bundle.
 
 ## Limitations
 

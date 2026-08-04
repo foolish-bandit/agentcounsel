@@ -185,6 +185,44 @@ class CatalogFixture:
                 ),
             ],
         }
+        nda_spec = specs["skills"][0]
+        nda_spec["modules"] = [
+            {
+                "id": "common-review",
+                "kind": "workflow-module",
+                "path": "skills/contracts/nda-review/modules/common-review.md",
+                "required": False,
+                "load_when": "Standard and deep review modes.",
+                "activation": {
+                    "modes": ["standard", "deep-review"],
+                    "operator": "always",
+                },
+            },
+            {
+                "id": "receiving-party",
+                "kind": "workflow-module",
+                "path": "skills/contracts/nda-review/modules/receiving-party.md",
+                "required": False,
+                "load_when": "The client is receiving information.",
+                "activation": {
+                    "modes": ["standard", "deep-review"],
+                    "input_id": "client-role",
+                    "operator": "equals",
+                    "value": "receiving",
+                },
+            },
+            {
+                "id": "expanded-verification",
+                "kind": "quality-check",
+                "path": "skills/contracts/nda-review/modules/expanded-verification.md",
+                "required": False,
+                "load_when": "Deep review mode.",
+                "activation": {
+                    "modes": ["deep-review"],
+                    "operator": "always",
+                },
+            },
+        ]
         (self.root / "metadata" / "index.json").write_text(
             json.dumps(index), encoding="utf-8"
         )
@@ -207,6 +245,21 @@ class CatalogFixture:
                 f"---\nname: {skill['title']}\n---\n# {skill['title']}\n\n{body}\n",
                 encoding="utf-8",
             )
+
+        nda_modules = self.root / "skills" / "contracts" / "nda-review" / "modules"
+        nda_modules.mkdir()
+        (nda_modules / "common-review.md").write_text(
+            "# Common Review\n\nReview scope and confidentiality definitions.\n",
+            encoding="utf-8",
+        )
+        (nda_modules / "receiving-party.md").write_text(
+            "# Receiving Party\n\nReview use restrictions and residuals.\n",
+            encoding="utf-8",
+        )
+        (nda_modules / "expanded-verification.md").write_text(
+            "# Expanded Verification\n\nVerify every material issue.\n",
+            encoding="utf-8",
+        )
 
     @staticmethod
     def _input(
@@ -363,6 +416,51 @@ class TestCatalogService(unittest.TestCase):
             self.assertEqual(spec["schema_version"], "2.0")
             self.assertTrue(spec["has_custom_spec"])
             self.assertEqual(spec["input_schema"][0]["id"], "full-nda-text")
+
+    def test_get_skill_context_selects_modules_and_returns_reproducible_bundle(self):
+        bundle = self.service.get_skill_context(
+            "nda-review",
+            mode="standard",
+            inputs={
+                "full-nda-text": "Fictional NDA text",
+                "client-role": "receiving",
+            },
+        )
+        self.assertEqual(bundle["skill_id"], "contracts/nda-review")
+        self.assertEqual(
+            [module["id"] for module in bundle["modules"]],
+            ["common-review", "receiving-party"],
+        )
+        self.assertTrue(all(module["reason"] for module in bundle["modules"]))
+        self.assertEqual(
+            {item["id"]: item["status"] for item in bundle["selection_trace"]},
+            {
+                "common-review": "selected",
+                "receiving-party": "selected",
+                "expanded-verification": "not-selected",
+            },
+        )
+        self.assertGreater(bundle["estimated_tokens"]["total"], 0)
+        self.assertRegex(bundle["contract_sha256"], r"^[0-9a-f]{64}$")
+        self.assertRegex(bundle["bundle_sha256"], r"^[0-9a-f]{64}$")
+        self.assertTrue(bundle["complete"])
+
+    def test_get_skill_context_missing_activation_input_fails_closed(self):
+        bundle = self.service.get_skill_context(
+            "contracts/nda-review",
+            mode="standard",
+            inputs={"full-nda-text": "Fictional NDA text"},
+        )
+        self.assertEqual(
+            [module["id"] for module in bundle["modules"]],
+            ["common-review"],
+        )
+        self.assertEqual(
+            [module["id"] for module in bundle["unresolved_modules"]],
+            ["receiving-party"],
+        )
+        self.assertEqual(bundle["missing_required_inputs"], ["client-role"])
+        self.assertFalse(bundle["complete"])
 
     def test_route_uses_typed_contract_inputs_modes_and_gates(self):
         route = self.service.route_task("Review this NDA before signature", limit=2)

@@ -9,8 +9,8 @@ This scorecard measures repository-readiness and maintainability signals. It doe
 - Review-ready: 189
 - Baseline: 2
 - High improvement priority: 6
-- Medium improvement priority: 162
-- Low improvement priority: 44
+- Medium improvement priority: 161
+- Low improvement priority: 45
 
 Priority is a maintenance queue, not a legal-risk rating. Baseline skills and unscored critical workflows are high priority; unscored high-risk workflows, large-context skills, and skills with neither an example nor a template are medium priority; scored compact skills can be low priority.
 
@@ -83,7 +83,6 @@ Priority is a maintenance queue, not a legal-risk rating. Baseline skills and un
 | `insurance/tender-letter-review` | high | review-ready | medium | 3 | 0 | no | 0 | complete | 1,865 | compact |
 | `ip/dmca-takedown` | high | review-ready | medium | 3 | 0 | no | 0 | complete | 3,158 | moderate |
 | `ip/fto-triage` | medium | review-ready | medium | 3 | 0 | no | 0 | complete | 4,276 | moderate |
-| `ip/infringement-triage` | medium | review-ready | medium | 3 | 0 | no | 1 | complete | 6,115 | large |
 | `ip/invention-intake` | high | review-ready | medium | 3 | 0 | no | 0 | complete | 3,890 | moderate |
 | `ip/open-source-license-review` | medium | review-ready | medium | 3 | 0 | no | 0 | complete | 3,308 | moderate |
 | `ip/trademark-clearance-triage` | medium | review-ready | medium | 3 | 0 | no | 0 | complete | 2,670 | moderate |
@@ -103,7 +102,7 @@ Priority is a maintenance queue, not a legal-risk rating. Baseline skills and un
 | `litigation/brief-section-drafter` | high | review-ready | medium | 3 | 0 | no | 0 | complete | 5,376 | moderate |
 | `litigation/demand-letter` | high | review-ready | medium | 3 | 0 | no | 1 | complete | 3,329 | moderate |
 | `litigation/discovery-response-workflow` | high | review-ready | medium | 3 | 0 | no | 0 | complete | 3,378 | moderate |
-| `litigation/motion-opposition-drafter` | high | review-ready | medium | 3 | 0 | no | 1 | complete | 6,346 | large |
+| `litigation/motion-opposition-drafter` | high | review-ready | medium | 3 | 0 | no | 1 | complete | 2,412 | compact |
 | `litigation/subpoena-triage` | high | review-ready | medium | 3 | 0 | no | 0 | complete | 4,383 | moderate |
 | `m-and-a/acquisition-diligence-request-list` | medium | review-ready | medium | 3 | 0 | no | 0 | complete | 2,834 | moderate |
 | `m-and-a/closing-deliverables-tracker` | medium | review-ready | medium | 3 | 0 | no | 0 | complete | 3,024 | moderate |
@@ -204,6 +203,7 @@ Priority is a maintenance queue, not a legal-risk rating. Baseline skills and un
 | `insurance/claims-chronology-builder` | medium | review-ready | low | 3 | 0 | yes | 0 | complete | 1,662 | compact |
 | `insurance/insurance-policy-summary` | medium | review-ready | low | 3 | 0 | yes | 0 | complete | 2,062 | compact |
 | `ip/cease-and-desist-response` | high | scored | low | 3 | 3 | no | 0 | complete | 4,370 | moderate |
+| `ip/infringement-triage` | medium | review-ready | low | 3 | 0 | no | 1 | complete | 2,127 | compact |
 | `legal-methodology/attorney-review-gate` | high | scored | low | 2 | 2 | no | 0 | complete | 1,506 | compact |
 | `legal-ops/legal-intake-triage` | medium | review-ready | low | 3 | 0 | no | 1 | complete | 3,673 | moderate |
 | `legal-ops/legal-meeting-briefing` | low | review-ready | low | 3 | 0 | no | 1 | complete | 2,455 | compact |

@@ -3,10 +3,7 @@
 This sequence consolidates related work into small PRs that extend the current
 AgentCounsel systems instead of replacing them.
 
-> **Note:** this sequence has been largely executed. PRs 2, 3, 5, and 6 have
-> shipped — see the per-PR status lines below, which also record where the
-> landed artifacts differ from the file names originally proposed. PRs 1 and 4
-> remain open.
+> **Note:** the original platform sequence is largely complete. PRs 2, 3, 5, and 6 shipped; the broader registry and connector registry remain partially open. A second execution-contract sequence also shipped: Phase 2A compiled typed contracts for all skills, and Phase 2B added deterministic selective modules, context bundles, decision traces, and budget gates.
 
 ## PR 1: Generated Platform Registry
 
@@ -202,3 +199,15 @@ Borrowing inputs:
 - Add validation in the same PR that introduces a new generated artifact.
 - Update `NOTICE` only when external code, prose, schemas, prompts, templates,
   examples, or eval content is copied or closely adapted.
+
+## Phase 2 Execution Contracts
+
+### Phase 2A: Typed contract foundation
+
+Status: shipped. Every canonical skill compiles to Skill Specification v2, and custom sidecars may add exact types, modes, gates, modules, and quality checks without weakening inherited safety invariants.
+
+### Phase 2B: Deterministic selective context
+
+Status: shipped in v0.3.0. The two former large-context skills were decomposed into compact cores and Markdown modules. Selection is declarative, fail-closed, and fully traced. The MCP catalog returns reproducible bundles, generated scorecards enforce nine context scenarios in CI, and platform packs preserve every custom contract and selectable resource.
+
+Next candidates should be chosen from generated context and health metrics, not from file size alone. A future migration should require a concrete scenario matrix, content-preservation tests, and measurable routine-context reduction before splitting another skill.

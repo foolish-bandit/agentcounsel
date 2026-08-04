@@ -115,6 +115,10 @@
       "type": "array",
       "items": {"$ref": "#/$defs/module"}
     },
+    "context_scenarios": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/contextScenario"}
+    },
     "quality_checks": {
       "type": "array",
       "items": {"type": "string", "minLength": 1},
@@ -165,7 +169,8 @@
             "integer",
             "number",
             "jurisdiction",
-            "object"
+            "object",
+            "string-list"
           ]
         },
         "required": {"type": "boolean"},
@@ -176,6 +181,12 @@
         "enum": {
           "type": "array",
           "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "items": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "minItems": 1,
           "uniqueItems": true
         }
       },
@@ -256,9 +267,50 @@
         },
         "path": {"type": "string", "minLength": 1},
         "required": {"type": "boolean"},
-        "load_when": {"type": "string", "minLength": 1}
+        "load_when": {"type": "string", "minLength": 1},
+        "activation": {"$ref": "#/$defs/moduleActivation"}
       },
       "additionalProperties": true
+    },
+    "moduleActivation": {
+      "type": "object",
+      "required": ["modes", "operator"],
+      "properties": {
+        "modes": {
+          "type": "array",
+          "items": {"enum": ["quick-triage", "standard", "deep-review"]},
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "operator": {"enum": ["always", "present", "equals", "contains-any"]},
+        "input_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+        "value": {"type": "string", "minLength": 1},
+        "values": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "contextScenario": {
+      "type": "object",
+      "required": [
+        "id",
+        "mode",
+        "inputs",
+        "baseline_estimated_tokens",
+        "max_ratio"
+      ],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+        "mode": {"enum": ["quick-triage", "standard", "deep-review"]},
+        "inputs": {"type": "object"},
+        "baseline_estimated_tokens": {"type": "integer", "minimum": 1},
+        "max_ratio": {"type": "number", "exclusiveMinimum": 0}
+      },
+      "additionalProperties": false
     },
     "customGate": {
       "type": "object",

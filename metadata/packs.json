@@ -1,7 +1,7 @@
 {
   "generated_by": "scripts/build_platform_packs.py",
-  "schema_version": "1.0",
-  "date": "2026-05-28",
+  "schema_version": "1.1",
+  "date": "2026-08-04",
   "platforms": [
     "chatgpt",
     "claude",
@@ -77,6 +77,16 @@
         "skills/legal-research/legal-research-memo/templates/legal-research-memo.md",
         "skills/legal-research/references/citation-type-taxonomy.md"
       ],
+      "included_skill_specs": [
+        "skills/legal-research/legal-research-memo/SPEC.json"
+      ],
+      "included_spec_resources": [
+        "connectors/courtlistener.md",
+        "skills/legal-methodology/source-validation/SKILL.md",
+        "skills/legal-research/legal-research-memo/templates/legal-research-memo.md",
+        "skills/legal-research/negative-treatment-check/SKILL.md",
+        "skills/legal-research/references/citation-type-taxonomy.md"
+      ],
       "included_quality_checks": [
         "attorney-review-gate",
         "citation-integrity-check",
@@ -116,8 +126,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "claude/legal-research",
@@ -148,75 +158,14 @@
         "skills/legal-research/legal-research-memo/templates/legal-research-memo.md",
         "skills/legal-research/references/citation-type-taxonomy.md"
       ],
-      "included_quality_checks": [
-        "attorney-review-gate",
-        "citation-integrity-check",
-        "source-validation-check",
-        "jurisdiction-deadline-gates",
-        "privilege-confidentiality-check",
-        "output-format-compliance-check",
-        "assumption-audit",
-        "hallucination-red-team"
+      "included_skill_specs": [
+        "skills/legal-research/legal-research-memo/SPEC.json"
       ],
-      "included_matter_packs": [],
-      "included_matter_workspace_templates": [
-        "matter-workspaces/bankruptcy-matter.md",
-        "matter-workspaces/contract-review-matter.md",
-        "matter-workspaces/corporate-transaction-matter.md",
-        "matter-workspaces/employment-matter.md",
-        "matter-workspaces/litigation-matter.md",
-        "matter-workspaces/privacy-matter.md",
-        "matter-workspaces/regulatory-matter.md"
-      ],
-      "included_playbooks": [
-        "playbooks/legal-research-memo.md"
-      ],
-      "included_review_panels": [],
-      "included_source_citation_templates": [
-        "matter-workspaces/_template/source_log.md",
-        "matter-workspaces/_template/citation_map.md",
-        "matter-workspaces/_template/unsupported_claims.md",
-        "matter-workspaces/_template/assumptions.md"
-      ],
-      "included_attorney_review_templates": [
-        "matter-workspaces/_template/attorney_review.md"
-      ],
-      "safety_disclaimer": "Every AgentCounsel pack produces draft legal work product for review by a licensed attorney. It is not legal advice, and it does not replace attorney verification.",
-      "attorney_review_requirements": [
-        "A licensed attorney must review and adopt all outputs before reliance.",
-        "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
-        "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
-      ],
-      "version": "1.0",
-      "date": "2026-05-28"
-    },
-    {
-      "pack_id": "gemini/legal-research",
-      "platform": "gemini",
-      "output": "gemini/legal-research.zip",
-      "setup_instructions": "Add the notebook source files to Gemini and follow notebook-instructions.md.",
-      "practice_area": "legal-research",
-      "practice_area_name": "Legal Research",
-      "use_case": "practice-area legal workflow pack",
-      "included_skills": [
-        "skills/legal-research/authority-synthesis/SKILL.md",
-        "skills/legal-research/case-brief/SKILL.md",
-        "skills/legal-research/legal-research-memo/SKILL.md",
-        "skills/legal-research/negative-treatment-check/SKILL.md",
-        "skills/legal-research/regulatory-history-tracer/SKILL.md",
-        "skills/legal-research/research-plan/SKILL.md"
-      ],
-      "included_core_rules": [
-        "core/legal-work-product.md",
-        "core/source-and-citation-discipline.md",
-        "core/jurisdiction-and-deadline-gates.md",
-        "core/confidentiality-and-privilege.md",
-        "core/output-format-rules.md",
-        "core/attorney-review-checklist.md"
-      ],
-      "included_templates": [
-        "skills/legal-research/case-brief/templates/case-brief-outline.md",
+      "included_spec_resources": [
+        "connectors/courtlistener.md",
+        "skills/legal-methodology/source-validation/SKILL.md",
         "skills/legal-research/legal-research-memo/templates/legal-research-memo.md",
+        "skills/legal-research/negative-treatment-check/SKILL.md",
         "skills/legal-research/references/citation-type-taxonomy.md"
       ],
       "included_quality_checks": [
@@ -258,8 +207,89 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
+    },
+    {
+      "pack_id": "gemini/legal-research",
+      "platform": "gemini",
+      "output": "gemini/legal-research.zip",
+      "setup_instructions": "Add the notebook source files to Gemini and follow notebook-instructions.md.",
+      "practice_area": "legal-research",
+      "practice_area_name": "Legal Research",
+      "use_case": "practice-area legal workflow pack",
+      "included_skills": [
+        "skills/legal-research/authority-synthesis/SKILL.md",
+        "skills/legal-research/case-brief/SKILL.md",
+        "skills/legal-research/legal-research-memo/SKILL.md",
+        "skills/legal-research/negative-treatment-check/SKILL.md",
+        "skills/legal-research/regulatory-history-tracer/SKILL.md",
+        "skills/legal-research/research-plan/SKILL.md"
+      ],
+      "included_core_rules": [
+        "core/legal-work-product.md",
+        "core/source-and-citation-discipline.md",
+        "core/jurisdiction-and-deadline-gates.md",
+        "core/confidentiality-and-privilege.md",
+        "core/output-format-rules.md",
+        "core/attorney-review-checklist.md"
+      ],
+      "included_templates": [
+        "skills/legal-research/case-brief/templates/case-brief-outline.md",
+        "skills/legal-research/legal-research-memo/templates/legal-research-memo.md",
+        "skills/legal-research/references/citation-type-taxonomy.md"
+      ],
+      "included_skill_specs": [
+        "skills/legal-research/legal-research-memo/SPEC.json"
+      ],
+      "included_spec_resources": [
+        "connectors/courtlistener.md",
+        "skills/legal-methodology/source-validation/SKILL.md",
+        "skills/legal-research/legal-research-memo/templates/legal-research-memo.md",
+        "skills/legal-research/negative-treatment-check/SKILL.md",
+        "skills/legal-research/references/citation-type-taxonomy.md"
+      ],
+      "included_quality_checks": [
+        "attorney-review-gate",
+        "citation-integrity-check",
+        "source-validation-check",
+        "jurisdiction-deadline-gates",
+        "privilege-confidentiality-check",
+        "output-format-compliance-check",
+        "assumption-audit",
+        "hallucination-red-team"
+      ],
+      "included_matter_packs": [],
+      "included_matter_workspace_templates": [
+        "matter-workspaces/bankruptcy-matter.md",
+        "matter-workspaces/contract-review-matter.md",
+        "matter-workspaces/corporate-transaction-matter.md",
+        "matter-workspaces/employment-matter.md",
+        "matter-workspaces/litigation-matter.md",
+        "matter-workspaces/privacy-matter.md",
+        "matter-workspaces/regulatory-matter.md"
+      ],
+      "included_playbooks": [
+        "playbooks/legal-research-memo.md"
+      ],
+      "included_review_panels": [],
+      "included_source_citation_templates": [
+        "matter-workspaces/_template/source_log.md",
+        "matter-workspaces/_template/citation_map.md",
+        "matter-workspaces/_template/unsupported_claims.md",
+        "matter-workspaces/_template/assumptions.md"
+      ],
+      "included_attorney_review_templates": [
+        "matter-workspaces/_template/attorney_review.md"
+      ],
+      "safety_disclaimer": "Every AgentCounsel pack produces draft legal work product for review by a licensed attorney. It is not legal advice, and it does not replace attorney verification.",
+      "attorney_review_requirements": [
+        "A licensed attorney must review and adopt all outputs before reliance.",
+        "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
+        "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
+      ],
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "chatgpt/litigation",
@@ -301,6 +331,14 @@
         "skills/litigation/privilege-log-review/templates/privilege-log-review-table.md",
         "skills/litigation/references/output-patterns.md"
       ],
+      "included_skill_specs": [
+        "skills/litigation/motion-opposition-drafter/SPEC.json"
+      ],
+      "included_spec_resources": [
+        "skills/litigation/motion-opposition-drafter/modules/expanded-verification.md",
+        "skills/litigation/motion-opposition-drafter/modules/motion-deconstruction.md",
+        "skills/litigation/motion-opposition-drafter/modules/opposition-drafting.md"
+      ],
       "included_quality_checks": [
         "attorney-review-gate",
         "legal-prose-polish",
@@ -339,8 +377,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "claude/litigation",
@@ -382,6 +420,14 @@
         "skills/litigation/privilege-log-review/templates/privilege-log-review-table.md",
         "skills/litigation/references/output-patterns.md"
       ],
+      "included_skill_specs": [
+        "skills/litigation/motion-opposition-drafter/SPEC.json"
+      ],
+      "included_spec_resources": [
+        "skills/litigation/motion-opposition-drafter/modules/expanded-verification.md",
+        "skills/litigation/motion-opposition-drafter/modules/motion-deconstruction.md",
+        "skills/litigation/motion-opposition-drafter/modules/opposition-drafting.md"
+      ],
       "included_quality_checks": [
         "attorney-review-gate",
         "legal-prose-polish",
@@ -420,8 +466,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "gemini/litigation",
@@ -463,6 +509,14 @@
         "skills/litigation/privilege-log-review/templates/privilege-log-review-table.md",
         "skills/litigation/references/output-patterns.md"
       ],
+      "included_skill_specs": [
+        "skills/litigation/motion-opposition-drafter/SPEC.json"
+      ],
+      "included_spec_resources": [
+        "skills/litigation/motion-opposition-drafter/modules/expanded-verification.md",
+        "skills/litigation/motion-opposition-drafter/modules/motion-deconstruction.md",
+        "skills/litigation/motion-opposition-drafter/modules/opposition-drafting.md"
+      ],
       "included_quality_checks": [
         "attorney-review-gate",
         "legal-prose-polish",
@@ -501,8 +555,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "chatgpt/contracts",
@@ -540,6 +594,16 @@
         "skills/contracts/references/red-flags.md",
         "skills/contracts/references/redline-output-guidance.md"
       ],
+      "included_skill_specs": [
+        "skills/contracts/nda-review/SPEC.json"
+      ],
+      "included_spec_resources": [
+        "practice-profiles/contracts.md",
+        "skills/contracts/nda-review/templates/nda-risk-table.md",
+        "skills/contracts/references/market-benchmark-framework.md",
+        "skills/contracts/references/negotiability-ratings.md",
+        "skills/contracts/references/red-flags.md"
+      ],
       "included_quality_checks": [
         "attorney-review-gate",
         "source-validation-check",
@@ -575,8 +639,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "claude/contracts",
@@ -614,6 +678,16 @@
         "skills/contracts/references/red-flags.md",
         "skills/contracts/references/redline-output-guidance.md"
       ],
+      "included_skill_specs": [
+        "skills/contracts/nda-review/SPEC.json"
+      ],
+      "included_spec_resources": [
+        "practice-profiles/contracts.md",
+        "skills/contracts/nda-review/templates/nda-risk-table.md",
+        "skills/contracts/references/market-benchmark-framework.md",
+        "skills/contracts/references/negotiability-ratings.md",
+        "skills/contracts/references/red-flags.md"
+      ],
       "included_quality_checks": [
         "attorney-review-gate",
         "source-validation-check",
@@ -649,8 +723,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "gemini/contracts",
@@ -688,6 +762,16 @@
         "skills/contracts/references/red-flags.md",
         "skills/contracts/references/redline-output-guidance.md"
       ],
+      "included_skill_specs": [
+        "skills/contracts/nda-review/SPEC.json"
+      ],
+      "included_spec_resources": [
+        "practice-profiles/contracts.md",
+        "skills/contracts/nda-review/templates/nda-risk-table.md",
+        "skills/contracts/references/market-benchmark-framework.md",
+        "skills/contracts/references/negotiability-ratings.md",
+        "skills/contracts/references/red-flags.md"
+      ],
       "included_quality_checks": [
         "attorney-review-gate",
         "source-validation-check",
@@ -723,8 +807,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "chatgpt/corporate",
@@ -760,6 +844,8 @@
         "skills/corporate/references/output-patterns.md",
         "skills/corporate/written-consent/templates/written-consent-outline.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "legal-prose-polish",
@@ -797,8 +883,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "claude/corporate",
@@ -834,6 +920,8 @@
         "skills/corporate/references/output-patterns.md",
         "skills/corporate/written-consent/templates/written-consent-outline.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "legal-prose-polish",
@@ -871,8 +959,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "gemini/corporate",
@@ -908,6 +996,8 @@
         "skills/corporate/references/output-patterns.md",
         "skills/corporate/written-consent/templates/written-consent-outline.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "legal-prose-polish",
@@ -945,8 +1035,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "chatgpt/employment",
@@ -983,6 +1073,8 @@
         "skills/employment/severance-review/templates/severance-review-issues-table.md",
         "skills/employment/termination-risk/templates/termination-risk-checklist.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "source-validation-check",
@@ -1019,8 +1111,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "claude/employment",
@@ -1057,6 +1149,8 @@
         "skills/employment/severance-review/templates/severance-review-issues-table.md",
         "skills/employment/termination-risk/templates/termination-risk-checklist.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "source-validation-check",
@@ -1093,8 +1187,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "gemini/employment",
@@ -1131,6 +1225,8 @@
         "skills/employment/severance-review/templates/severance-review-issues-table.md",
         "skills/employment/termination-risk/templates/termination-risk-checklist.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "source-validation-check",
@@ -1167,8 +1263,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "chatgpt/privacy",
@@ -1207,6 +1303,15 @@
         "skills/privacy/pia-generation/templates/privacy-impact-assessment.md",
         "skills/privacy/references/dpa-red-flags.md"
       ],
+      "included_skill_specs": [
+        "skills/privacy/breach-response-workflow/SPEC.json"
+      ],
+      "included_spec_resources": [
+        "practice-profiles/privacy.md",
+        "skills/litigation/legal-hold/SKILL.md",
+        "skills/litigation/litigation-chronology/SKILL.md",
+        "skills/privacy/dpa-review/SKILL.md"
+      ],
       "included_quality_checks": [
         "attorney-review-gate",
         "citation-integrity-check",
@@ -1247,8 +1352,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "claude/privacy",
@@ -1287,6 +1392,15 @@
         "skills/privacy/pia-generation/templates/privacy-impact-assessment.md",
         "skills/privacy/references/dpa-red-flags.md"
       ],
+      "included_skill_specs": [
+        "skills/privacy/breach-response-workflow/SPEC.json"
+      ],
+      "included_spec_resources": [
+        "practice-profiles/privacy.md",
+        "skills/litigation/legal-hold/SKILL.md",
+        "skills/litigation/litigation-chronology/SKILL.md",
+        "skills/privacy/dpa-review/SKILL.md"
+      ],
       "included_quality_checks": [
         "attorney-review-gate",
         "citation-integrity-check",
@@ -1327,8 +1441,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "gemini/privacy",
@@ -1367,6 +1481,15 @@
         "skills/privacy/pia-generation/templates/privacy-impact-assessment.md",
         "skills/privacy/references/dpa-red-flags.md"
       ],
+      "included_skill_specs": [
+        "skills/privacy/breach-response-workflow/SPEC.json"
+      ],
+      "included_spec_resources": [
+        "practice-profiles/privacy.md",
+        "skills/litigation/legal-hold/SKILL.md",
+        "skills/litigation/litigation-chronology/SKILL.md",
+        "skills/privacy/dpa-review/SKILL.md"
+      ],
       "included_quality_checks": [
         "attorney-review-gate",
         "citation-integrity-check",
@@ -1407,8 +1530,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "chatgpt/product-legal",
@@ -1436,6 +1559,8 @@
         "skills/product-legal/launch-review/templates/launch-issues-register.md",
         "skills/product-legal/references/terms-of-service-red-flags.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "source-validation-check",
@@ -1467,8 +1592,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "claude/product-legal",
@@ -1496,6 +1621,8 @@
         "skills/product-legal/launch-review/templates/launch-issues-register.md",
         "skills/product-legal/references/terms-of-service-red-flags.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "source-validation-check",
@@ -1527,8 +1654,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "gemini/product-legal",
@@ -1556,6 +1683,8 @@
         "skills/product-legal/launch-review/templates/launch-issues-register.md",
         "skills/product-legal/references/terms-of-service-red-flags.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "source-validation-check",
@@ -1587,8 +1716,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "chatgpt/regulatory",
@@ -1616,6 +1745,8 @@
       "included_templates": [
         "skills/regulatory/compliance-gap-matrix/templates/compliance-gap-matrix.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "assumption-audit",
@@ -1650,8 +1781,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "claude/regulatory",
@@ -1679,6 +1810,8 @@
       "included_templates": [
         "skills/regulatory/compliance-gap-matrix/templates/compliance-gap-matrix.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "assumption-audit",
@@ -1713,8 +1846,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "gemini/regulatory",
@@ -1742,6 +1875,8 @@
       "included_templates": [
         "skills/regulatory/compliance-gap-matrix/templates/compliance-gap-matrix.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "assumption-audit",
@@ -1776,8 +1911,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "chatgpt/ai-governance",
@@ -1805,6 +1940,8 @@
         "skills/ai-governance/model-risk-triage/templates/model-risk-register.md",
         "skills/ai-governance/references/ai-vendor-terms-red-flags.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "citation-integrity-check",
@@ -1835,8 +1972,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "claude/ai-governance",
@@ -1864,6 +2001,8 @@
         "skills/ai-governance/model-risk-triage/templates/model-risk-register.md",
         "skills/ai-governance/references/ai-vendor-terms-red-flags.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "citation-integrity-check",
@@ -1894,8 +2033,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "gemini/ai-governance",
@@ -1923,6 +2062,8 @@
         "skills/ai-governance/model-risk-triage/templates/model-risk-register.md",
         "skills/ai-governance/references/ai-vendor-terms-red-flags.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "citation-integrity-check",
@@ -1953,8 +2094,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "chatgpt/insurance",
@@ -1990,6 +2131,8 @@
         "skills/insurance/references/output-patterns.md",
         "skills/insurance/references/red-flags.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "assumption-audit",
@@ -2022,8 +2165,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "claude/insurance",
@@ -2059,6 +2202,8 @@
         "skills/insurance/references/output-patterns.md",
         "skills/insurance/references/red-flags.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "assumption-audit",
@@ -2091,8 +2236,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "gemini/insurance",
@@ -2128,6 +2273,8 @@
         "skills/insurance/references/output-patterns.md",
         "skills/insurance/references/red-flags.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "assumption-audit",
@@ -2160,8 +2307,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "chatgpt/ip",
@@ -2192,6 +2339,18 @@
         "skills/ip/infringement-triage/templates/infringement-triage-memo.md",
         "skills/ip/references/output-patterns.md"
       ],
+      "included_skill_specs": [
+        "skills/ip/infringement-triage/SPEC.json"
+      ],
+      "included_spec_resources": [
+        "skills/ip/infringement-triage/modules/copyright.md",
+        "skills/ip/infringement-triage/modules/defenses-routing-output.md",
+        "skills/ip/infringement-triage/modules/expanded-verification.md",
+        "skills/ip/infringement-triage/modules/factor-method.md",
+        "skills/ip/infringement-triage/modules/patent.md",
+        "skills/ip/infringement-triage/modules/trade-secret.md",
+        "skills/ip/infringement-triage/modules/trademark.md"
+      ],
       "included_quality_checks": [
         "attorney-review-gate",
         "assumption-audit",
@@ -2224,8 +2383,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "claude/ip",
@@ -2256,6 +2415,18 @@
         "skills/ip/infringement-triage/templates/infringement-triage-memo.md",
         "skills/ip/references/output-patterns.md"
       ],
+      "included_skill_specs": [
+        "skills/ip/infringement-triage/SPEC.json"
+      ],
+      "included_spec_resources": [
+        "skills/ip/infringement-triage/modules/copyright.md",
+        "skills/ip/infringement-triage/modules/defenses-routing-output.md",
+        "skills/ip/infringement-triage/modules/expanded-verification.md",
+        "skills/ip/infringement-triage/modules/factor-method.md",
+        "skills/ip/infringement-triage/modules/patent.md",
+        "skills/ip/infringement-triage/modules/trade-secret.md",
+        "skills/ip/infringement-triage/modules/trademark.md"
+      ],
       "included_quality_checks": [
         "attorney-review-gate",
         "assumption-audit",
@@ -2288,8 +2459,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "gemini/ip",
@@ -2320,6 +2491,18 @@
         "skills/ip/infringement-triage/templates/infringement-triage-memo.md",
         "skills/ip/references/output-patterns.md"
       ],
+      "included_skill_specs": [
+        "skills/ip/infringement-triage/SPEC.json"
+      ],
+      "included_spec_resources": [
+        "skills/ip/infringement-triage/modules/copyright.md",
+        "skills/ip/infringement-triage/modules/defenses-routing-output.md",
+        "skills/ip/infringement-triage/modules/expanded-verification.md",
+        "skills/ip/infringement-triage/modules/factor-method.md",
+        "skills/ip/infringement-triage/modules/patent.md",
+        "skills/ip/infringement-triage/modules/trade-secret.md",
+        "skills/ip/infringement-triage/modules/trademark.md"
+      ],
       "included_quality_checks": [
         "attorney-review-gate",
         "assumption-audit",
@@ -2352,8 +2535,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "chatgpt/legal-methodology",
@@ -2388,6 +2571,8 @@
         "skills/legal-methodology/references/citation-confidence-tiers.md",
         "skills/legal-methodology/references/plain-language-checklist.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "citation-integrity-check",
@@ -2445,8 +2630,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "claude/legal-methodology",
@@ -2481,6 +2666,8 @@
         "skills/legal-methodology/references/citation-confidence-tiers.md",
         "skills/legal-methodology/references/plain-language-checklist.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "citation-integrity-check",
@@ -2538,8 +2725,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "gemini/legal-methodology",
@@ -2574,6 +2761,8 @@
         "skills/legal-methodology/references/citation-confidence-tiers.md",
         "skills/legal-methodology/references/plain-language-checklist.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "citation-integrity-check",
@@ -2631,8 +2820,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "chatgpt/setup",
@@ -2673,6 +2862,8 @@
         "core/attorney-review-checklist.md"
       ],
       "included_templates": [],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "citation-integrity-check",
@@ -2702,8 +2893,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "claude/setup",
@@ -2744,6 +2935,8 @@
         "core/attorney-review-checklist.md"
       ],
       "included_templates": [],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "citation-integrity-check",
@@ -2773,8 +2966,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "gemini/setup",
@@ -2815,6 +3008,8 @@
         "core/attorney-review-checklist.md"
       ],
       "included_templates": [],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "citation-integrity-check",
@@ -2844,8 +3039,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "chatgpt/antitrust-competition",
@@ -2878,6 +3073,8 @@
       "included_templates": [
         "skills/antitrust-competition/references/risk-indicators.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "source-validation-check",
@@ -2900,8 +3097,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "claude/antitrust-competition",
@@ -2934,6 +3131,8 @@
       "included_templates": [
         "skills/antitrust-competition/references/risk-indicators.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "source-validation-check",
@@ -2956,8 +3155,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "gemini/antitrust-competition",
@@ -2990,6 +3189,8 @@
       "included_templates": [
         "skills/antitrust-competition/references/risk-indicators.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "source-validation-check",
@@ -3012,8 +3213,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "chatgpt/bankruptcy-restructuring",
@@ -3049,6 +3250,8 @@
         "skills/bankruptcy-restructuring/references/issue-catalog.md",
         "skills/bankruptcy-restructuring/references/output-patterns.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "assumption-audit",
@@ -3083,8 +3286,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "claude/bankruptcy-restructuring",
@@ -3120,6 +3323,8 @@
         "skills/bankruptcy-restructuring/references/issue-catalog.md",
         "skills/bankruptcy-restructuring/references/output-patterns.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "assumption-audit",
@@ -3154,8 +3359,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "gemini/bankruptcy-restructuring",
@@ -3191,6 +3396,8 @@
         "skills/bankruptcy-restructuring/references/issue-catalog.md",
         "skills/bankruptcy-restructuring/references/output-patterns.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "assumption-audit",
@@ -3225,8 +3432,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "chatgpt/family-law",
@@ -3261,6 +3468,8 @@
       "included_templates": [
         "skills/family-law/references/issue-catalog.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "assumption-audit",
@@ -3296,8 +3505,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "claude/family-law",
@@ -3332,6 +3541,8 @@
       "included_templates": [
         "skills/family-law/references/issue-catalog.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "assumption-audit",
@@ -3367,8 +3578,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "gemini/family-law",
@@ -3403,6 +3614,8 @@
       "included_templates": [
         "skills/family-law/references/issue-catalog.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "assumption-audit",
@@ -3438,8 +3651,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "chatgpt/financial-crime",
@@ -3471,6 +3684,8 @@
         "skills/financial-crime/sanctions-screening-review/templates/sanctions-alert-adjudication.md",
         "skills/financial-crime/transaction-monitoring-alert-triage/templates/tm-alert-triage-packet.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "source-validation-check",
@@ -3502,8 +3717,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "claude/financial-crime",
@@ -3535,6 +3750,8 @@
         "skills/financial-crime/sanctions-screening-review/templates/sanctions-alert-adjudication.md",
         "skills/financial-crime/transaction-monitoring-alert-triage/templates/tm-alert-triage-packet.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "source-validation-check",
@@ -3566,8 +3783,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "gemini/financial-crime",
@@ -3599,6 +3816,8 @@
         "skills/financial-crime/sanctions-screening-review/templates/sanctions-alert-adjudication.md",
         "skills/financial-crime/transaction-monitoring-alert-triage/templates/tm-alert-triage-packet.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "source-validation-check",
@@ -3630,8 +3849,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "chatgpt/legal-ops",
@@ -3661,6 +3880,8 @@
         "skills/legal-ops/signature-routing-checklist/templates/signature-readiness-review.md",
         "skills/legal-ops/templated-legal-response/templates/templated-response-draft.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "assumption-audit",
@@ -3692,8 +3913,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "claude/legal-ops",
@@ -3723,6 +3944,8 @@
         "skills/legal-ops/signature-routing-checklist/templates/signature-readiness-review.md",
         "skills/legal-ops/templated-legal-response/templates/templated-response-draft.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "assumption-audit",
@@ -3754,8 +3977,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "gemini/legal-ops",
@@ -3785,6 +4008,8 @@
         "skills/legal-ops/signature-routing-checklist/templates/signature-readiness-review.md",
         "skills/legal-ops/templated-legal-response/templates/templated-response-draft.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "assumption-audit",
@@ -3816,8 +4041,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "chatgpt/m-and-a",
@@ -3854,6 +4079,8 @@
         "skills/m-and-a/references/red-flags.md",
         "skills/m-and-a/transition-services-agreement-review/templates/tsa-review-matrix.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "legal-prose-polish",
@@ -3887,8 +4114,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "claude/m-and-a",
@@ -3925,6 +4152,8 @@
         "skills/m-and-a/references/red-flags.md",
         "skills/m-and-a/transition-services-agreement-review/templates/tsa-review-matrix.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "legal-prose-polish",
@@ -3958,8 +4187,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "gemini/m-and-a",
@@ -3996,6 +4225,8 @@
         "skills/m-and-a/references/red-flags.md",
         "skills/m-and-a/transition-services-agreement-review/templates/tsa-review-matrix.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "legal-prose-polish",
@@ -4029,8 +4260,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "chatgpt/real-estate",
@@ -4063,6 +4294,8 @@
       "included_templates": [
         "skills/real-estate/references/red-flags.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "legal-prose-polish",
@@ -4095,8 +4328,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "claude/real-estate",
@@ -4129,6 +4362,8 @@
       "included_templates": [
         "skills/real-estate/references/red-flags.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "legal-prose-polish",
@@ -4161,8 +4396,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "gemini/real-estate",
@@ -4195,6 +4430,8 @@
       "included_templates": [
         "skills/real-estate/references/red-flags.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "legal-prose-polish",
@@ -4227,8 +4464,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "chatgpt/securities-capital-markets",
@@ -4264,6 +4501,8 @@
       "included_templates": [
         "skills/securities-capital-markets/references/issue-spotting-frameworks.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "legal-prose-polish",
@@ -4296,8 +4535,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "claude/securities-capital-markets",
@@ -4333,6 +4572,8 @@
       "included_templates": [
         "skills/securities-capital-markets/references/issue-spotting-frameworks.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "legal-prose-polish",
@@ -4365,8 +4606,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "gemini/securities-capital-markets",
@@ -4402,6 +4643,8 @@
       "included_templates": [
         "skills/securities-capital-markets/references/issue-spotting-frameworks.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "legal-prose-polish",
@@ -4434,8 +4677,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "chatgpt/tax",
@@ -4469,6 +4712,8 @@
         "skills/tax/references/issue-catalog.md",
         "skills/tax/references/output-patterns.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "citation-integrity-check",
@@ -4500,8 +4745,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "claude/tax",
@@ -4535,6 +4780,8 @@
         "skills/tax/references/issue-catalog.md",
         "skills/tax/references/output-patterns.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "citation-integrity-check",
@@ -4566,8 +4813,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "gemini/tax",
@@ -4601,6 +4848,8 @@
         "skills/tax/references/issue-catalog.md",
         "skills/tax/references/output-patterns.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "citation-integrity-check",
@@ -4632,8 +4881,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "chatgpt/trusts-estates",
@@ -4669,6 +4918,8 @@
         "skills/trusts-estates/references/issue-catalog.md",
         "skills/trusts-estates/references/output-patterns.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "assumption-audit",
@@ -4703,8 +4954,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "claude/trusts-estates",
@@ -4740,6 +4991,8 @@
         "skills/trusts-estates/references/issue-catalog.md",
         "skills/trusts-estates/references/output-patterns.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "assumption-audit",
@@ -4774,8 +5027,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "gemini/trusts-estates",
@@ -4811,6 +5064,8 @@
         "skills/trusts-estates/references/issue-catalog.md",
         "skills/trusts-estates/references/output-patterns.md"
       ],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "attorney-review-gate",
         "assumption-audit",
@@ -4845,8 +5100,8 @@
         "The agent must not invent legal authority, citations, quotations, facts, or deadlines.",
         "Jurisdiction, governing law, posture, and deadlines must be supplied or flagged as unknown."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     },
     {
       "pack_id": "repo-agents/global",
@@ -4865,6 +5120,8 @@
         "core/attorney-review-checklist.md"
       ],
       "included_templates": [],
+      "included_skill_specs": [],
+      "included_spec_resources": [],
       "included_quality_checks": [
         "assumption-audit",
         "attorney-review-gate",
@@ -4888,8 +5145,8 @@
         "Repo agents must route to the narrowest relevant skill.",
         "All legal outputs remain draft work product for attorney review."
       ],
-      "version": "1.0",
-      "date": "2026-05-28"
+      "version": "1.1",
+      "date": "2026-08-04"
     }
   ]
 }

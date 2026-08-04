@@ -1,0 +1,220 @@
+{
+  "schema_version": "2.0",
+  "skill_id": "ip/infringement-triage",
+  "input_schema": [
+    {
+      "id": "ip-rights-at-issue",
+      "label": "IP rights at issue",
+      "type": "string-list",
+      "required": true,
+      "description": "One or more controlled identifiers for the intellectual-property rights requiring separate analysis.",
+      "source_requirement": "user-provided-and-confirmed",
+      "may_infer": false,
+      "sensitive": false,
+      "items": [
+        "trademark",
+        "copyright",
+        "patent",
+        "trade-secret"
+      ]
+    }
+  ],
+  "modules": [
+    {
+      "id": "factor-method",
+      "kind": "workflow-module",
+      "path": "skills/ip/infringement-triage/modules/factor-method.md",
+      "required": false,
+      "load_when": "standard or deep-review mode",
+      "activation": {
+        "modes": [
+          "standard",
+          "deep-review"
+        ],
+        "operator": "always"
+      }
+    },
+    {
+      "id": "trademark",
+      "kind": "workflow-module",
+      "path": "skills/ip/infringement-triage/modules/trademark.md",
+      "required": false,
+      "load_when": "the confirmed right list includes trademark",
+      "activation": {
+        "modes": [
+          "standard",
+          "deep-review"
+        ],
+        "input_id": "ip-rights-at-issue",
+        "operator": "contains-any",
+        "values": [
+          "trademark"
+        ]
+      }
+    },
+    {
+      "id": "copyright",
+      "kind": "workflow-module",
+      "path": "skills/ip/infringement-triage/modules/copyright.md",
+      "required": false,
+      "load_when": "the confirmed right list includes copyright",
+      "activation": {
+        "modes": [
+          "standard",
+          "deep-review"
+        ],
+        "input_id": "ip-rights-at-issue",
+        "operator": "contains-any",
+        "values": [
+          "copyright"
+        ]
+      }
+    },
+    {
+      "id": "patent",
+      "kind": "workflow-module",
+      "path": "skills/ip/infringement-triage/modules/patent.md",
+      "required": false,
+      "load_when": "the confirmed right list includes patent",
+      "activation": {
+        "modes": [
+          "standard",
+          "deep-review"
+        ],
+        "input_id": "ip-rights-at-issue",
+        "operator": "contains-any",
+        "values": [
+          "patent"
+        ]
+      }
+    },
+    {
+      "id": "trade-secret",
+      "kind": "workflow-module",
+      "path": "skills/ip/infringement-triage/modules/trade-secret.md",
+      "required": false,
+      "load_when": "the confirmed right list includes trade-secret",
+      "activation": {
+        "modes": [
+          "standard",
+          "deep-review"
+        ],
+        "input_id": "ip-rights-at-issue",
+        "operator": "contains-any",
+        "values": [
+          "trade-secret"
+        ]
+      }
+    },
+    {
+      "id": "defenses-routing-output",
+      "kind": "workflow-module",
+      "path": "skills/ip/infringement-triage/modules/defenses-routing-output.md",
+      "required": false,
+      "load_when": "standard or deep-review mode",
+      "activation": {
+        "modes": [
+          "standard",
+          "deep-review"
+        ],
+        "operator": "always"
+      }
+    },
+    {
+      "id": "expanded-verification",
+      "kind": "quality-check",
+      "path": "skills/ip/infringement-triage/modules/expanded-verification.md",
+      "required": false,
+      "load_when": "deep-review mode",
+      "activation": {
+        "modes": [
+          "deep-review"
+        ],
+        "operator": "always"
+      }
+    }
+  ],
+  "context_scenarios": [
+    {
+      "id": "quick-triage",
+      "mode": "quick-triage",
+      "inputs": {
+        "ip-rights-at-issue": [
+          "trademark"
+        ],
+        "parties-posture-and-relationship": "accused party",
+        "available-evidence-of-potential-infringement": "Provided comparison evidence"
+      },
+      "baseline_estimated_tokens": 6115,
+      "max_ratio": 0.4
+    },
+    {
+      "id": "standard-trademark",
+      "mode": "standard",
+      "inputs": {
+        "ip-rights-at-issue": [
+          "trademark"
+        ],
+        "parties-posture-and-relationship": "accused party",
+        "available-evidence-of-potential-infringement": "Provided comparison evidence"
+      },
+      "baseline_estimated_tokens": 6115,
+      "max_ratio": 0.7
+    },
+    {
+      "id": "standard-copyright",
+      "mode": "standard",
+      "inputs": {
+        "ip-rights-at-issue": [
+          "copyright"
+        ],
+        "parties-posture-and-relationship": "accused party",
+        "available-evidence-of-potential-infringement": "Provided comparison evidence"
+      },
+      "baseline_estimated_tokens": 6115,
+      "max_ratio": 0.7
+    },
+    {
+      "id": "standard-patent",
+      "mode": "standard",
+      "inputs": {
+        "ip-rights-at-issue": [
+          "patent"
+        ],
+        "parties-posture-and-relationship": "accused party",
+        "available-evidence-of-potential-infringement": "Provided comparison evidence"
+      },
+      "baseline_estimated_tokens": 6115,
+      "max_ratio": 0.7
+    },
+    {
+      "id": "standard-trade-secret",
+      "mode": "standard",
+      "inputs": {
+        "ip-rights-at-issue": [
+          "trade-secret"
+        ],
+        "parties-posture-and-relationship": "accused party",
+        "available-evidence-of-potential-infringement": "Provided comparison evidence"
+      },
+      "baseline_estimated_tokens": 6115,
+      "max_ratio": 0.7
+    },
+    {
+      "id": "deep-all-rights",
+      "mode": "deep-review",
+      "inputs": {
+        "ip-rights-at-issue": [
+          "trademark",
+          "copyright",
+          "patent",
+          "trade-secret"
+        ],
+        "parties-posture-and-relationship": "accused party",
+        "available-evidence-of-potential-infringement": "Provided comparison evidence"
+      },
+      "baseline_estimated_tokens": 6115,
+      "max_ratio": 1.15
+    }
+  ]
+}
