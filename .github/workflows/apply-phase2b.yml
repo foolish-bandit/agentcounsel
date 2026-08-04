@@ -1,21 +1,22 @@
 name: Apply Phase 2B implementation
 
 on:
-  push:
+  pull_request:
     branches:
-      - feat/phase-2b-selective-modules
+      - main
 
 permissions:
   contents: write
 
 jobs:
   apply:
-    if: github.actor != 'github-actions[bot]'
+    if: github.event.pull_request.head.ref == 'feat/phase-2b-selective-modules' && github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
-      - name: Check out branch
+      - name: Check out feature branch
         uses: actions/checkout@v7
         with:
+          ref: feat/phase-2b-selective-modules
           fetch-depth: 0
 
       - name: Decode implementation patch
