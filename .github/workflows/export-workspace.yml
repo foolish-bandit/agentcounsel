@@ -1,0 +1,29 @@
+name: Export workspace
+
+on:
+  push:
+    branches:
+      - chore/export-agentcounsel-workspace
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Create repository archive
+        run: git archive --format=zip --output=agentcounsel-workspace.zip HEAD
+
+      - name: Upload repository archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: agentcounsel-workspace
+          path: agentcounsel-workspace.zip
+          if-no-files-found: error
+          retention-days: 1
