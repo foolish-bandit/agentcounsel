@@ -1,0 +1,38 @@
+name: Apply Phase 2B implementation
+
+on:
+  push:
+    branches:
+      - feat/phase-2b-selective-modules
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out branch
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Decode implementation patch
+        run: base64 --decode .github/phase2b.patch.xz.b64 | xz --decompress > /tmp/phase2b.patch
+
+      - name: Apply verified local implementation
+        run: |
+          git apply --index --binary /tmp/phase2b.patch
+          rm -f .github/phase2b.patch.xz.b64
+          rm -f .github/workflows/apply-phase2b.yml
+          rm -f .github/workflows/export-phase2b.yml
+          git add -A
+          git status --short
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "feat: complete Phase 2B selective context and provenance"
+          git push origin HEAD:feat/phase-2b-selective-modules
