@@ -31,7 +31,7 @@ Whoever you are, the assumption is the same: a licensed attorney reviews the out
 - A library of legal **workflows** and **output structures**.
 - A way to make AI-assisted legal drafting more consistent, reviewable, and safe.
 - Useful piecemeal (one Markdown file) or as a whole.
-- Plain Markdown — no build system, no runtime, no account, no lock-in.
+- Plain Markdown at its core, with no required runtime, account, or vendor lock-in. An optional MCP catalog provides typed routing and selective context retrieval.
 
 **It is not:**
 
@@ -45,6 +45,19 @@ Whoever you are, the assumption is the same: a licensed attorney reviews the out
 **[QUICKSTART.md](QUICKSTART.md) is the one place to start** — pick your platform, install a practice-area pack, and run your first skill in about five minutes. Sample outputs are in **[`examples/`](examples/)**.
 
 You do not need to read `core/` to get started: every pack and adapter loads those operating rules for the AI automatically. Read [`core/`](core/) yourself only if you are using a raw `SKILL.md` file on its own, or you want to understand the rules your AI is following (a worthwhile ten minutes, but not a prerequisite).
+
+## Deterministic selective context
+
+Every one of the 212 skills compiles to a validated [Skill Specification v2](docs/SKILL_SPEC_V2.md) contract. For ordinary Markdown use, the canonical `SKILL.md` remains enough. For agent runtimes, the optional MCP catalog can route a task, require typed inputs, choose an execution mode, and return only the applicable core and modules through `get_skill_context`.
+
+Selection is fail-closed and inspectable. Missing activation inputs do not load every candidate module. Each bundle includes a decision record for every declared module, per-file SHA-256 hashes, inherited-rule dependency hashes, a compiled-contract fingerprint, token-planning estimates, and a deterministic bundle fingerprint for audit or replay. CI enforces declared context budgets in [`reports/selective-context.md`](reports/selective-context.md).
+
+The first two modularized workflows show the model:
+
+- `litigation/motion-opposition-drafter`: mode-based loading for quick triage, standard drafting, and deep verification.
+- `ip/infringement-triage`: mode-based common modules plus right-specific loading for trademark, copyright, patent, and trade secret matters.
+
+The compact cores are now below the repository's large-context band. Standard scenarios use about 58% of their pre-migration context estimate while preserving the complete deep-review package. These figures are deterministic planning estimates, not provider token counts or billing claims.
 
 ## Practice areas
 
@@ -155,7 +168,7 @@ AgentCounsel is plain Markdown, so it works anywhere an agent or person can read
 
 | Surface | How to use AgentCounsel | Where to look |
 |---|---|---|
-| **Generic Markdown** | Open any `SKILL.md`, paste it into your assistant as context, and follow the workflow. Works with any model. | [`adapters/generic-md/`](adapters/generic-md/) |
+| **Generic Markdown** | Open any ordinary `SKILL.md` directly. When a skill has `SPEC.json`, use the catalog's **Copy Full Package** action or copy the complete skill folder so its selectable resources remain available. | [`adapters/generic-md/`](adapters/generic-md/) |
 | **ChatGPT** | Create a ChatGPT Project and add individual skill files. (For the consolidated practice-area pack, use the packs page above.) | [`adapters/generic-md/`](adapters/generic-md/) |
 | **Claude (claude.ai)** | Create a Claude Project and upload a practice-area pack from the packs page — no command line needed. | [QUICKSTART.md](QUICKSTART.md) |
 | **Claude Code** | Use the Claude Code plugin-style bundle, or keep the repo in a folder Claude can read as a local playbook. | [`adapters/claude-code-plugin/`](adapters/claude-code-plugin/) |
@@ -163,6 +176,7 @@ AgentCounsel is plain Markdown, so it works anywhere an agent or person can read
 | **Gemini** | Install the repository as a Gemini CLI extension — `gemini-extension.json` and `GEMINI.md` load the operating model automatically. | [`adapters/gemini/`](adapters/gemini/) |
 | **Codex / repo agents** | Point a repo-based coding or legal agent at the library through `AGENTS.md` so it selects the narrowest relevant skill. | [`adapters/codex/`](adapters/codex/), [`AGENTS.md`](AGENTS.md) |
 | **Cursor** | Add the library to a project and reference it from a `.cursorrules` file or `AGENTS.md`. (The packs page above also serves a ready-made `.cursorrules`.) | [`adapters/codex/`](adapters/codex/) |
+| **MCP client** | Use the optional local MCP catalog for stable-ID routing, typed contracts, and deterministic `get_skill_context` bundles. | [`docs/MCP_SERVER.md`](docs/MCP_SERVER.md), [`agentcounsel_mcp.py`](agentcounsel_mcp.py) |
 | **Your own agent** | Vendor the `skills/` and `core/` directories into your project and reference them from your agent's instructions. | [`skills/`](skills/), [`core/`](core/) |
 
 Adapters are intentionally **thin**: they tell an environment how to find and use the canonical library; they do not duplicate it. The one exception is the Claude Code plugin bundle, which carries generated copies of a curated set of skills — regenerate it with `python scripts/sync_plugin_skills.py` (see [`PLUGIN_SYNC.md`](PLUGIN_SYNC.md)).
@@ -170,10 +184,10 @@ Adapters are intentionally **thin**: they tell an environment how to find and us
 ### Installing or copying skills
 
 - **A practice area (recommended):** download a pre-built pack from the [packs page](https://zgbrenner.github.io/agentcounsel/packs/) — one file per practice area for ChatGPT, Claude, and Gemini. Or run `python scripts/build_platform_packs.py` locally to produce the same packs in `dist/`.
-- **One skill:** copy a single `SKILL.md` (and its `templates/`, if any) into your assistant. Nothing else is required.
+- **One skill:** for an ordinary skill, copy `SKILL.md` and any templates. When the folder contains `SPEC.json`, copy the complete folder or use the catalog's **Copy Full Package** action; the compact `SKILL.md` alone is the routing and quick-triage core, not the full standard/deep package.
 - **The whole library:** clone the repository, or vendor `skills/` and `core/` into your own project.
 
-There is no installer, no package to publish, and no runtime dependency. A skill is just a file.
+There is no required installer or runtime dependency. Ordinary skills remain portable files; modularized skills remain portable Markdown-plus-JSON folders. The MCP server is optional and exists for clients that need typed routing, true selective loading, and reproducible context bundles.
 
 ## Safety model
 
@@ -236,10 +250,7 @@ python scripts/validate_repo.py                # full repository validation
 Other standard-library helpers in `scripts/` build the machine-readable skill index (`build_skill_index.py`), the per-platform install packs (`build_platform_packs.py`), the matter-workspace initializer (`init_matter_workspace.py`), and the browsable static catalog under [`site/`](site/). Every script is documented in [`docs/CLI.md`](docs/CLI.md); the recommended commands to run after each kind of edit are in [`docs/AGENT_COMMANDS.md`](docs/AGENT_COMMANDS.md). See [`VALIDATION.md`](VALIDATION.md) for the full list of checks.
 
 Platform pack manifests and plugin-compatibility guidance are documented in
-[`docs/PLUGIN_COMPATIBILITY.md`](docs/PLUGIN_COMPATIBILITY.md). The generated
-metadata files `metadata/index.json`, `metadata/router.json`, and
-`metadata/packs.json` are the machine-readable surfaces for skills, routing,
-and platform packs.
+[`docs/PLUGIN_COMPATIBILITY.md`](docs/PLUGIN_COMPATIBILITY.md). The generated metadata files `metadata/index.json`, `metadata/router.json`, `metadata/skill_specs.json`, `metadata/selective_context_metrics.json`, and `metadata/packs.json` are the machine-readable surfaces for skills, routing, typed execution, context budgets, and platform packs.
 
 ## Contributing
 

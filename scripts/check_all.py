@@ -36,6 +36,8 @@ FULL_SUITE = [
      [sys.executable, "scripts/build_skill_index.py", "--check"]),
     ("Check typed skill contract registry is up to date",
      [sys.executable, "scripts/build_skill_specs.py", "--check"]),
+    ("Check selective context metrics and budgets",
+     [sys.executable, "scripts/generate_selective_context_metrics.py", "--check"]),
     ("Check platform pack manifest is up to date",
      [sys.executable, "scripts/build_platform_packs.py", "--check"]),
     ("Check context metrics are up to date",

@@ -1,11 +1,13 @@
 {
   "schema_version": "2.0",
   "skill_count": 212,
-  "custom_spec_count": 3,
-  "legacy_compiled_count": 209,
+  "custom_spec_count": 5,
+  "legacy_compiled_count": 207,
   "custom_specs_by_practice_area": {
     "contracts": 1,
+    "ip": 1,
     "legal-research": 1,
+    "litigation": 1,
     "privacy": 1
   },
   "skills": [
@@ -16850,8 +16852,8 @@
       "skill_id": "ip/infringement-triage",
       "title": "Infringement Triage",
       "skill_path": "skills/ip/infringement-triage/SKILL.md",
-      "spec_path": null,
-      "has_custom_spec": false,
+      "spec_path": "skills/ip/infringement-triage/SPEC.json",
+      "has_custom_spec": true,
       "inherits": [
         "core/legal-work-product.md",
         "core/source-and-citation-discipline.md",
@@ -16923,14 +16925,20 @@
       ],
       "input_schema": [
         {
-          "id": "intellectual-property-right-or-rights-at-issue",
-          "label": "the intellectual property right or rights at issue",
-          "type": "text",
+          "id": "ip-rights-at-issue",
+          "label": "IP rights at issue",
+          "type": "string-list",
           "required": true,
-          "description": "the intellectual property right or rights at issue",
-          "source_requirement": "user-provided",
+          "description": "One or more controlled identifiers for the intellectual-property rights requiring separate analysis.",
+          "source_requirement": "user-provided-and-confirmed",
           "may_infer": false,
-          "sensitive": false
+          "sensitive": false,
+          "items": [
+            "trademark",
+            "copyright",
+            "patent",
+            "trade-secret"
+          ]
         },
         {
           "id": "parties-posture-and-relationship",
@@ -17020,7 +17028,121 @@
           }
         ]
       },
-      "modules": [],
+      "modules": [
+        {
+          "id": "factor-method",
+          "kind": "workflow-module",
+          "path": "skills/ip/infringement-triage/modules/factor-method.md",
+          "required": false,
+          "load_when": "standard or deep-review mode",
+          "activation": {
+            "modes": [
+              "standard",
+              "deep-review"
+            ],
+            "operator": "always"
+          }
+        },
+        {
+          "id": "trademark",
+          "kind": "workflow-module",
+          "path": "skills/ip/infringement-triage/modules/trademark.md",
+          "required": false,
+          "load_when": "the confirmed right list includes trademark",
+          "activation": {
+            "modes": [
+              "standard",
+              "deep-review"
+            ],
+            "input_id": "ip-rights-at-issue",
+            "operator": "contains-any",
+            "values": [
+              "trademark"
+            ]
+          }
+        },
+        {
+          "id": "copyright",
+          "kind": "workflow-module",
+          "path": "skills/ip/infringement-triage/modules/copyright.md",
+          "required": false,
+          "load_when": "the confirmed right list includes copyright",
+          "activation": {
+            "modes": [
+              "standard",
+              "deep-review"
+            ],
+            "input_id": "ip-rights-at-issue",
+            "operator": "contains-any",
+            "values": [
+              "copyright"
+            ]
+          }
+        },
+        {
+          "id": "patent",
+          "kind": "workflow-module",
+          "path": "skills/ip/infringement-triage/modules/patent.md",
+          "required": false,
+          "load_when": "the confirmed right list includes patent",
+          "activation": {
+            "modes": [
+              "standard",
+              "deep-review"
+            ],
+            "input_id": "ip-rights-at-issue",
+            "operator": "contains-any",
+            "values": [
+              "patent"
+            ]
+          }
+        },
+        {
+          "id": "trade-secret",
+          "kind": "workflow-module",
+          "path": "skills/ip/infringement-triage/modules/trade-secret.md",
+          "required": false,
+          "load_when": "the confirmed right list includes trade-secret",
+          "activation": {
+            "modes": [
+              "standard",
+              "deep-review"
+            ],
+            "input_id": "ip-rights-at-issue",
+            "operator": "contains-any",
+            "values": [
+              "trade-secret"
+            ]
+          }
+        },
+        {
+          "id": "defenses-routing-output",
+          "kind": "workflow-module",
+          "path": "skills/ip/infringement-triage/modules/defenses-routing-output.md",
+          "required": false,
+          "load_when": "standard or deep-review mode",
+          "activation": {
+            "modes": [
+              "standard",
+              "deep-review"
+            ],
+            "operator": "always"
+          }
+        },
+        {
+          "id": "expanded-verification",
+          "kind": "quality-check",
+          "path": "skills/ip/infringement-triage/modules/expanded-verification.md",
+          "required": false,
+          "load_when": "deep-review mode",
+          "activation": {
+            "modes": [
+              "deep-review"
+            ],
+            "operator": "always"
+          }
+        }
+      ],
       "quality_checks": [
         "attorney-review-gate",
         "assumption-audit",
@@ -17029,6 +17151,89 @@
         "jurisdiction-deadline-gates",
         "privilege-confidentiality-check",
         "output-format-compliance-check"
+      ],
+      "context_scenarios": [
+        {
+          "id": "quick-triage",
+          "mode": "quick-triage",
+          "inputs": {
+            "ip-rights-at-issue": [
+              "trademark"
+            ],
+            "parties-posture-and-relationship": "accused party",
+            "available-evidence-of-potential-infringement": "Provided comparison evidence"
+          },
+          "baseline_estimated_tokens": 6115,
+          "max_ratio": 0.4
+        },
+        {
+          "id": "standard-trademark",
+          "mode": "standard",
+          "inputs": {
+            "ip-rights-at-issue": [
+              "trademark"
+            ],
+            "parties-posture-and-relationship": "accused party",
+            "available-evidence-of-potential-infringement": "Provided comparison evidence"
+          },
+          "baseline_estimated_tokens": 6115,
+          "max_ratio": 0.7
+        },
+        {
+          "id": "standard-copyright",
+          "mode": "standard",
+          "inputs": {
+            "ip-rights-at-issue": [
+              "copyright"
+            ],
+            "parties-posture-and-relationship": "accused party",
+            "available-evidence-of-potential-infringement": "Provided comparison evidence"
+          },
+          "baseline_estimated_tokens": 6115,
+          "max_ratio": 0.7
+        },
+        {
+          "id": "standard-patent",
+          "mode": "standard",
+          "inputs": {
+            "ip-rights-at-issue": [
+              "patent"
+            ],
+            "parties-posture-and-relationship": "accused party",
+            "available-evidence-of-potential-infringement": "Provided comparison evidence"
+          },
+          "baseline_estimated_tokens": 6115,
+          "max_ratio": 0.7
+        },
+        {
+          "id": "standard-trade-secret",
+          "mode": "standard",
+          "inputs": {
+            "ip-rights-at-issue": [
+              "trade-secret"
+            ],
+            "parties-posture-and-relationship": "accused party",
+            "available-evidence-of-potential-infringement": "Provided comparison evidence"
+          },
+          "baseline_estimated_tokens": 6115,
+          "max_ratio": 0.7
+        },
+        {
+          "id": "deep-all-rights",
+          "mode": "deep-review",
+          "inputs": {
+            "ip-rights-at-issue": [
+              "trademark",
+              "copyright",
+              "patent",
+              "trade-secret"
+            ],
+            "parties-posture-and-relationship": "accused party",
+            "available-evidence-of-potential-infringement": "Provided comparison evidence"
+          },
+          "baseline_estimated_tokens": 6115,
+          "max_ratio": 1.15
+        }
       ]
     },
     {
@@ -23407,8 +23612,8 @@
       "skill_id": "litigation/motion-opposition-drafter",
       "title": "Motion Opposition Drafter",
       "skill_path": "skills/litigation/motion-opposition-drafter/SKILL.md",
-      "spec_path": null,
-      "has_custom_spec": false,
+      "spec_path": "skills/litigation/motion-opposition-drafter/SPEC.json",
+      "has_custom_spec": true,
       "inherits": [
         "core/legal-work-product.md",
         "core/source-and-citation-discipline.md",
@@ -23606,7 +23811,49 @@
           }
         ]
       },
-      "modules": [],
+      "modules": [
+        {
+          "id": "motion-deconstruction",
+          "kind": "workflow-module",
+          "path": "skills/litigation/motion-opposition-drafter/modules/motion-deconstruction.md",
+          "required": false,
+          "load_when": "standard or deep-review mode",
+          "activation": {
+            "modes": [
+              "standard",
+              "deep-review"
+            ],
+            "operator": "always"
+          }
+        },
+        {
+          "id": "opposition-drafting",
+          "kind": "workflow-module",
+          "path": "skills/litigation/motion-opposition-drafter/modules/opposition-drafting.md",
+          "required": false,
+          "load_when": "standard or deep-review mode",
+          "activation": {
+            "modes": [
+              "standard",
+              "deep-review"
+            ],
+            "operator": "always"
+          }
+        },
+        {
+          "id": "expanded-verification",
+          "kind": "quality-check",
+          "path": "skills/litigation/motion-opposition-drafter/modules/expanded-verification.md",
+          "required": false,
+          "load_when": "deep-review mode",
+          "activation": {
+            "modes": [
+              "deep-review"
+            ],
+            "operator": "always"
+          }
+        }
+      ],
       "quality_checks": [
         "attorney-review-gate",
         "legal-prose-polish",
@@ -23617,6 +23864,44 @@
         "hallucination-red-team",
         "jurisdiction-deadline-gates",
         "privilege-confidentiality-check"
+      ],
+      "context_scenarios": [
+        {
+          "id": "quick-triage",
+          "mode": "quick-triage",
+          "inputs": {
+            "movants-motion-memorandum-and-any-supporting-declarations-or-exhibits": "Provided complete motion papers",
+            "case-theory-and-the-clients-position-in-opposition": "The motion should be denied on the supplied record",
+            "relevant-record-materials-that-support-the-opposition": "Provided record materials",
+            "response-deadline-as-stated-on-the-docket-or-scheduling-order": "User-supplied date [deadline verification required]"
+          },
+          "baseline_estimated_tokens": 6346,
+          "max_ratio": 0.4
+        },
+        {
+          "id": "standard",
+          "mode": "standard",
+          "inputs": {
+            "movants-motion-memorandum-and-any-supporting-declarations-or-exhibits": "Provided complete motion papers",
+            "case-theory-and-the-clients-position-in-opposition": "The motion should be denied on the supplied record",
+            "relevant-record-materials-that-support-the-opposition": "Provided record materials",
+            "response-deadline-as-stated-on-the-docket-or-scheduling-order": "User-supplied date [deadline verification required]"
+          },
+          "baseline_estimated_tokens": 6346,
+          "max_ratio": 0.75
+        },
+        {
+          "id": "deep-review",
+          "mode": "deep-review",
+          "inputs": {
+            "movants-motion-memorandum-and-any-supporting-declarations-or-exhibits": "Provided complete motion papers",
+            "case-theory-and-the-clients-position-in-opposition": "The motion should be denied on the supplied record",
+            "relevant-record-materials-that-support-the-opposition": "Provided record materials",
+            "response-deadline-as-stated-on-the-docket-or-scheduling-order": "User-supplied date [deadline verification required]"
+          },
+          "baseline_estimated_tokens": 6346,
+          "max_ratio": 1.1
+        }
       ]
     },
     {

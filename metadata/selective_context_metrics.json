@@ -1,0 +1,541 @@
+{
+  "schema_version": "1.0",
+  "approximation": "one token per four characters, rounded up",
+  "skill_count": 2,
+  "scenario_count": 9,
+  "within_budget_count": 9,
+  "complete_count": 9,
+  "all_within_budget": true,
+  "all_complete": true,
+  "scenarios": [
+    {
+      "skill_id": "ip/infringement-triage",
+      "scenario_id": "deep-all-rights",
+      "mode": "deep-review",
+      "selected_module_ids": [
+        "factor-method",
+        "trademark",
+        "copyright",
+        "patent",
+        "trade-secret",
+        "defenses-routing-output",
+        "expanded-verification"
+      ],
+      "selection_trace": [
+        {
+          "id": "factor-method",
+          "status": "selected",
+          "reason": "activation matched execution mode deep-review"
+        },
+        {
+          "id": "trademark",
+          "status": "selected",
+          "reason": "activation input ip-rights-at-issue contains trademark"
+        },
+        {
+          "id": "copyright",
+          "status": "selected",
+          "reason": "activation input ip-rights-at-issue contains copyright"
+        },
+        {
+          "id": "patent",
+          "status": "selected",
+          "reason": "activation input ip-rights-at-issue contains patent"
+        },
+        {
+          "id": "trade-secret",
+          "status": "selected",
+          "reason": "activation input ip-rights-at-issue contains trade-secret"
+        },
+        {
+          "id": "defenses-routing-output",
+          "status": "selected",
+          "reason": "activation matched execution mode deep-review"
+        },
+        {
+          "id": "expanded-verification",
+          "status": "selected",
+          "reason": "activation matched execution mode deep-review"
+        }
+      ],
+      "unresolved_module_ids": [],
+      "missing_required_inputs": [],
+      "core_estimated_tokens": 2127,
+      "module_estimated_tokens": 3323,
+      "total_estimated_tokens": 5450,
+      "baseline_estimated_tokens": 6115,
+      "ratio": 0.8913,
+      "max_ratio": 1.15,
+      "within_budget": true,
+      "complete": true,
+      "contract_sha256": "de221966f28785b32c9e3b6104dad4b32ef1295dd33acf05b0d993daf56e8063",
+      "inherited_rule_hashes": {
+        "core/legal-work-product.md": "9647d00e4edef3939da6197f917ec85a982b5503a2414932b636eca07612f211",
+        "core/source-and-citation-discipline.md": "5c6e20bd1593724510a41d2b008c1836c70fb8515848cd8fd00249fff0b2ddcd",
+        "core/output-format-rules.md": "d0ce40f9b806d06f040983fbfdb0ee330b56f8327093f7feac0a20823207b7ca",
+        "core/attorney-review-checklist.md": "aac9e3a19452ea86a874ebdcbf7c00e4853adedc3fea62321e33d1d3aa63d806",
+        "core/jurisdiction-and-deadline-gates.md": "151192fc2c44ca20b2894ca94f01258d8a80355be54434a808e8e94f6dc40f94"
+      },
+      "bundle_sha256": "5ca9e725f760a3a0048036b760e25d8d1376b51bff570b4d8ffdf72e9256a8e5"
+    },
+    {
+      "skill_id": "ip/infringement-triage",
+      "scenario_id": "quick-triage",
+      "mode": "quick-triage",
+      "selected_module_ids": [],
+      "selection_trace": [
+        {
+          "id": "factor-method",
+          "status": "not-selected",
+          "reason": "activation applies to modes standard, deep-review; requested mode was quick-triage"
+        },
+        {
+          "id": "trademark",
+          "status": "not-selected",
+          "reason": "activation applies to modes standard, deep-review; requested mode was quick-triage"
+        },
+        {
+          "id": "copyright",
+          "status": "not-selected",
+          "reason": "activation applies to modes standard, deep-review; requested mode was quick-triage"
+        },
+        {
+          "id": "patent",
+          "status": "not-selected",
+          "reason": "activation applies to modes standard, deep-review; requested mode was quick-triage"
+        },
+        {
+          "id": "trade-secret",
+          "status": "not-selected",
+          "reason": "activation applies to modes standard, deep-review; requested mode was quick-triage"
+        },
+        {
+          "id": "defenses-routing-output",
+          "status": "not-selected",
+          "reason": "activation applies to modes standard, deep-review; requested mode was quick-triage"
+        },
+        {
+          "id": "expanded-verification",
+          "status": "not-selected",
+          "reason": "activation applies to mode deep-review only; requested mode was quick-triage"
+        }
+      ],
+      "unresolved_module_ids": [],
+      "missing_required_inputs": [],
+      "core_estimated_tokens": 2127,
+      "module_estimated_tokens": 0,
+      "total_estimated_tokens": 2127,
+      "baseline_estimated_tokens": 6115,
+      "ratio": 0.3478,
+      "max_ratio": 0.4,
+      "within_budget": true,
+      "complete": true,
+      "contract_sha256": "de221966f28785b32c9e3b6104dad4b32ef1295dd33acf05b0d993daf56e8063",
+      "inherited_rule_hashes": {
+        "core/legal-work-product.md": "9647d00e4edef3939da6197f917ec85a982b5503a2414932b636eca07612f211",
+        "core/source-and-citation-discipline.md": "5c6e20bd1593724510a41d2b008c1836c70fb8515848cd8fd00249fff0b2ddcd",
+        "core/output-format-rules.md": "d0ce40f9b806d06f040983fbfdb0ee330b56f8327093f7feac0a20823207b7ca",
+        "core/attorney-review-checklist.md": "aac9e3a19452ea86a874ebdcbf7c00e4853adedc3fea62321e33d1d3aa63d806",
+        "core/jurisdiction-and-deadline-gates.md": "151192fc2c44ca20b2894ca94f01258d8a80355be54434a808e8e94f6dc40f94"
+      },
+      "bundle_sha256": "0005d4ffe095cb0dedc49c50dc67e65b9f50a682d8845ff87bb678e2eb2b020f"
+    },
+    {
+      "skill_id": "ip/infringement-triage",
+      "scenario_id": "standard-copyright",
+      "mode": "standard",
+      "selected_module_ids": [
+        "factor-method",
+        "copyright",
+        "defenses-routing-output"
+      ],
+      "selection_trace": [
+        {
+          "id": "factor-method",
+          "status": "selected",
+          "reason": "activation matched execution mode standard"
+        },
+        {
+          "id": "trademark",
+          "status": "not-selected",
+          "reason": "activation input ip-rights-at-issue matched none of: trademark"
+        },
+        {
+          "id": "copyright",
+          "status": "selected",
+          "reason": "activation input ip-rights-at-issue contains copyright"
+        },
+        {
+          "id": "patent",
+          "status": "not-selected",
+          "reason": "activation input ip-rights-at-issue matched none of: patent"
+        },
+        {
+          "id": "trade-secret",
+          "status": "not-selected",
+          "reason": "activation input ip-rights-at-issue matched none of: trade-secret"
+        },
+        {
+          "id": "defenses-routing-output",
+          "status": "selected",
+          "reason": "activation matched execution mode standard"
+        },
+        {
+          "id": "expanded-verification",
+          "status": "not-selected",
+          "reason": "activation applies to mode deep-review only; requested mode was standard"
+        }
+      ],
+      "unresolved_module_ids": [],
+      "missing_required_inputs": [],
+      "core_estimated_tokens": 2127,
+      "module_estimated_tokens": 1419,
+      "total_estimated_tokens": 3546,
+      "baseline_estimated_tokens": 6115,
+      "ratio": 0.5799,
+      "max_ratio": 0.7,
+      "within_budget": true,
+      "complete": true,
+      "contract_sha256": "de221966f28785b32c9e3b6104dad4b32ef1295dd33acf05b0d993daf56e8063",
+      "inherited_rule_hashes": {
+        "core/legal-work-product.md": "9647d00e4edef3939da6197f917ec85a982b5503a2414932b636eca07612f211",
+        "core/source-and-citation-discipline.md": "5c6e20bd1593724510a41d2b008c1836c70fb8515848cd8fd00249fff0b2ddcd",
+        "core/output-format-rules.md": "d0ce40f9b806d06f040983fbfdb0ee330b56f8327093f7feac0a20823207b7ca",
+        "core/attorney-review-checklist.md": "aac9e3a19452ea86a874ebdcbf7c00e4853adedc3fea62321e33d1d3aa63d806",
+        "core/jurisdiction-and-deadline-gates.md": "151192fc2c44ca20b2894ca94f01258d8a80355be54434a808e8e94f6dc40f94"
+      },
+      "bundle_sha256": "b0880feb6b3e2fab59d578a9b8eae870a3d608c939b2c03cf24a5fed014174f4"
+    },
+    {
+      "skill_id": "ip/infringement-triage",
+      "scenario_id": "standard-patent",
+      "mode": "standard",
+      "selected_module_ids": [
+        "factor-method",
+        "patent",
+        "defenses-routing-output"
+      ],
+      "selection_trace": [
+        {
+          "id": "factor-method",
+          "status": "selected",
+          "reason": "activation matched execution mode standard"
+        },
+        {
+          "id": "trademark",
+          "status": "not-selected",
+          "reason": "activation input ip-rights-at-issue matched none of: trademark"
+        },
+        {
+          "id": "copyright",
+          "status": "not-selected",
+          "reason": "activation input ip-rights-at-issue matched none of: copyright"
+        },
+        {
+          "id": "patent",
+          "status": "selected",
+          "reason": "activation input ip-rights-at-issue contains patent"
+        },
+        {
+          "id": "trade-secret",
+          "status": "not-selected",
+          "reason": "activation input ip-rights-at-issue matched none of: trade-secret"
+        },
+        {
+          "id": "defenses-routing-output",
+          "status": "selected",
+          "reason": "activation matched execution mode standard"
+        },
+        {
+          "id": "expanded-verification",
+          "status": "not-selected",
+          "reason": "activation applies to mode deep-review only; requested mode was standard"
+        }
+      ],
+      "unresolved_module_ids": [],
+      "missing_required_inputs": [],
+      "core_estimated_tokens": 2127,
+      "module_estimated_tokens": 1427,
+      "total_estimated_tokens": 3554,
+      "baseline_estimated_tokens": 6115,
+      "ratio": 0.5812,
+      "max_ratio": 0.7,
+      "within_budget": true,
+      "complete": true,
+      "contract_sha256": "de221966f28785b32c9e3b6104dad4b32ef1295dd33acf05b0d993daf56e8063",
+      "inherited_rule_hashes": {
+        "core/legal-work-product.md": "9647d00e4edef3939da6197f917ec85a982b5503a2414932b636eca07612f211",
+        "core/source-and-citation-discipline.md": "5c6e20bd1593724510a41d2b008c1836c70fb8515848cd8fd00249fff0b2ddcd",
+        "core/output-format-rules.md": "d0ce40f9b806d06f040983fbfdb0ee330b56f8327093f7feac0a20823207b7ca",
+        "core/attorney-review-checklist.md": "aac9e3a19452ea86a874ebdcbf7c00e4853adedc3fea62321e33d1d3aa63d806",
+        "core/jurisdiction-and-deadline-gates.md": "151192fc2c44ca20b2894ca94f01258d8a80355be54434a808e8e94f6dc40f94"
+      },
+      "bundle_sha256": "b3cdc8cda3edaf6943cc181dc559ee8c3340cfc46f45b1f748f2d97dac2a32e3"
+    },
+    {
+      "skill_id": "ip/infringement-triage",
+      "scenario_id": "standard-trade-secret",
+      "mode": "standard",
+      "selected_module_ids": [
+        "factor-method",
+        "trade-secret",
+        "defenses-routing-output"
+      ],
+      "selection_trace": [
+        {
+          "id": "factor-method",
+          "status": "selected",
+          "reason": "activation matched execution mode standard"
+        },
+        {
+          "id": "trademark",
+          "status": "not-selected",
+          "reason": "activation input ip-rights-at-issue matched none of: trademark"
+        },
+        {
+          "id": "copyright",
+          "status": "not-selected",
+          "reason": "activation input ip-rights-at-issue matched none of: copyright"
+        },
+        {
+          "id": "patent",
+          "status": "not-selected",
+          "reason": "activation input ip-rights-at-issue matched none of: patent"
+        },
+        {
+          "id": "trade-secret",
+          "status": "selected",
+          "reason": "activation input ip-rights-at-issue contains trade-secret"
+        },
+        {
+          "id": "defenses-routing-output",
+          "status": "selected",
+          "reason": "activation matched execution mode standard"
+        },
+        {
+          "id": "expanded-verification",
+          "status": "not-selected",
+          "reason": "activation applies to mode deep-review only; requested mode was standard"
+        }
+      ],
+      "unresolved_module_ids": [],
+      "missing_required_inputs": [],
+      "core_estimated_tokens": 2127,
+      "module_estimated_tokens": 1439,
+      "total_estimated_tokens": 3566,
+      "baseline_estimated_tokens": 6115,
+      "ratio": 0.5832,
+      "max_ratio": 0.7,
+      "within_budget": true,
+      "complete": true,
+      "contract_sha256": "de221966f28785b32c9e3b6104dad4b32ef1295dd33acf05b0d993daf56e8063",
+      "inherited_rule_hashes": {
+        "core/legal-work-product.md": "9647d00e4edef3939da6197f917ec85a982b5503a2414932b636eca07612f211",
+        "core/source-and-citation-discipline.md": "5c6e20bd1593724510a41d2b008c1836c70fb8515848cd8fd00249fff0b2ddcd",
+        "core/output-format-rules.md": "d0ce40f9b806d06f040983fbfdb0ee330b56f8327093f7feac0a20823207b7ca",
+        "core/attorney-review-checklist.md": "aac9e3a19452ea86a874ebdcbf7c00e4853adedc3fea62321e33d1d3aa63d806",
+        "core/jurisdiction-and-deadline-gates.md": "151192fc2c44ca20b2894ca94f01258d8a80355be54434a808e8e94f6dc40f94"
+      },
+      "bundle_sha256": "780202e094c132546ab1eb25b535258de75b6ef10c821fc3e45de19fe4058e46"
+    },
+    {
+      "skill_id": "ip/infringement-triage",
+      "scenario_id": "standard-trademark",
+      "mode": "standard",
+      "selected_module_ids": [
+        "factor-method",
+        "trademark",
+        "defenses-routing-output"
+      ],
+      "selection_trace": [
+        {
+          "id": "factor-method",
+          "status": "selected",
+          "reason": "activation matched execution mode standard"
+        },
+        {
+          "id": "trademark",
+          "status": "selected",
+          "reason": "activation input ip-rights-at-issue contains trademark"
+        },
+        {
+          "id": "copyright",
+          "status": "not-selected",
+          "reason": "activation input ip-rights-at-issue matched none of: copyright"
+        },
+        {
+          "id": "patent",
+          "status": "not-selected",
+          "reason": "activation input ip-rights-at-issue matched none of: patent"
+        },
+        {
+          "id": "trade-secret",
+          "status": "not-selected",
+          "reason": "activation input ip-rights-at-issue matched none of: trade-secret"
+        },
+        {
+          "id": "defenses-routing-output",
+          "status": "selected",
+          "reason": "activation matched execution mode standard"
+        },
+        {
+          "id": "expanded-verification",
+          "status": "not-selected",
+          "reason": "activation applies to mode deep-review only; requested mode was standard"
+        }
+      ],
+      "unresolved_module_ids": [],
+      "missing_required_inputs": [],
+      "core_estimated_tokens": 2127,
+      "module_estimated_tokens": 1421,
+      "total_estimated_tokens": 3548,
+      "baseline_estimated_tokens": 6115,
+      "ratio": 0.5802,
+      "max_ratio": 0.7,
+      "within_budget": true,
+      "complete": true,
+      "contract_sha256": "de221966f28785b32c9e3b6104dad4b32ef1295dd33acf05b0d993daf56e8063",
+      "inherited_rule_hashes": {
+        "core/legal-work-product.md": "9647d00e4edef3939da6197f917ec85a982b5503a2414932b636eca07612f211",
+        "core/source-and-citation-discipline.md": "5c6e20bd1593724510a41d2b008c1836c70fb8515848cd8fd00249fff0b2ddcd",
+        "core/output-format-rules.md": "d0ce40f9b806d06f040983fbfdb0ee330b56f8327093f7feac0a20823207b7ca",
+        "core/attorney-review-checklist.md": "aac9e3a19452ea86a874ebdcbf7c00e4853adedc3fea62321e33d1d3aa63d806",
+        "core/jurisdiction-and-deadline-gates.md": "151192fc2c44ca20b2894ca94f01258d8a80355be54434a808e8e94f6dc40f94"
+      },
+      "bundle_sha256": "82e6a4b4b053877e304a6dc075f038428f105985dbf8a46fc199eca3824e16aa"
+    },
+    {
+      "skill_id": "litigation/motion-opposition-drafter",
+      "scenario_id": "deep-review",
+      "mode": "deep-review",
+      "selected_module_ids": [
+        "motion-deconstruction",
+        "opposition-drafting",
+        "expanded-verification"
+      ],
+      "selection_trace": [
+        {
+          "id": "motion-deconstruction",
+          "status": "selected",
+          "reason": "activation matched execution mode deep-review"
+        },
+        {
+          "id": "opposition-drafting",
+          "status": "selected",
+          "reason": "activation matched execution mode deep-review"
+        },
+        {
+          "id": "expanded-verification",
+          "status": "selected",
+          "reason": "activation matched execution mode deep-review"
+        }
+      ],
+      "unresolved_module_ids": [],
+      "missing_required_inputs": [],
+      "core_estimated_tokens": 2412,
+      "module_estimated_tokens": 2029,
+      "total_estimated_tokens": 4441,
+      "baseline_estimated_tokens": 6346,
+      "ratio": 0.6998,
+      "max_ratio": 1.1,
+      "within_budget": true,
+      "complete": true,
+      "contract_sha256": "af3845d2c2d8eb84920813831bf9a65fb7c7cd5a4273f3227a2764b70bf097bf",
+      "inherited_rule_hashes": {
+        "core/legal-work-product.md": "9647d00e4edef3939da6197f917ec85a982b5503a2414932b636eca07612f211",
+        "core/source-and-citation-discipline.md": "5c6e20bd1593724510a41d2b008c1836c70fb8515848cd8fd00249fff0b2ddcd",
+        "core/output-format-rules.md": "d0ce40f9b806d06f040983fbfdb0ee330b56f8327093f7feac0a20823207b7ca",
+        "core/attorney-review-checklist.md": "aac9e3a19452ea86a874ebdcbf7c00e4853adedc3fea62321e33d1d3aa63d806",
+        "core/jurisdiction-and-deadline-gates.md": "151192fc2c44ca20b2894ca94f01258d8a80355be54434a808e8e94f6dc40f94"
+      },
+      "bundle_sha256": "0cdc7c831795db9aed954904e5ed7bfb31d8699bbcd62c7c73f8267a9e7f3550"
+    },
+    {
+      "skill_id": "litigation/motion-opposition-drafter",
+      "scenario_id": "quick-triage",
+      "mode": "quick-triage",
+      "selected_module_ids": [],
+      "selection_trace": [
+        {
+          "id": "motion-deconstruction",
+          "status": "not-selected",
+          "reason": "activation applies to modes standard, deep-review; requested mode was quick-triage"
+        },
+        {
+          "id": "opposition-drafting",
+          "status": "not-selected",
+          "reason": "activation applies to modes standard, deep-review; requested mode was quick-triage"
+        },
+        {
+          "id": "expanded-verification",
+          "status": "not-selected",
+          "reason": "activation applies to mode deep-review only; requested mode was quick-triage"
+        }
+      ],
+      "unresolved_module_ids": [],
+      "missing_required_inputs": [],
+      "core_estimated_tokens": 2412,
+      "module_estimated_tokens": 0,
+      "total_estimated_tokens": 2412,
+      "baseline_estimated_tokens": 6346,
+      "ratio": 0.3801,
+      "max_ratio": 0.4,
+      "within_budget": true,
+      "complete": true,
+      "contract_sha256": "af3845d2c2d8eb84920813831bf9a65fb7c7cd5a4273f3227a2764b70bf097bf",
+      "inherited_rule_hashes": {
+        "core/legal-work-product.md": "9647d00e4edef3939da6197f917ec85a982b5503a2414932b636eca07612f211",
+        "core/source-and-citation-discipline.md": "5c6e20bd1593724510a41d2b008c1836c70fb8515848cd8fd00249fff0b2ddcd",
+        "core/output-format-rules.md": "d0ce40f9b806d06f040983fbfdb0ee330b56f8327093f7feac0a20823207b7ca",
+        "core/attorney-review-checklist.md": "aac9e3a19452ea86a874ebdcbf7c00e4853adedc3fea62321e33d1d3aa63d806",
+        "core/jurisdiction-and-deadline-gates.md": "151192fc2c44ca20b2894ca94f01258d8a80355be54434a808e8e94f6dc40f94"
+      },
+      "bundle_sha256": "1ff367364106f9957459428f61fc7d6999bc83029a77da7ecb6df8d693439f79"
+    },
+    {
+      "skill_id": "litigation/motion-opposition-drafter",
+      "scenario_id": "standard",
+      "mode": "standard",
+      "selected_module_ids": [
+        "motion-deconstruction",
+        "opposition-drafting"
+      ],
+      "selection_trace": [
+        {
+          "id": "motion-deconstruction",
+          "status": "selected",
+          "reason": "activation matched execution mode standard"
+        },
+        {
+          "id": "opposition-drafting",
+          "status": "selected",
+          "reason": "activation matched execution mode standard"
+        },
+        {
+          "id": "expanded-verification",
+          "status": "not-selected",
+          "reason": "activation applies to mode deep-review only; requested mode was standard"
+        }
+      ],
+      "unresolved_module_ids": [],
+      "missing_required_inputs": [],
+      "core_estimated_tokens": 2412,
+      "module_estimated_tokens": 1302,
+      "total_estimated_tokens": 3714,
+      "baseline_estimated_tokens": 6346,
+      "ratio": 0.5853,
+      "max_ratio": 0.75,
+      "within_budget": true,
+      "complete": true,
+      "contract_sha256": "af3845d2c2d8eb84920813831bf9a65fb7c7cd5a4273f3227a2764b70bf097bf",
+      "inherited_rule_hashes": {
+        "core/legal-work-product.md": "9647d00e4edef3939da6197f917ec85a982b5503a2414932b636eca07612f211",
+        "core/source-and-citation-discipline.md": "5c6e20bd1593724510a41d2b008c1836c70fb8515848cd8fd00249fff0b2ddcd",
+        "core/output-format-rules.md": "d0ce40f9b806d06f040983fbfdb0ee330b56f8327093f7feac0a20823207b7ca",
+        "core/attorney-review-checklist.md": "aac9e3a19452ea86a874ebdcbf7c00e4853adedc3fea62321e33d1d3aa63d806",
+        "core/jurisdiction-and-deadline-gates.md": "151192fc2c44ca20b2894ca94f01258d8a80355be54434a808e8e94f6dc40f94"
+      },
+      "bundle_sha256": "858591de568845dcfd4d9702e3fb54b10a4235035df1a80d50f5fc300b95eef4"
+    }
+  ]
+}

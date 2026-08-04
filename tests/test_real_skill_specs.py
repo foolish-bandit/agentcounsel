@@ -24,11 +24,17 @@ class TestRealSkillContracts(unittest.TestCase):
     def test_every_canonical_skill_has_a_compiled_contract(self):
         self.assertEqual(self.data["skill_count"], 212)
         self.assertEqual(len(self.by_id), 212)
-        self.assertEqual(self.data["custom_spec_count"], 3)
-        self.assertEqual(self.data["legacy_compiled_count"], 209)
+        self.assertEqual(self.data["custom_spec_count"], 5)
+        self.assertEqual(self.data["legacy_compiled_count"], 207)
         self.assertEqual(
             self.data["custom_specs_by_practice_area"],
-            {"contracts": 1, "legal-research": 1, "privacy": 1},
+            {
+                "contracts": 1,
+                "ip": 1,
+                "legal-research": 1,
+                "litigation": 1,
+                "privacy": 1,
+            },
         )
 
     def test_all_contracts_preserve_baseline_safety_controls(self):
@@ -49,12 +55,14 @@ class TestRealSkillContracts(unittest.TestCase):
                     )
                 )
 
-    def test_pilot_contracts_are_custom_and_domain_specific(self):
+    def test_custom_contracts_are_domain_specific(self):
         nda = self.by_id["contracts/nda-review"]
         research = self.by_id["legal-research/legal-research-memo"]
         breach = self.by_id["privacy/breach-response-workflow"]
+        infringement = self.by_id["ip/infringement-triage"]
+        opposition = self.by_id["litigation/motion-opposition-drafter"]
 
-        for spec in (nda, research, breach):
+        for spec in (nda, research, breach, infringement, opposition):
             self.assertTrue(spec["has_custom_spec"])
             self.assertTrue(spec["spec_path"].endswith("/SPEC.json"))
 
@@ -88,6 +96,17 @@ class TestRealSkillContracts(unittest.TestCase):
         self.assertIn("reportability-conclusion-prohibited", breach_gate_ids)
         self.assertIn("deadline-calculation-prohibited", breach_gate_ids)
         self.assertFalse(breach["gates"]["deadline"]["calculation_allowed"])
+
+        rights = {item["id"]: item for item in infringement["input_schema"]}
+        self.assertEqual(rights["ip-rights-at-issue"]["type"], "string-list")
+        self.assertEqual(len(infringement["context_scenarios"]), 6)
+        self.assertEqual(len(opposition["context_scenarios"]), 3)
+        self.assertTrue(
+            any(module.get("activation") for module in infringement["modules"])
+        )
+        self.assertTrue(
+            any(module.get("activation") for module in opposition["modules"])
+        )
 
     def test_generated_registry_matches_live_compilation(self):
         generated = json.loads(

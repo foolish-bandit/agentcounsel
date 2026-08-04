@@ -4,8 +4,8 @@
   "skill_count": 212,
   "priority_counts": {
     "high": 6,
-    "medium": 162,
-    "low": 44
+    "medium": 161,
+    "low": 45
   },
   "readiness_counts": {
     "scored": 21,
@@ -1184,24 +1184,6 @@
       "improvement_priority": "medium"
     },
     {
-      "id": "ip/infringement-triage",
-      "title": "Infringement Triage",
-      "path": "skills/ip/infringement-triage/SKILL.md",
-      "practice_area": "ip",
-      "risk_level": "medium",
-      "eval_status": "manual-eval-ready",
-      "eval_case_count": 3,
-      "candidate_output_count": 0,
-      "has_example": false,
-      "template_count": 1,
-      "routing_metadata": "complete",
-      "missing_routing_fields": [],
-      "estimated_tokens": 6115,
-      "context_pressure": "large",
-      "readiness_band": "review-ready",
-      "improvement_priority": "medium"
-    },
-    {
       "id": "ip/invention-intake",
       "title": "Invention Disclosure Intake",
       "path": "skills/ip/invention-intake/SKILL.md",
@@ -1556,8 +1538,8 @@
       "template_count": 1,
       "routing_metadata": "complete",
       "missing_routing_fields": [],
-      "estimated_tokens": 6346,
-      "context_pressure": "large",
+      "estimated_tokens": 2412,
+      "context_pressure": "compact",
       "readiness_band": "review-ready",
       "improvement_priority": "medium"
     },
@@ -3359,6 +3341,24 @@
       "estimated_tokens": 4370,
       "context_pressure": "moderate",
       "readiness_band": "scored",
+      "improvement_priority": "low"
+    },
+    {
+      "id": "ip/infringement-triage",
+      "title": "Infringement Triage",
+      "path": "skills/ip/infringement-triage/SKILL.md",
+      "practice_area": "ip",
+      "risk_level": "medium",
+      "eval_status": "manual-eval-ready",
+      "eval_case_count": 3,
+      "candidate_output_count": 0,
+      "has_example": false,
+      "template_count": 1,
+      "routing_metadata": "complete",
+      "missing_routing_fields": [],
+      "estimated_tokens": 2127,
+      "context_pressure": "compact",
+      "readiness_band": "review-ready",
       "improvement_priority": "low"
     },
     {

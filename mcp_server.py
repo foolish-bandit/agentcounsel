@@ -68,6 +68,22 @@ def get_skill_spec(skill_id: str) -> dict[str, Any]:
 
 
 @mcp.tool()
+def get_skill_context(
+    skill_id: str,
+    mode: str = "standard",
+    inputs: dict[str, Any] | None = None,
+    module_ids: list[str] | None = None,
+) -> dict[str, Any]:
+    """Return a deterministic selective context bundle with selection reasons."""
+    return CATALOG.get_skill_context(
+        skill_id,
+        mode=mode,
+        inputs=inputs,
+        module_ids=module_ids,
+    )
+
+
+@mcp.tool()
 def get_skill(skill_id: str) -> dict[str, Any]:
     """Return the complete Markdown workflow for one AgentCounsel skill."""
     return CATALOG.get_skill(skill_id)

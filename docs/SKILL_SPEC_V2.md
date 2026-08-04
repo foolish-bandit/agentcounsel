@@ -138,10 +138,19 @@ Allowed types:
 
 ```text
 text, document, document-set, enum, date, datetime, boolean,
-integer, number, jurisdiction, object
+integer, number, jurisdiction, object, string-list
 ```
 
 Required inputs must set `may_infer` to `false`.
+
+`string-list` represents one or more strings. A sidecar may add an `items`
+allow-list when the values are controlled, such as the IP rights
+`trademark`, `copyright`, `patent`, and `trade-secret`. The compiler rejects
+empty values and values that collide after whitespace trimming and
+case-insensitive normalization. Runtime inputs use the allow-list's canonical
+spelling. Numeric runtime inputs must also be finite, and `object` inputs must
+contain only JSON-compatible values with string keys so bundle hashes remain
+portable and reproducible.
 
 To refine a legacy input, use the generated stable input ID. To add a new input, provide every required field.
 
@@ -192,6 +201,56 @@ Allowed kinds:
 
 Every module path must resolve to an existing repository file. `load_when` must state the condition or mode that justifies loading it.
 
+A module may also declare a machine-readable `activation` object. This is the
+deterministic counterpart to the human-readable `load_when` field:
+
+```json
+{
+  "modes": ["standard", "deep-review"],
+  "input_id": "ip-rights-at-issue",
+  "operator": "contains-any",
+  "values": ["trademark"]
+}
+```
+
+The supported operators are deliberately limited:
+
+| Operator | Required fields | Meaning |
+|---|---|---|
+| `always` | `modes` | Load whenever the requested mode is allowed. |
+| `present` | `modes`, `input_id` | Load when the supplied input is present and non-empty. |
+| `equals` | `modes`, `input_id`, `value` | Load when the normalized scalar input equals the declared value. |
+| `contains-any` | `modes`, `input_id`, `values` | Load when a normalized scalar or list input contains at least one declared value. |
+
+Mode and input conditions are ANDed. Modules without `activation` retain the
+Phase 2A behavior: they are not automatically selected unless they are marked
+`required` or a client explicitly asks for their ID. Missing activation inputs
+fail closed. The selector reports the unresolved condition instead of loading
+every candidate module.
+
+### `context_scenarios`
+
+A custom sidecar may declare deterministic scenarios used to measure and
+enforce selective-context budgets:
+
+```json
+{
+  "id": "standard-trademark",
+  "mode": "standard",
+  "inputs": {"ip-rights-at-issue": ["trademark"]},
+  "baseline_estimated_tokens": 6115,
+  "max_ratio": 0.7
+}
+```
+
+Scenario IDs must be unique, modes must be known, inputs must refer to declared
+input IDs, baselines must be positive integers, and ratios must be positive
+and finite. Repository tooling builds the exact context bundle for each
+scenario and fails
+validation when a bundle is incomplete or exceeds its declared ratio. These
+estimates measure repository text size; they do not claim a provider-specific
+token bill or latency reduction.
+
 ### `quality_checks`
 
 Additional quality-check IDs appended to the generated baseline checks. Mode-specific checks belong on the corresponding execution mode.
@@ -205,11 +264,16 @@ Additional quality-check IDs appended to the generated baseline checks. Mode-spe
 5. Declare only repository paths that already exist.
 6. Keep required legal inputs non-inferable.
 7. Use gates for observable stop, escalation, or confirmation boundaries—not for legal conclusions.
-8. Regenerate and validate:
+8. Use declarative module activation only for inputs and modes that can be
+   evaluated without legal judgment or fuzzy prose interpretation.
+9. Add context scenarios for every materially different activation path and
+   keep their budgets conservative enough to catch accidental context growth.
+10. Regenerate and validate:
 
 ```bash
 python scripts/build_skill_specs.py
 python scripts/build_skill_specs.py --check
+python scripts/generate_selective_context_metrics.py --check
 python -m unittest tests.test_skill_spec_v2 tests.test_build_skill_specs tests.test_real_skill_specs -v
 python scripts/check_all.py
 ```

@@ -44,6 +44,9 @@ jobs:
       - name: Check typed skill contract registry is up to date
         run: python scripts/build_skill_specs.py --check
 
+      - name: Check selective context metrics and budgets
+        run: python scripts/generate_selective_context_metrics.py --check
+
       - name: Check platform pack manifest is up to date
         run: python scripts/build_platform_packs.py --check
 

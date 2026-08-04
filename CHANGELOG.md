@@ -6,7 +6,35 @@ All notable changes to AgentCounsel are recorded in this file. The format follow
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-08-04
+
 ### Added
+
+- **Phase 2B deterministic selective context:** Skill Specification v2 now
+  supports controlled `string-list` inputs, declarative module activation, and
+  context-budget scenarios. The standard-library context engine fails closed on
+  missing activation inputs, explains every selected, skipped, or unresolved
+  module, hashes the compiled contract, inherited rules, and every loaded file, and emits a reproducible bundle fingerprint.
+  The MCP catalog exposes this through `get_skill_context`.
+- **Two fully modularized flagship workflows:**
+  `litigation/motion-opposition-drafter` and `ip/infringement-triage` now keep a
+  compact canonical core and load detailed Markdown modules by execution mode
+  and, for IP matters, by the rights actually implicated. All nine declared
+  scenarios are complete and within CI-enforced budgets. Quick-triage bundles
+  use 34.8% to 38.0% of the pre-migration context estimate; standard bundles use
+  58.0% to 58.5%. These are deterministic planning estimates, not provider token
+  counts or billing claims.
+- **Selective-context observability and distribution:** generated JSON and
+  Markdown scorecards record complete module-selection traces and bundle
+  fingerprints. ChatGPT, Claude, Gemini, and repo-agent packs now preserve
+  custom specs and selectable resources, with an explicit distinction between
+  logical selection in consolidated packs and true prompt-size reduction through
+  MCP or another selective client.
+- **Catalog execution packages:** custom-spec skill pages now distinguish the
+  compact core from the complete portable package, display the typed contract
+  and module activation table, expose every selectable resource, and include
+  the full package in one-off prompts. Ordinary skills keep the simple one-file
+  copy experience.
 
 - **Skill Specification v2 foundation:** every canonical skill now compiles
   to a typed execution contract in `metadata/skill_specs.json`, with

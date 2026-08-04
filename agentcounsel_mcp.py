@@ -15,6 +15,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from scripts.skill_context import build_skill_context
+
 
 class CatalogLoadError(RuntimeError):
     """Raised when generated AgentCounsel catalog metadata cannot be loaded."""
@@ -256,6 +258,23 @@ class CatalogService:
         """Return the complete typed execution contract for one skill."""
         stable_id = self._resolve_id(skill_id)
         return deepcopy(self._specs[stable_id])
+
+    def get_skill_context(
+        self,
+        skill_id: str,
+        mode: str = "standard",
+        inputs: dict[str, Any] | None = None,
+        module_ids: list[str] | None = None,
+    ) -> dict[str, Any]:
+        """Return the deterministic core-plus-modules context for one skill."""
+        stable_id = self._resolve_id(skill_id)
+        return build_skill_context(
+            self.root,
+            self._specs[stable_id],
+            mode,
+            inputs,
+            module_ids,
+        )
 
     def get_skill(self, skill_id: str) -> dict[str, Any]:
         card = self.get_skill_card(skill_id)

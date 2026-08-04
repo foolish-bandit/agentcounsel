@@ -18,6 +18,11 @@ derived artifact from the canonical files.
 |---|---|---|
 | `scripts/validate_repo.py` | No | — |
 | `scripts/build_skill_index.py` | Yes (writes metadata) | `--check` |
+| `scripts/build_skill_specs.py` | Yes (writes typed contract registry) | `--check` |
+| `scripts/generate_selective_context_metrics.py` | Yes (writes JSON and Markdown scorecards) | `--check` |
+| `scripts/generate_context_metrics.py` | Yes (writes context reports) | `--check` |
+| `scripts/generate_skill_health_report.py` | Yes (writes readiness reports) | `--check` |
+| `scripts/check_all.py` | No, except the site verification build | `--quick` |
 | `scripts/build_platform_packs.py` | Yes (writes `dist/`, `metadata/packs.json`) | `--check` |
 | `scripts/check_evals.py` | No | — |
 | `scripts/check_legal_prose.py` | No | `--strict`, `--quiet`, `--path` |
@@ -65,11 +70,53 @@ Invalid frontmatter (unknown quality check, bad risk level) blocks the build.
 
 ---
 
+## scripts/build_skill_specs.py
+
+**Purpose.** Compile every canonical skill into a validated Skill Specification v2 contract and write `metadata/skill_specs.json`. Optional `SPEC.json` sidecars may add typed inputs, gates, modules, activation rules, and context scenarios, but cannot weaken inherited attorney-review, evidence, or deadline protections.
+
+**Example.** `python scripts/build_skill_specs.py` · `python scripts/build_skill_specs.py --check`
+
+**Mutates files?** Yes, without `--check`.
+
+**Common failure modes.** An invalid sidecar, duplicate ID, unresolved module path, unsupported activation operator, or attempted weakening of a baseline safety invariant.
+
+---
+
+## scripts/generate_selective_context_metrics.py
+
+**Purpose.** Build every declared selective-context scenario, store deterministic token-planning estimates and complete module-selection traces in `metadata/selective_context_metrics.json`, render `reports/selective-context.md`, and fail when a bundle is incomplete or exceeds its declared budget.
+
+**Example.** `python scripts/generate_selective_context_metrics.py` · `python scripts/generate_selective_context_metrics.py --check`
+
+**Mutates files?** Yes, without `--check`.
+
+**Common failure modes.** A missing required input in a scenario, unresolved required module, stale generated artifact, or total-to-baseline ratio above `max_ratio`. The estimates are one token per four characters, not provider token counts.
+
+---
+
+## scripts/generate_context_metrics.py and generate_skill_health_report.py
+
+**Purpose.** Regenerate repository-wide context-pressure and maintainability scorecards. Context metrics measure canonical skills and generated pack footprints; the health report combines eval, example, template, routing, and context signals into a maintenance queue. Neither report claims legal correctness.
+
+**Example.** `python scripts/generate_context_metrics.py --check` · `python scripts/generate_skill_health_report.py --check`
+
+**Mutates files?** Yes, without `--check`.
+
+---
+
+## scripts/check_all.py
+
+**Purpose.** Run the complete CI-equivalent repository gate in workflow order, stopping at the first failure. `--quick` runs the three core structural checks.
+
+**Example.** `python scripts/check_all.py` · `python scripts/check_all.py --quick`
+
+**Mutates files?** It is a verification entry point. The final site-generation step writes the git-ignored `site/public/` directory.
+
+---
+
 ## scripts/build_platform_packs.py
 
-**Purpose.** Regenerate the per-platform packs in `dist/` and the pack manifest
-`metadata/packs.json`, discovering each area's skills, templates, quality checks,
-matter packs, matter workspaces, playbooks, and review panels.
+**Purpose.** Regenerate the per-platform packs in `dist/` and the pack manifest `metadata/packs.json`, discovering each area's skills, custom typed specs, selectable spec resources, templates, quality checks, matter packs, matter workspaces, playbooks, and review panels.
 
 **Example.** `python scripts/build_platform_packs.py` · `python scripts/build_platform_packs.py --check`
 
@@ -183,7 +230,7 @@ edit a bundled skill — re-run to resync. See `PLUGIN_SYNC.md`.
 
 ## scripts/generate_cold_start_interviews.py
 
-**Purpose.** Regenerate the 14 generated cold-start interview skills under
+**Purpose.** Regenerate the 15 generated cold-start interview skills under
 `skills/setup/` from the embedded per-area question banks. The four
 hand-authored interviews are off-limits to the generator.
 

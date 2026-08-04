@@ -1,6 +1,6 @@
 {
   "name": "agentcounsel",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "An open, Markdown-native legal skills library: structured workflows that produce draft legal work product for attorney review.",
   "contextFileName": "GEMINI.md"
 }
