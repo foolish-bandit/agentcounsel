@@ -19,8 +19,13 @@ jobs:
           ref: feat/phase-2b-selective-modules
           fetch-depth: 0
 
-      - name: Decode implementation patch
-        run: base64 --decode .github/phase2b.patch.xz.b64 | xz --decompress > /tmp/phase2b.patch
+      - name: Reconstruct and verify implementation patch
+        run: |
+          git show origin/release/v0.3.0-selective-context:.patch-transfer/part-00.b64 > /tmp/part-00.b64
+          git show origin/release/v0.3.0-selective-context:.patch-transfer/part-01.b64 > /tmp/part-01.b64
+          cat /tmp/part-00.b64 /tmp/part-01.b64 | base64 --decode | gzip --decompress > /tmp/phase2b.patch
+          echo "e06b408f604aaa3fab79db941493b9387e3cb0ecf52addf9104252743b65e380  /tmp/phase2b.patch" | sha256sum --check
+          test "$(wc -c < /tmp/phase2b.patch)" -eq 400758
 
       - name: Apply verified local implementation
         run: |
@@ -28,7 +33,9 @@ jobs:
           rm -f .github/phase2b.patch.xz.b64
           rm -f .github/workflows/apply-phase2b.yml
           rm -f .github/workflows/export-phase2b.yml
+          rm -f .github/workflows/export-workspace.yml
           git add -A
+          git diff --cached --check
           git status --short
 
       - name: Commit and push
