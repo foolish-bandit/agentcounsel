@@ -40,14 +40,12 @@ jobs:
           test "$(wc -c < /tmp/phase2b.patch)" -eq 418246
           git apply --check --binary /tmp/phase2b.patch
 
-      - name: Apply verified local implementation
+      - name: Apply verified implementation without workflow-file mutations
         shell: bash
         run: |
           git apply --index --binary /tmp/phase2b.patch
           rm -f .github/phase2b.patch.xz.b64
-          rm -f .github/workflows/apply-phase2b.yml
-          rm -f .github/workflows/export-phase2b.yml
-          rm -f .github/workflows/export-workspace.yml
+          git restore --source=HEAD --staged --worktree .github/workflows/validate.yml
           git add -A
           git diff --cached --check
           git status --short
