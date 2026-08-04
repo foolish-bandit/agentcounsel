@@ -8,6 +8,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: apply-phase2b-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   apply:
     if: github.event.pull_request.head.ref == 'feat/phase-2b-selective-modules' && github.actor != 'github-actions[bot]'
@@ -20,14 +24,24 @@ jobs:
           fetch-depth: 0
 
       - name: Reconstruct and verify implementation patch
+        shell: bash
         run: |
-          git show origin/release/v0.3.0-selective-context:.patch-transfer/part-00.b64 > /tmp/part-00.b64
-          git show origin/release/v0.3.0-selective-context:.patch-transfer/part-01.b64 > /tmp/part-01.b64
-          cat /tmp/part-00.b64 /tmp/part-01.b64 | base64 --decode | gzip --decompress > /tmp/phase2b.patch
-          echo "e06b408f604aaa3fab79db941493b9387e3cb0ecf52addf9104252743b65e380  /tmp/phase2b.patch" | sha256sum --check
-          test "$(wc -c < /tmp/phase2b.patch)" -eq 400758
+          git show origin/release/v0.3.0-selective-context:.patch-transfer-v2/part-000.b64 > /tmp/part-000.b64
+          git show origin/release/v0.3.0-selective-context:.patch-transfer-v2/part-001.b64 > /tmp/part-001.b64
+          git show origin/release/v0.3.0-selective-context:.patch-transfer-v2/part-002.b64 > /tmp/part-002.b64
+          git show origin/release/v0.3.0-selective-context:.patch-transfer-v2/part-003.b64 > /tmp/part-003.b64
+          git show origin/release/v0.3.0-selective-context:.patch-transfer-v2/part-004.b64 > /tmp/part-004.b64
+          git show origin/release/v0.3.0-selective-context:.patch-transfer-v2/part-005.b64 > /tmp/part-005.b64
+          git show origin/release/v0.3.0-selective-context:.patch-transfer-v2/part-006.b64 > /tmp/part-006.b64
+          git show origin/release/v0.3.0-selective-context:.patch-transfer-v2/part-007.b64 > /tmp/part-007.b64
+          git show origin/release/v0.3.0-selective-context:.patch-transfer-v2/part-008.b64 > /tmp/part-008.b64
+          cat /tmp/part-*.b64 | base64 --decode | xz --decompress > /tmp/phase2b.patch
+          echo "8550a60f52997352351b6de84c8f3b608d926ff58145d8ac0c82355b19cd3109  /tmp/phase2b.patch" | sha256sum --check
+          test "$(wc -c < /tmp/phase2b.patch)" -eq 418246
+          git apply --check --binary /tmp/phase2b.patch
 
       - name: Apply verified local implementation
+        shell: bash
         run: |
           git apply --index --binary /tmp/phase2b.patch
           rm -f .github/phase2b.patch.xz.b64
@@ -39,6 +53,7 @@ jobs:
           git status --short
 
       - name: Commit and push
+        shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
