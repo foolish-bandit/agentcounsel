@@ -1,0 +1,29 @@
+name: Export Phase 3 workspace
+
+on:
+  push:
+    branches:
+      - feat/phase-3-matter-graphs
+
+permissions:
+  contents: read
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          ref: feat/phase-3-matter-graphs
+          fetch-depth: 0
+
+      - name: Archive branch
+        run: git archive --format=zip --output=agentcounsel-phase3.zip HEAD
+
+      - name: Upload branch archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: agentcounsel-phase3-workspace
+          path: agentcounsel-phase3.zip
+          retention-days: 1
