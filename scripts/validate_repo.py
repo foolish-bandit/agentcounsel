@@ -64,6 +64,7 @@ EXPECTED_DIRS = [
     "practice-profiles",
     "matter-workspaces",
     "matter-workspaces/_template",
+    "matter-plans",
     "playbooks",
     "review-panels",
     "overlays",

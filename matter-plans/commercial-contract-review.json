@@ -1,0 +1,485 @@
+{
+  "schema_version": "1.0",
+  "plan_id": "commercial-contract-review",
+  "title": "Commercial Contract Review",
+  "source_path": "playbooks/commercial-contract-review.md",
+  "description": "Review a commercial agreement, selectively branch into SOW or redline work, and run parallel quality checks before attorney approval.",
+  "tags": [
+    "contracts",
+    "risk-review",
+    "redline"
+  ],
+  "required_inputs": [
+    {
+      "id": "agreement",
+      "type": "document",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "client-role",
+      "type": "document",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "business-context",
+      "type": "document",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "client-playbook",
+      "type": "text",
+      "required": false,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "has-sow",
+      "type": "enum",
+      "required": true,
+      "may_infer": false,
+      "sensitive": false,
+      "enum": [
+        "yes",
+        "no"
+      ]
+    },
+    {
+      "id": "sow",
+      "type": "document",
+      "required": false,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "governing-msa",
+      "type": "document",
+      "required": false,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "has-prior-redline",
+      "type": "enum",
+      "required": true,
+      "may_infer": false,
+      "sensitive": false,
+      "enum": [
+        "yes",
+        "no"
+      ]
+    },
+    {
+      "id": "redline-materials",
+      "type": "document",
+      "required": false,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "priority-issues",
+      "type": "text",
+      "required": false,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "review-date",
+      "type": "date",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "jurisdiction",
+      "type": "jurisdiction",
+      "required": true,
+      "may_infer": false,
+      "sensitive": false
+    },
+    {
+      "id": "distribution-plan",
+      "type": "text",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "matter-context",
+      "type": "document",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    }
+  ],
+  "nodes": [
+    {
+      "id": "contract-risk-review",
+      "type": "skill",
+      "skill_id": "contracts/contract-risk-review",
+      "mode": "deep-review",
+      "depends_on": [],
+      "condition": {
+        "operator": "always"
+      },
+      "input_bindings": [
+        {
+          "target_input_id": "full-commercial-contract-text",
+          "source": {
+            "kind": "matter-input",
+            "id": "agreement"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "clients-role-under-the-agreement",
+          "source": {
+            "kind": "matter-input",
+            "id": "client-role"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "business-and-transaction-context",
+          "source": {
+            "kind": "matter-input",
+            "id": "business-context"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "clients-standard-positions-or-playbook",
+          "source": {
+            "kind": "matter-input",
+            "id": "client-playbook"
+          },
+          "required": false
+        }
+      ],
+      "produces": [
+        "contract-risk-matrix"
+      ]
+    },
+    {
+      "id": "sow-review",
+      "type": "skill",
+      "skill_id": "contracts/sow-review",
+      "mode": "standard",
+      "depends_on": [
+        "contract-risk-review"
+      ],
+      "condition": {
+        "operator": "equals",
+        "input_id": "has-sow",
+        "value": "yes"
+      },
+      "input_bindings": [
+        {
+          "target_input_id": "statement-of-work-or-work-order-text",
+          "source": {
+            "kind": "matter-input",
+            "id": "sow"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "governing-master-services-agreement",
+          "source": {
+            "kind": "matter-input",
+            "id": "governing-msa"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "clients-role-and-the-business-context",
+          "source": {
+            "kind": "matter-input",
+            "id": "business-context"
+          },
+          "required": true
+        }
+      ],
+      "produces": [
+        "sow-review-report"
+      ]
+    },
+    {
+      "id": "redline-summary",
+      "type": "skill",
+      "skill_id": "contracts/redline-summary",
+      "mode": "standard",
+      "depends_on": [
+        "contract-risk-review"
+      ],
+      "condition": {
+        "operator": "equals",
+        "input_id": "has-prior-redline",
+        "value": "yes"
+      },
+      "input_bindings": [
+        {
+          "target_input_id": "two-versions-of-a-contract-a-set-of-tracked-changes-or-a-base-agreement-plus-amendments",
+          "source": {
+            "kind": "matter-input",
+            "id": "redline-materials"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "clients-role-under-the-agreement",
+          "source": {
+            "kind": "matter-input",
+            "id": "client-role"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "issues-the-reviewer-most-cares-about",
+          "source": {
+            "kind": "matter-input",
+            "id": "priority-issues"
+          },
+          "required": false
+        }
+      ],
+      "produces": [
+        "redline-summary-report"
+      ]
+    },
+    {
+      "id": "source-validation",
+      "type": "skill",
+      "skill_id": "legal-methodology/source-validation",
+      "mode": "deep-review",
+      "depends_on": [
+        "contract-risk-review"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "input_bindings": [
+        {
+          "target_input_id": "draft-legal-work-product-to-check",
+          "source": {
+            "kind": "artifact",
+            "id": "contract-risk-matrix"
+          },
+          "required": true,
+          "transform": "artifact-ref"
+        },
+        {
+          "target_input_id": "cited-sources-authorities-and-underlying-record",
+          "source": {
+            "kind": "matter-input",
+            "id": "agreement"
+          },
+          "required": true,
+          "transform": "as-document-set"
+        },
+        {
+          "target_input_id": "claims-quotations-and-dates-to-validate",
+          "source": {
+            "kind": "matter-input",
+            "id": "review-date"
+          },
+          "required": true
+        }
+      ],
+      "produces": [
+        "source-validation-report"
+      ]
+    },
+    {
+      "id": "assumption-audit",
+      "type": "skill",
+      "skill_id": "legal-methodology/assumption-audit",
+      "mode": "deep-review",
+      "depends_on": [
+        "contract-risk-review"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "input_bindings": [
+        {
+          "target_input_id": "draft-legal-output-to-audit",
+          "source": {
+            "kind": "artifact",
+            "id": "contract-risk-matrix"
+          },
+          "required": true,
+          "transform": "artifact-ref"
+        },
+        {
+          "target_input_id": "user-provided-facts-source-documents-and-instructions-available-for-comparison",
+          "source": {
+            "kind": "matter-input",
+            "id": "agreement"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "intended-use-audience-jurisdiction-and-client-role-if-known",
+          "source": {
+            "kind": "matter-input",
+            "id": "jurisdiction"
+          },
+          "required": true
+        }
+      ],
+      "produces": [
+        "assumption-audit-report"
+      ]
+    },
+    {
+      "id": "privilege-check",
+      "type": "skill",
+      "skill_id": "legal-methodology/privilege-confidentiality-check",
+      "mode": "deep-review",
+      "depends_on": [
+        "contract-risk-review"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "input_bindings": [
+        {
+          "target_input_id": "draft-output-to-review-for-privilege-and-confidentiality-risk",
+          "source": {
+            "kind": "artifact",
+            "id": "contract-risk-matrix"
+          },
+          "required": true,
+          "transform": "artifact-ref"
+        },
+        {
+          "target_input_id": "intended-recipient-and-distribution-plan",
+          "source": {
+            "kind": "matter-input",
+            "id": "distribution-plan"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "matter-context-client-identity-and-confidentiality-instructions-if-known",
+          "source": {
+            "kind": "matter-input",
+            "id": "matter-context"
+          },
+          "required": true
+        }
+      ],
+      "produces": [
+        "privilege-check-report"
+      ]
+    },
+    {
+      "id": "contract-review-panel",
+      "type": "attorney-gate",
+      "depends_on": [
+        "contract-risk-review",
+        "source-validation",
+        "assumption-audit",
+        "privilege-check"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "gate": {
+        "severity": "required",
+        "instruction": "Attorney reviews high-risk provisions, source fidelity, assumptions, privilege, and negotiation priorities.",
+        "required_artifacts": [
+          "contract-risk-matrix",
+          "source-validation-report",
+          "assumption-audit-report",
+          "privilege-check-report"
+        ]
+      },
+      "produces": []
+    },
+    {
+      "id": "final-attorney-review",
+      "type": "attorney-gate",
+      "depends_on": [
+        "contract-review-panel",
+        "sow-review",
+        "redline-summary"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "gate": {
+        "severity": "required",
+        "instruction": "Attorney confirms the client position and authorizes any negotiation or signature recommendation.",
+        "required_artifacts": [
+          "contract-risk-matrix",
+          "source-validation-report",
+          "assumption-audit-report",
+          "privilege-check-report"
+        ]
+      },
+      "produces": []
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "contract-risk-matrix",
+      "type": "matrix",
+      "produced_by": "contract-risk-review",
+      "attorney_review_required": true,
+      "sensitive": true
+    },
+    {
+      "id": "sow-review-report",
+      "type": "table",
+      "produced_by": "sow-review",
+      "attorney_review_required": true,
+      "sensitive": true
+    },
+    {
+      "id": "redline-summary-report",
+      "type": "table",
+      "produced_by": "redline-summary",
+      "attorney_review_required": true,
+      "sensitive": true
+    },
+    {
+      "id": "source-validation-report",
+      "type": "table",
+      "produced_by": "source-validation",
+      "attorney_review_required": true,
+      "sensitive": true
+    },
+    {
+      "id": "assumption-audit-report",
+      "type": "table",
+      "produced_by": "assumption-audit",
+      "attorney_review_required": true,
+      "sensitive": true
+    },
+    {
+      "id": "privilege-check-report",
+      "type": "checklist",
+      "produced_by": "privilege-check",
+      "attorney_review_required": true,
+      "sensitive": true
+    }
+  ],
+  "final_outputs": [
+    "contract-risk-matrix",
+    "source-validation-report",
+    "assumption-audit-report",
+    "privilege-check-report"
+  ],
+  "budget": {
+    "max_graph_depth": 4,
+    "max_parallel_width": 5,
+    "max_ready_nodes": 5,
+    "max_total_estimated_tokens": 30000
+  }
+}

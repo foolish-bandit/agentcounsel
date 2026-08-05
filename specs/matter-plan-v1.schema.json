@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentcounsel.dev/specs/matter-plan-v1.schema.json",
+  "title": "AgentCounsel Matter Plan Specification v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "plan_id", "title", "source_path", "description", "tags", "required_inputs", "nodes", "artifacts", "final_outputs", "budget"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "plan_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+    "title": {"type": "string", "minLength": 1},
+    "source_path": {"type": "string", "pattern": "^(playbooks|matter-packs)/[A-Za-z0-9._/-]+\\.md$"},
+    "description": {"type": "string", "minLength": 1},
+    "tags": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+    "required_inputs": {"type": "array", "items": {"$ref": "#/$defs/input"}},
+    "nodes": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/node"}},
+    "artifacts": {"type": "array", "items": {"$ref": "#/$defs/artifact"}},
+    "final_outputs": {"type": "array", "minItems": 1, "items": {"type": "string"}, "uniqueItems": true},
+    "budget": {"$ref": "#/$defs/budget"}
+  },
+  "$defs": {
+    "slug": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$"},
+    "input": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "type", "required", "may_infer", "sensitive"],
+      "properties": {
+        "id": {"$ref": "#/$defs/slug"},
+        "type": {"enum": ["text", "document", "document-set", "enum", "date", "datetime", "boolean", "integer", "number", "jurisdiction", "object", "string-list"]},
+        "required": {"type": "boolean"}, "may_infer": {"type": "boolean"}, "sensitive": {"type": "boolean"},
+        "enum": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "items": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+      }
+    },
+    "condition": {
+      "type": "object", "additionalProperties": false,
+      "required": ["operator"],
+      "properties": {
+        "operator": {"enum": ["always", "present", "equals", "contains-any", "artifact-present", "gate-approved"]},
+        "input_id": {"$ref": "#/$defs/slug"}, "value": {"type": "string"},
+        "values": {"type": "array", "minItems": 1, "items": {"type": "string"},
+        "artifact_id": {"$ref": "#/$defs/slug"}, "gate_id": {"$ref": "#/$defs/slug"}
+      }
+    },
+    "source": {
+      "type": "object", "additionalProperties": false,
+      "required": ["kind"],
+      "properties": {"kind": {"enum": ["matter-input", "artifact", "constant", "gate-decision"]}, "id": {"type": "string"}, "value": {}}
+    },
+    "binding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["target_input_id", "source", "required"],
+      "properties": {
+        "target_input_id": {"$ref": "#/$defs/slug"}, "source": {"$ref": "#/$defs/source"},
+        "required": {"type": "boolean"},
+        "transform": {"enum": ["identity", "json-text", "join-text", "as-document-set", "artifact-ref"]}
+      }
+    },
+    "gate": {
+      "type": "object", "additionalProperties": false,
+      "required": ["severity", "instruction", "required_artifacts"],
+      "properties": {
+        "severity": {"enum": ["required", "immediate"]}, "instruction": {"type": "string", "minLength": 1},
+        "required_artifacts": {"type": "array", "items": {"$ref": "#/$defs/slug"}, "uniqueItems": true}
+      }
+    },
+    "node": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "type", "depends_on", "condition"],
+      "properties": {
+        "id": {"$ref": "#/$defs/slug"}, "type": {"enum": ["skill", "attorney-gate"]},
+        "skill_id": {"type": "string"}, "mode": {"type": "string"},
+        "depends_on": {"type": "array", "items": {"$ref": "#/$defs/slug"}, "uniqueItems": true},
+        "condition": {"$ref": "#/$defs/condition"},
+        "input_bindings": {"type": "array", "items": {"$ref": "#/$defs/binding"}},
+        "module_ids": {"type": "array", "items": {"$ref": "#/$defs/slug"}, "uniqueItems": true},
+        "produces": {"type": "array", "items": {"$ref": "#/$defs/slug"}, "uniqueItems": true},
+        "gate": {"$ref": "#/$defs/gate"}
+      }
+    },
+    "artifact": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "type", "produced_by", "attorney_review_required", "sensitive"],
+      "properties": {
+        "id": {"$ref": "#/$defs/slug"},
+        "type": {"enum": ["document", "document-set", "memo", "table", "checklist", "tracker", "timeline", "matrix", "structured-data", "section", "letter"]},
+        "produced_by": {"$ref": "#/$defs/slug"}, "attorney_review_required": {"type": "boolean"}, "sensitive": {"type": "boolean"}
+      }
+    },
+    "budget": {
+      "type": "object", "additionalProperties": false,
+      "required": ["max_graph_depth", "max_parallel_width", "max_ready_nodes", "max_total_estimated_tokens"],
+      "properties": {
+        "max_graph_depth": {"type": "integer", "minimum": 1}, "max_parallel_width": {"type": "integer", "minimum": 1},
+        "max_ready_nodes": {"type": "integer", "minimum": 1}, "max_total_estimated_tokens": {"type": "integer", "minimum": 1}
+      }
+    }
+  }
+}
+}

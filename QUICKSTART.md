@@ -16,8 +16,12 @@ Markdown.
   context, provide inputs, and review the structured draft it produces.
 - A **pack** bundles every skill in a practice area plus the safety rules and
   commands into one uploadable file — the fastest way to start.
-- For larger work there are also **matter workspaces**, **playbooks**, **review
-  panels**, **matter packs**, and **quality checks**. See
+- A **playbook** explains how a recurring task should be run; a **matter pack**
+  recommends a sequence for a broader matter type; a **matter plan** is the
+  validated graph that makes dependencies, artifact handoffs, parallel lanes,
+  and attorney gates machine-readable; and a **matter workspace** stores one
+  matter's actual documents, facts, artifacts, and decisions. Review panels and
+  quality checks inspect drafts before attorney reliance. See
   [`docs/CHOOSE_YOUR_WORKFLOW.md`](docs/CHOOSE_YOUR_WORKFLOW.md) to decide which.
 
 Not sure which surface fits your task? Read
@@ -101,6 +105,43 @@ requires no technical setup.
 7. **What not to do.** Do not delete the visible placeholders (`[CONFIRM: ...]`, `[verify jurisdiction]`) without resolving them — each is a task for a person.
 
 ---
+
+## A worked example: planning a legal research memo
+
+Matter plans organize multi-step work but do not execute legal analysis. This example builds the first ready wave for the typed legal-research graph.
+
+1. Create an input file such as `research-inputs.json`:
+
+   ```json
+   {
+     "legal-question": "[Matter question supplied by the supervising attorney]",
+     "known-facts": {"fact-1": "[User-supplied fact]"},
+     "jurisdiction": "[Confirmed jurisdiction]",
+     "existing-authorities": ["[Provided authority or source file]"],
+     "relevant-date": "[User-supplied date]",
+     "time-and-scope": "[Attorney-approved research scope]"
+   }
+   ```
+
+2. Inspect the graph:
+
+   ```bash
+   python scripts/matter_plan_cli.py show legal-research-memo --markdown
+   ```
+
+3. Build the current plan state:
+
+   ```bash
+   python scripts/matter_plan_cli.py build legal-research-memo \
+     --inputs research-inputs.json \
+     --output research-plan-state.json
+   ```
+
+4. The result identifies the ready node, blocked nodes, artifact handoffs, and the attorney scope-approval gate. It loads context only for the ready skill. It does not call a model, invent research, approve the scope, or calculate a deadline.
+5. After a person runs the ready skill and records the resulting artifact identity, rebuild the plan with an artifacts file. After the attorney approves the scope gate, rebuild with a gates file containing the explicit `approved` decision. Downstream nodes then become eligible in deterministic waves.
+6. Keep actual documents and draft outputs in a matter workspace. The exported plan receipt contains hashes, lineage, states, and presence metadata, not the raw legal question or confidential facts.
+
+The same operations are available to MCP clients through `build_matter_plan` and `verify_matter_plan_receipt`.
 
 ## A worked example: reviewing an NDA
 

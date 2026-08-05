@@ -16,6 +16,11 @@ from pathlib import Path
 from typing import Any
 
 from scripts.skill_context import build_skill_context
+from scripts.matter_plan import (
+    build_matter_plan as compile_matter_plan,
+    verify_matter_plan_receipt as verify_plan_receipt,
+)
+from scripts.build_matter_plans import search_plan_cards
 
 
 class CatalogLoadError(RuntimeError):
@@ -143,6 +148,7 @@ class CatalogService:
         index: dict[str, Any],
         router: dict[str, Any],
         skill_specs: dict[str, Any],
+        matter_plans: dict[str, Any] | None = None,
     ) -> None:
         self.root = root
         self.index = index
@@ -212,13 +218,41 @@ class CatalogService:
                 + ", ".join(missing_specs[:10])
             )
 
+        self.matter_plans = matter_plans or {"schema_version": "1.0", "plan_count": 0, "plans": []}
+        raw_plans = self.matter_plans.get("plans")
+        if not isinstance(raw_plans, list):
+            raise CatalogLoadError("metadata/matter_plans.json must contain a 'plans' list")
+        self._matter_plan_cards: dict[str, dict[str, Any]] = {}
+        plan_alias_candidates: dict[str, set[str]] = {}
+        for raw in raw_plans:
+            if not isinstance(raw, dict) or not isinstance(raw.get("plan_id"), str):
+                raise CatalogLoadError("metadata/matter_plans.json contains an invalid plan card")
+            plan_id = raw["plan_id"]
+            if plan_id in self._matter_plan_cards:
+                raise CatalogLoadError(f"Duplicate matter plan id: {plan_id}")
+            self._matter_plan_cards[plan_id] = dict(raw)
+            for alias in (plan_id, raw.get("title"), raw.get("path"), raw.get("source_path")):
+                if isinstance(alias, str) and alias.strip():
+                    plan_alias_candidates.setdefault(alias.strip().lower(), set()).add(plan_id)
+        self._matter_plan_aliases = {
+            alias: next(iter(ids))
+            for alias, ids in plan_alias_candidates.items()
+            if len(ids) == 1
+        }
+
     @classmethod
     def from_root(cls, root: Path | str) -> "CatalogService":
         root_path = Path(root).resolve()
         index = _read_json(root_path / "metadata" / "index.json")
         router = _read_json(root_path / "metadata" / "router.json")
         skill_specs = _read_json(root_path / "metadata" / "skill_specs.json")
-        return cls(root_path, index, router, skill_specs)
+        matter_path = root_path / "metadata" / "matter_plans.json"
+        matter_plans = (
+            _read_json(matter_path)
+            if matter_path.is_file()
+            else {"schema_version": "1.0", "plan_count": 0, "plans": []}
+        )
+        return cls(root_path, index, router, skill_specs, matter_plans)
 
     def list_practice_areas(self) -> list[dict[str, Any]]:
         counts = self.index.get("practice_areas")
@@ -275,6 +309,61 @@ class CatalogService:
             inputs,
             module_ids,
         )
+
+    def _resolve_matter_plan_id(self, identifier: str) -> str:
+        normalized = identifier.strip().lower()
+        if not normalized:
+            raise KeyError("Matter plan identifier must not be empty")
+        if normalized in self._matter_plan_aliases:
+            return self._matter_plan_aliases[normalized]
+        raise KeyError(f"Unknown or ambiguous matter plan identifier: {identifier}")
+
+    def list_matter_plans(self) -> list[dict[str, Any]]:
+        """Return compact validated matter-plan cards in stable ID order."""
+        return [
+            deepcopy(self._matter_plan_cards[plan_id])
+            for plan_id in sorted(self._matter_plan_cards)
+        ]
+
+    def search_matter_plans(self, query: str, limit: int = 10) -> list[dict[str, Any]]:
+        """Search matter-plan cards without loading their full JSON graphs."""
+        return search_plan_cards(self.matter_plans, query, limit)
+
+    def get_matter_plan(self, plan_id: str) -> dict[str, Any]:
+        """Return one complete declarative Matter Plan v1 graph."""
+        stable_id = self._resolve_matter_plan_id(plan_id)
+        path = self.root / str(self._matter_plan_cards[stable_id]["path"])
+        try:
+            plan = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise CatalogLoadError(f"Could not load matter plan {stable_id}: {exc}") from exc
+        if not isinstance(plan, dict):
+            raise CatalogLoadError(f"Matter plan {stable_id} is not a JSON object")
+        return plan
+
+    def build_matter_plan(
+        self,
+        plan_id: str,
+        matter_inputs: dict[str, Any] | None = None,
+        available_artifacts: dict[str, dict[str, Any]] | None = None,
+        gate_decisions: dict[str, str] | None = None,
+        node_ids: list[str] | None = None,
+    ) -> dict[str, Any]:
+        """Resolve ready, blocked, unresolved, completed, and gated plan nodes."""
+        plan = self.get_matter_plan(plan_id)
+        return compile_matter_plan(
+            self.root,
+            plan,
+            matter_inputs=matter_inputs,
+            available_artifacts=available_artifacts,
+            gate_decisions=gate_decisions,
+            explicit_node_ids=node_ids,
+            skill_specs=self._specs,
+        )
+
+    def verify_matter_plan_receipt(self, receipt: dict[str, Any]) -> dict[str, Any]:
+        """Verify a privacy-conscious matter-plan receipt against repository state."""
+        return verify_plan_receipt(self.root, receipt)
 
     def get_skill(self, skill_id: str) -> dict[str, Any]:
         card = self.get_skill_card(skill_id)

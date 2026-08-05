@@ -1,7 +1,7 @@
 {
   "name": "agentcounsel",
   "displayName": "AgentCounsel",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "A curated starter bundle of AgentCounsel legal skills: structured workflows that produce draft legal work product for attorney review. Not legal advice.",
   "author": "AgentCounsel contributors",
   "license": "MIT",

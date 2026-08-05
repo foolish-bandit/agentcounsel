@@ -59,6 +59,22 @@ The first two modularized workflows show the model:
 
 The compact cores are now below the repository's large-context band. Standard scenarios use about 58% of their pre-migration context estimate while preserving the complete deep-review package. These figures are deterministic planning estimates, not provider token counts or billing claims.
 
+## Typed matter graphs
+
+AgentCounsel can now compile recurring multi-skill matters into validated directed acyclic graphs. A **matter plan** is a machine-readable companion to a human playbook or matter pack. It declares the canonical skills, typed artifact handoffs, conditional branches, parallel review lanes, and attorney gates for the matter without executing an AI model or storing client documents.
+
+The four v0.4.0 pilot plans cover legal research memos, commercial contract review, litigation motion opposition, and privacy incident response. The planner assigns every node a visible state, loads selective context only for nodes that are actually ready, and blocks downstream work when a required input, artifact, dependency, or attorney approval is absent. Generated receipts record plan and contract hashes, artifact lineage, gate decisions, node states, execution waves, and budget arithmetic while excluding raw sensitive matter text.
+
+Use the local CLI:
+
+```bash
+python scripts/matter_plan_cli.py list
+python scripts/matter_plan_cli.py show legal-research-memo
+python scripts/matter_plan_cli.py build legal-research-memo --inputs inputs.json
+```
+
+MCP clients can use `list_matter_plans`, `search_matter_plans`, `get_matter_plan`, `build_matter_plan`, and `verify_matter_plan_receipt`. Browse the human-readable graphs in the catalog or inspect [`matter-plans/README.md`](matter-plans/README.md). Graph validation proves structure, references, gates, lineage, deterministic state resolution, and receipt integrity. It does not prove that legal analysis is correct or that a deadline is accurate.
+
 ## Practice areas
 
 AgentCounsel has **212 skills**: 177 across **20 practice areas**, plus 35 cross-cutting skills in three supporting groups (Setup, Legal Operations, Legal Methodology).
@@ -105,7 +121,8 @@ Most tasks are one skill. When the work is larger, AgentCounsel gives you severa
 | **One-off skill** | A single, self-contained task and one draft output. |
 | **Quality check** | Reviewing an existing draft — source validation, citation integrity, prose polish, red-team. |
 | **Practice-area pack** | Repeated work in one practice area, installed into your AI tool. |
-| **Matter pack** | A recurring matter *type* that runs an ordered sequence of skills. |
+| **Matter pack** | Human guidance describing a recommended sequence for a recurring matter type. |
+| **Matter plan** | A typed, auditable graph for a supported recurring matter, with dependencies, handoffs, parallel lanes, and attorney gates. |
 | **Matter workspace** | A multi-step, document-heavy, deadline- or source-sensitive, ongoing matter. |
 | **Playbook** | A recurring task type you run the same way every time (e.g., NDA review). |
 | **Review panel** | A high-risk draft that needs several supervised review passes before reliance. |
@@ -121,13 +138,14 @@ examples/           Illustrative sample outputs, with fictional facts.
 practice-profiles/  Per-practice-area configuration profiles for a legal team.
 matter-workspaces/  Scaffolds for organizing one matter — single-file templates
                     plus the canonical multi-file _template/.
-matter-packs/       Workflow bundles — recommended skill sequences per matter type.
+matter-packs/       Human-readable workflow bundles and recommended skill sequences.
+matter-plans/       Typed DAG sidecars for validated multi-skill matter execution.
 playbooks/          Repeatable recipes for recurring task types (NDA review, etc.).
 review-panels/      Supervised multi-pass review workflows for a draft.
 overlays/           Industry and sector overlays that tune skills for a context.
 adapters/           Thin integration files for specific environments.
 connectors/         External-source verification integrations (e.g., CourtListener).
-metadata/           Generated machine-readable skill index (index.json).
+metadata/           Generated skill, contract, context, pack, and matter-plan registries.
 docs/               The metadata standard, the safety model, the FAQ, and the practice-area registry.
 scripts/            Standard-library Python helpers (validation, index, packs).
 dist/               Generated platform install packs (gitignored; built by
@@ -247,10 +265,10 @@ python scripts/sync_plugin_skills.py --check   # plugin bundle is in sync
 python scripts/validate_repo.py                # full repository validation
 ```
 
-Other standard-library helpers in `scripts/` build the machine-readable skill index (`build_skill_index.py`), the per-platform install packs (`build_platform_packs.py`), the matter-workspace initializer (`init_matter_workspace.py`), and the browsable static catalog under [`site/`](site/). Every script is documented in [`docs/CLI.md`](docs/CLI.md); the recommended commands to run after each kind of edit are in [`docs/AGENT_COMMANDS.md`](docs/AGENT_COMMANDS.md). See [`VALIDATION.md`](VALIDATION.md) for the full list of checks.
+Other standard-library helpers in `scripts/` build the machine-readable skill index (`build_skill_index.py`), typed matter-plan registry (`build_matter_plans.py`), adversarial plan evaluations (`evaluate_matter_plans.py`), per-platform install packs (`build_platform_packs.py`), the matter-workspace initializer (`init_matter_workspace.py`), and the browsable static catalog under [`site/`](site/). Every script is documented in [`docs/CLI.md`](docs/CLI.md); the recommended commands to run after each kind of edit are in [`docs/AGENT_COMMANDS.md`](docs/AGENT_COMMANDS.md). See [`VALIDATION.md`](VALIDATION.md) for the full list of checks.
 
 Platform pack manifests and plugin-compatibility guidance are documented in
-[`docs/PLUGIN_COMPATIBILITY.md`](docs/PLUGIN_COMPATIBILITY.md). The generated metadata files `metadata/index.json`, `metadata/router.json`, `metadata/skill_specs.json`, `metadata/selective_context_metrics.json`, and `metadata/packs.json` are the machine-readable surfaces for skills, routing, typed execution, context budgets, and platform packs.
+[`docs/PLUGIN_COMPATIBILITY.md`](docs/PLUGIN_COMPATIBILITY.md). The generated metadata files `metadata/index.json`, `metadata/router.json`, `metadata/skill_specs.json`, `metadata/selective_context_metrics.json`, `metadata/matter_plans.json`, `metadata/matter_plan_evals.json`, and `metadata/packs.json` are the machine-readable surfaces for skills, routing, typed execution, context budgets, matter graphs, adversarial graph evaluations, and platform packs.
 
 ## Contributing
 

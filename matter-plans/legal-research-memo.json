@@ -1,0 +1,489 @@
+{
+  "schema_version": "1.0",
+  "plan_id": "legal-research-memo",
+  "title": "Legal Research Memo",
+  "source_path": "playbooks/legal-research-memo.md",
+  "description": "Plan, synthesize, treatment-check, draft, and independently review an authority-grounded legal research memo.",
+  "tags": [
+    "legal-research",
+    "memo",
+    "citations"
+  ],
+  "required_inputs": [
+    {
+      "id": "legal-question",
+      "type": "text",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "known-facts",
+      "type": "object",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "jurisdiction",
+      "type": "jurisdiction",
+      "required": true,
+      "may_infer": false,
+      "sensitive": false
+    },
+    {
+      "id": "existing-authorities",
+      "type": "document-set",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "relevant-date",
+      "type": "date",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "time-and-scope",
+      "type": "text",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    }
+  ],
+  "nodes": [
+    {
+      "id": "research-plan",
+      "type": "skill",
+      "skill_id": "legal-research/research-plan",
+      "mode": "standard",
+      "depends_on": [],
+      "condition": {
+        "operator": "always"
+      },
+      "input_bindings": [
+        {
+          "target_input_id": "legal-question-or-task-to-be-researched",
+          "source": {
+            "kind": "matter-input",
+            "id": "legal-question"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "known-facts",
+          "source": {
+            "kind": "matter-input",
+            "id": "known-facts"
+          },
+          "required": true,
+          "transform": "json-text"
+        },
+        {
+          "target_input_id": "applicable-jurisdiction",
+          "source": {
+            "kind": "matter-input",
+            "id": "jurisdiction"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "any-authority-already-provided",
+          "source": {
+            "kind": "matter-input",
+            "id": "existing-authorities"
+          },
+          "required": true,
+          "transform": "join-text"
+        },
+        {
+          "target_input_id": "time-and-scope-constraints",
+          "source": {
+            "kind": "matter-input",
+            "id": "time-and-scope"
+          },
+          "required": true
+        }
+      ],
+      "produces": [
+        "research-roadmap"
+      ]
+    },
+    {
+      "id": "approve-research-scope",
+      "type": "attorney-gate",
+      "depends_on": [
+        "research-plan"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "gate": {
+        "severity": "required",
+        "instruction": "Attorney confirms the question, jurisdiction, relevant date, and research scope before authority analysis.",
+        "required_artifacts": [
+          "research-roadmap"
+        ]
+      },
+      "produces": []
+    },
+    {
+      "id": "authority-synthesis",
+      "type": "skill",
+      "skill_id": "legal-research/authority-synthesis",
+      "mode": "deep-review",
+      "depends_on": [
+        "approve-research-scope"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "input_bindings": [
+        {
+          "target_input_id": "question-presented-the-synthesis-answers",
+          "source": {
+            "kind": "matter-input",
+            "id": "legal-question"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "set-of-authorities-cases-statutes-regulations-secondary-sources-to-be-synthesized",
+          "source": {
+            "kind": "matter-input",
+            "id": "existing-authorities"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "applicable-jurisdiction",
+          "source": {
+            "kind": "matter-input",
+            "id": "jurisdiction"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "relevant-date-for-the-analysis",
+          "source": {
+            "kind": "matter-input",
+            "id": "relevant-date"
+          },
+          "required": true
+        }
+      ],
+      "produces": [
+        "authority-synthesis"
+      ]
+    },
+    {
+      "id": "negative-treatment-check",
+      "type": "skill",
+      "skill_id": "legal-research/negative-treatment-check",
+      "mode": "deep-review",
+      "depends_on": [
+        "authority-synthesis"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "input_bindings": [
+        {
+          "target_input_id": "draft-memo-or-citation-list-whose-authorities-need-treatment-verification",
+          "source": {
+            "kind": "artifact",
+            "id": "authority-synthesis"
+          },
+          "required": true,
+          "transform": "as-document-set"
+        },
+        {
+          "target_input_id": "for-each-authority-the-full-citation-as-it-appears-in-the-source",
+          "source": {
+            "kind": "constant",
+            "value": "[Attorney to confirm citations from the authority synthesis]"
+          },
+          "required": true
+        }
+      ],
+      "produces": [
+        "treatment-report"
+      ]
+    },
+    {
+      "id": "draft-research-memo",
+      "type": "skill",
+      "skill_id": "legal-research/legal-research-memo",
+      "mode": "deep-review",
+      "depends_on": [
+        "negative-treatment-check"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "input_bindings": [
+        {
+          "target_input_id": "specific-legal-question-presented",
+          "source": {
+            "kind": "matter-input",
+            "id": "legal-question"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "known-facts",
+          "source": {
+            "kind": "matter-input",
+            "id": "known-facts"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "applicable-jurisdiction",
+          "source": {
+            "kind": "matter-input",
+            "id": "jurisdiction"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "any-authority-already-provided",
+          "source": {
+            "kind": "artifact",
+            "id": "treatment-report"
+          },
+          "required": true,
+          "transform": "artifact-ref"
+        },
+        {
+          "target_input_id": "authority-already-provided",
+          "source": {
+            "kind": "matter-input",
+            "id": "existing-authorities"
+          },
+          "required": true
+        }
+      ],
+      "produces": [
+        "research-memo"
+      ]
+    },
+    {
+      "id": "source-validation",
+      "type": "skill",
+      "skill_id": "legal-methodology/source-validation",
+      "mode": "deep-review",
+      "depends_on": [
+        "draft-research-memo"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "input_bindings": [
+        {
+          "target_input_id": "draft-legal-work-product-to-check",
+          "source": {
+            "kind": "artifact",
+            "id": "research-memo"
+          },
+          "required": true,
+          "transform": "artifact-ref"
+        },
+        {
+          "target_input_id": "cited-sources-authorities-and-underlying-record",
+          "source": {
+            "kind": "matter-input",
+            "id": "existing-authorities"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "claims-quotations-and-dates-to-validate",
+          "source": {
+            "kind": "matter-input",
+            "id": "relevant-date"
+          },
+          "required": true
+        }
+      ],
+      "produces": [
+        "source-validation-report"
+      ]
+    },
+    {
+      "id": "citation-integrity-check",
+      "type": "skill",
+      "skill_id": "legal-methodology/citation-integrity-check",
+      "mode": "deep-review",
+      "depends_on": [
+        "draft-research-memo"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "input_bindings": [
+        {
+          "target_input_id": "draft-containing-citations-or-authority-backed-propositions",
+          "source": {
+            "kind": "artifact",
+            "id": "research-memo"
+          },
+          "required": true,
+          "transform": "artifact-ref"
+        },
+        {
+          "target_input_id": "cited-authorities-or-source-materials-available-for-review",
+          "source": {
+            "kind": "matter-input",
+            "id": "existing-authorities"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "jurisdiction-court-agency-or-governing-law-context-if-known",
+          "source": {
+            "kind": "matter-input",
+            "id": "jurisdiction"
+          },
+          "required": true
+        }
+      ],
+      "produces": [
+        "citation-integrity-report"
+      ]
+    },
+    {
+      "id": "assumption-audit",
+      "type": "skill",
+      "skill_id": "legal-methodology/assumption-audit",
+      "mode": "deep-review",
+      "depends_on": [
+        "draft-research-memo"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "input_bindings": [
+        {
+          "target_input_id": "draft-legal-output-to-audit",
+          "source": {
+            "kind": "artifact",
+            "id": "research-memo"
+          },
+          "required": true,
+          "transform": "artifact-ref"
+        },
+        {
+          "target_input_id": "user-provided-facts-source-documents-and-instructions-available-for-comparison",
+          "source": {
+            "kind": "matter-input",
+            "id": "known-facts"
+          },
+          "required": true,
+          "transform": "json-text"
+        },
+        {
+          "target_input_id": "intended-use-audience-jurisdiction-and-client-role-if-known",
+          "source": {
+            "kind": "matter-input",
+            "id": "jurisdiction"
+          },
+          "required": true
+        }
+      ],
+      "produces": [
+        "assumption-audit-report"
+      ]
+    },
+    {
+      "id": "final-attorney-review",
+      "type": "attorney-gate",
+      "depends_on": [
+        "source-validation",
+        "citation-integrity-check",
+        "assumption-audit"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "gate": {
+        "severity": "required",
+        "instruction": "Attorney independently verifies every authority, resolves every assumption and placeholder, and approves the memo before reliance.",
+        "required_artifacts": [
+          "research-memo",
+          "treatment-report",
+          "source-validation-report",
+          "citation-integrity-report",
+          "assumption-audit-report"
+        ]
+      },
+      "produces": []
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "research-roadmap",
+      "type": "document",
+      "produced_by": "research-plan",
+      "attorney_review_required": true,
+      "sensitive": true
+    },
+    {
+      "id": "authority-synthesis",
+      "type": "document",
+      "produced_by": "authority-synthesis",
+      "attorney_review_required": true,
+      "sensitive": true
+    },
+    {
+      "id": "treatment-report",
+      "type": "table",
+      "produced_by": "negative-treatment-check",
+      "attorney_review_required": true,
+      "sensitive": true
+    },
+    {
+      "id": "research-memo",
+      "type": "memo",
+      "produced_by": "draft-research-memo",
+      "attorney_review_required": true,
+      "sensitive": true
+    },
+    {
+      "id": "source-validation-report",
+      "type": "table",
+      "produced_by": "source-validation",
+      "attorney_review_required": true,
+      "sensitive": true
+    },
+    {
+      "id": "citation-integrity-report",
+      "type": "table",
+      "produced_by": "citation-integrity-check",
+      "attorney_review_required": true,
+      "sensitive": true
+    },
+    {
+      "id": "assumption-audit-report",
+      "type": "table",
+      "produced_by": "assumption-audit",
+      "attorney_review_required": true,
+      "sensitive": true
+    }
+  ],
+  "final_outputs": [
+    "research-memo",
+    "treatment-report",
+    "source-validation-report",
+    "citation-integrity-report",
+    "assumption-audit-report"
+  ],
+  "budget": {
+    "max_graph_depth": 7,
+    "max_parallel_width": 3,
+    "max_ready_nodes": 3,
+    "max_total_estimated_tokens": 28000
+  }
+}

@@ -13,8 +13,7 @@ review** — never legal advice, never a final answer, never an opinion. The
 library supplies process and structure; a qualified, licensed legal
 professional reviews and adopts every output.
 
-There is no runtime, build system, or package manager. The library is plain
-Markdown.
+The canonical legal library is plain Markdown. Standard-library tooling validates and packages it, and an optional local MCP/CLI layer provides typed routing, selective context, and matter-plan inspection. No hosted backend is required.
 
 ## First, decide which job you are doing
 
@@ -39,13 +38,17 @@ accident.
    skill; browse `SKILLS_INDEX.md`; `COMMANDS.md` lists slash-style shorthands.
    `CONTEXT.md` defines the repository's vocabulary — use terms like "skill,"
    "template," and "canonical" precisely.
-3. **Open the single narrowest relevant skill.** Read its `SKILL.md` and any
+3. **For a supported multi-step matter, inspect the matter plan.** Use
+   `matter-plans/` or `scripts/matter_plan_cli.py` when you need typed
+   dependencies, artifact handoffs, parallel lanes, and attorney gates. A plan
+   organizes work; it does not execute legal analysis or approve a gate.
+4. **Open the single narrowest relevant skill.** Read its `SKILL.md` and any
    file in its `templates/` folder. Do not load unrelated practice areas —
    extra context degrades the work (see "Why this discipline exists").
-4. **Follow the skill exactly.** Satisfy its Required Inputs gate before
+5. **Follow the skill exactly.** Satisfy its Required Inputs gate before
    substantive work. Follow its Workflow and Output Format. Do not improvise
    steps or invent a workflow.
-5. **Hand off for review.** Deliver with the skill's Attorney Verification
+6. **Hand off for review.** Deliver with the skill's Attorney Verification
    Checklist, unchecked. The agent never checks the boxes — the reviewing
    attorney does.
 
@@ -136,16 +139,18 @@ overlays/           Industry/jurisdiction overlays that tune existing
 practice-profiles/  Per-practice-area configuration for a legal team.
 playbooks/          Workflow recipes that sequence skills for a recurring
                     task type. See playbooks/README.md.
-matter-packs/       Workflow bundles — a recommended sequence of skills
-                    for a matter type. See matter-packs/README.md.
+matter-packs/       Human-readable recommended skill sequences.
+                    See matter-packs/README.md.
+matter-plans/       Typed DAG sidecars with handoffs and attorney gates.
+                    See matter-plans/README.md.
 review-panels/      Supervised multi-pass review workflows.
                     See review-panels/README.md.
 matter-workspaces/  Single-file scaffolds for organizing one matter.
 adapters/           Thin per-environment integration files.
 evals/              Lightweight, non-legal quality checks for skills.
 scripts/            Validation and build tooling (Python stdlib only).
-metadata/           Generated machine-readable index, router, and pack
-                    manifests (built by scripts/, never hand-edited).
+metadata/           Generated skill, contract, context, matter-plan, eval,
+                    router, and pack registries (never hand-edited).
 reports/            Generated eval-coverage and skill-quality reports, plus
                     the hand-maintained practice-area expansion plan.
 site/               Generated static catalog of the skills.

@@ -1,0 +1,448 @@
+{
+  "schema_version": "1.0",
+  "plan_id": "privacy-incident-response",
+  "title": "Privacy Incident Response",
+  "source_path": "matter-packs/privacy.md",
+  "description": "Organize breach facts, force immediate reportability review, and run parallel chronology, preservation, and policy work before communication approval.",
+  "tags": [
+    "privacy",
+    "incident",
+    "breach",
+    "preservation"
+  ],
+  "required_inputs": [
+    {
+      "id": "incident-summary",
+      "type": "text",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "discovery-date",
+      "type": "date",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "affected-data",
+      "type": "text",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "privilege-posture-text",
+      "type": "text",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "incident-description",
+      "type": "object",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "trigger-dates",
+      "type": "object",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "privilege-posture",
+      "type": "object",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "incident-records",
+      "type": "document-set",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "chronology-date-range",
+      "type": "date",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "preservation-trigger-date",
+      "type": "date",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "preservation-scope",
+      "type": "text",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "custodians-and-systems",
+      "type": "text",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "published-policy",
+      "type": "document",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "actual-practices",
+      "type": "text",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "processing-context",
+      "type": "document",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    }
+  ],
+  "nodes": [
+    {
+      "id": "breach-response",
+      "type": "skill",
+      "skill_id": "privacy/breach-response-workflow",
+      "mode": "deep-review",
+      "depends_on": [],
+      "condition": {
+        "operator": "always"
+      },
+      "input_bindings": [
+        {
+          "target_input_id": "description-of-the-incident-as-currently-understood-what-happened-how-it-was-discovered-and-its-containment-status",
+          "source": {
+            "kind": "matter-input",
+            "id": "incident-summary"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "discovery-date-and-any-other-trigger-dates-as-user-supplied-facts",
+          "source": {
+            "kind": "matter-input",
+            "id": "discovery-date"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "data-elements-data-subject-populations-and-systems-believed-to-be-affected",
+          "source": {
+            "kind": "matter-input",
+            "id": "affected-data"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "privilege-posture-whether-the-investigation-is-being-conducted-at-the-direction-of-counsel",
+          "source": {
+            "kind": "matter-input",
+            "id": "privilege-posture-text"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "incident-description",
+          "source": {
+            "kind": "matter-input",
+            "id": "incident-description"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "discovery-and-trigger-dates",
+          "source": {
+            "kind": "matter-input",
+            "id": "trigger-dates"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "privilege-posture",
+          "source": {
+            "kind": "matter-input",
+            "id": "privilege-posture"
+          },
+          "required": true
+        }
+      ],
+      "produces": [
+        "breach-response-package"
+      ]
+    },
+    {
+      "id": "immediate-reportability-review",
+      "type": "attorney-gate",
+      "depends_on": [
+        "breach-response"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "gate": {
+        "severity": "immediate",
+        "instruction": "Counsel immediately reviews reportability questions, contractual notices, privilege posture, and every unverified clock.",
+        "required_artifacts": [
+          "breach-response-package"
+        ]
+      },
+      "produces": []
+    },
+    {
+      "id": "litigation-chronology",
+      "type": "skill",
+      "skill_id": "litigation/litigation-chronology",
+      "mode": "deep-review",
+      "depends_on": [
+        "immediate-reportability-review"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "input_bindings": [
+        {
+          "target_input_id": "source-documents-records-and-correspondence",
+          "source": {
+            "kind": "matter-input",
+            "id": "incident-records"
+          },
+          "required": true,
+          "transform": "join-text"
+        },
+        {
+          "target_input_id": "matter-context",
+          "source": {
+            "kind": "artifact",
+            "id": "breach-response-package"
+          },
+          "required": true,
+          "transform": "artifact-ref"
+        },
+        {
+          "target_input_id": "date-range-and-events-of-interest",
+          "source": {
+            "kind": "matter-input",
+            "id": "chronology-date-range"
+          },
+          "required": true
+        }
+      ],
+      "produces": [
+        "incident-chronology"
+      ]
+    },
+    {
+      "id": "legal-hold",
+      "type": "skill",
+      "skill_id": "litigation/legal-hold",
+      "mode": "deep-review",
+      "depends_on": [
+        "immediate-reportability-review"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "input_bindings": [
+        {
+          "target_input_id": "matter-and-the-attorney-confirmed-preservation-trigger-date",
+          "source": {
+            "kind": "matter-input",
+            "id": "preservation-trigger-date"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "preservation-scope",
+          "source": {
+            "kind": "artifact",
+            "id": "breach-response-package"
+          },
+          "required": true,
+          "transform": "artifact-ref"
+        },
+        {
+          "target_input_id": "custodians-and-data-systems-involved",
+          "source": {
+            "kind": "matter-input",
+            "id": "custodians-and-systems"
+          },
+          "required": true
+        }
+      ],
+      "produces": [
+        "legal-hold-package"
+      ]
+    },
+    {
+      "id": "privacy-policy-gap-review",
+      "type": "skill",
+      "skill_id": "privacy/privacy-policy-gap-review",
+      "mode": "deep-review",
+      "depends_on": [
+        "immediate-reportability-review"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "input_bindings": [
+        {
+          "target_input_id": "published-privacy-policy-or-notice",
+          "source": {
+            "kind": "matter-input",
+            "id": "published-policy"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "description-of-the-organizations-actual-data-practices",
+          "source": {
+            "kind": "artifact",
+            "id": "breach-response-package"
+          },
+          "required": true,
+          "transform": "artifact-ref"
+        },
+        {
+          "target_input_id": "applicable-products-and-processing-context",
+          "source": {
+            "kind": "matter-input",
+            "id": "processing-context"
+          },
+          "required": true
+        }
+      ],
+      "produces": [
+        "policy-gap-report"
+      ]
+    },
+    {
+      "id": "regulatory-risk-review",
+      "type": "attorney-gate",
+      "depends_on": [
+        "litigation-chronology",
+        "legal-hold",
+        "privacy-policy-gap-review"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "gate": {
+        "severity": "required",
+        "instruction": "Attorney reviews reportability, preservation, policy gaps, and regulator-facing risk.",
+        "required_artifacts": [
+          "breach-response-package",
+          "incident-chronology",
+          "legal-hold-package",
+          "policy-gap-report"
+        ]
+      },
+      "produces": []
+    },
+    {
+      "id": "external-communication-review",
+      "type": "attorney-gate",
+      "depends_on": [
+        "litigation-chronology",
+        "legal-hold",
+        "privacy-policy-gap-review"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "gate": {
+        "severity": "required",
+        "instruction": "Attorney reviews every individual, regulator, insurer, customer, and vendor communication before sending.",
+        "required_artifacts": [
+          "breach-response-package",
+          "incident-chronology",
+          "legal-hold-package",
+          "policy-gap-report"
+        ]
+      },
+      "produces": []
+    },
+    {
+      "id": "final-attorney-review",
+      "type": "attorney-gate",
+      "depends_on": [
+        "regulatory-risk-review",
+        "external-communication-review"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "gate": {
+        "severity": "required",
+        "instruction": "Attorney confirms the response plan and every notification or preservation decision. No deadline is computed by AgentCounsel.",
+        "required_artifacts": [
+          "breach-response-package",
+          "incident-chronology",
+          "legal-hold-package",
+          "policy-gap-report"
+        ]
+      },
+      "produces": []
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "breach-response-package",
+      "type": "structured-data",
+      "produced_by": "breach-response",
+      "attorney_review_required": true,
+      "sensitive": true
+    },
+    {
+      "id": "incident-chronology",
+      "type": "timeline",
+      "produced_by": "litigation-chronology",
+      "attorney_review_required": true,
+      "sensitive": true
+    },
+    {
+      "id": "legal-hold-package",
+      "type": "document",
+      "produced_by": "legal-hold",
+      "attorney_review_required": true,
+      "sensitive": true
+    },
+    {
+      "id": "policy-gap-report",
+      "type": "table",
+      "produced_by": "privacy-policy-gap-review",
+      "attorney_review_required": true,
+      "sensitive": true
+    }
+  ],
+  "final_outputs": [
+    "breach-response-package",
+    "incident-chronology",
+    "legal-hold-package",
+    "policy-gap-report"
+  ],
+  "budget": {
+    "max_graph_depth": 5,
+    "max_parallel_width": 3,
+    "max_ready_nodes": 3,
+    "max_total_estimated_tokens": 30000
+  }
+}

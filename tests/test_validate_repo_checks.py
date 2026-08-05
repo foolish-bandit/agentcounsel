@@ -177,5 +177,10 @@ class TestCheckPracticeAreaDocSync(_FixtureTestCase):
         self.assertTrue(any("beta" in e for e in vr.errors), vr.errors)
 
 
+class TestExpectedDirectories(unittest.TestCase):
+    def test_matter_plans_is_required_repository_surface(self):
+        self.assertIn("matter-plans", vr.EXPECTED_DIRS)
+
+
 if __name__ == "__main__":
     unittest.main()

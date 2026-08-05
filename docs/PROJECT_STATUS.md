@@ -22,6 +22,8 @@ CI tooling on every change:
 - The generated metadata: [`../metadata/index.json`](../metadata/index.json), [`../metadata/router.json`](../metadata/router.json), [`../metadata/skill_specs.json`](../metadata/skill_specs.json), [`../metadata/selective_context_metrics.json`](../metadata/selective_context_metrics.json), and [`../metadata/packs.json`](../metadata/packs.json).
 - **Platform packs** that bundle skills, core rules, and quality checks for a
   given platform.
+- **Typed execution and selective context:** all 212 skills compile to validated contracts; modular workflows use deterministic, fail-closed context selection, provenance hashes, and CI-enforced budgets. The MCP retrieval surface and portable packages are validated on every change.
+- **Matter Plan v1 registry and planner:** four pilot matter graphs compile into deterministic states and execution waves with typed artifact handoffs, explicit attorney gates, lazy context loading, privacy-conscious receipts, generated metrics, and adversarial mutation checks. The graph model is stable enough for the pilots, while plan authoring conventions remain pre-1.0.
 - The **validation and CI scripts** in [`../scripts/`](../scripts/), run by
   [`../.github/workflows/`](../.github/workflows/) on every pull request. See
   [`../VALIDATION.md`](../VALIDATION.md).
@@ -55,7 +57,7 @@ always require a human attorney:
 These surfaces exist and are usable, but are newer and still settling. Expect
 their structure and conventions to keep evolving:
 
-- **Typed execution and selective context** are new but fully validated. Every skill has a compiled contract, while the first two physically modularized workflows exercise deterministic mode- and input-based loading. The MCP bundle API, context budgets, decision traces, and pack compatibility are expected to evolve before 1.0.
+- **Matter-plan authoring beyond the four pilots.** The planner, receipts, CLI, MCP tools, and graph validation are fully exercised, but only four recurring legal matters have reviewed plan sidecars. New plans should be added deliberately with practitioner review, lifecycle scenarios, and mutation tests rather than generated mechanically from prose.
 - **Playbooks** in [`../playbooks/`](../playbooks/). See
   [`PLAYBOOKS.md`](PLAYBOOKS.md).
 - **Review panels** in [`../review-panels/`](../review-panels/). See

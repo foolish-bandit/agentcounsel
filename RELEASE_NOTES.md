@@ -1,97 +1,116 @@
-# AgentCounsel v0.3.0: Deterministic Selective Context
+# AgentCounsel v0.4.0: Typed Matter Graphs
 
 **Release date:** 2026-08-04
 **License:** MIT
 
-> AgentCounsel produces **draft legal work product for attorney review**. It does not provide legal advice, replace a licensed attorney, or create an attorney-client relationship.
+> AgentCounsel produces **draft legal work product for attorney review**. It does not provide legal advice, replace a licensed attorney, compute legal deadlines, or create an attorney-client relationship.
 
-AgentCounsel v0.3.0 turns the Markdown library into a more precise execution substrate without making a runtime mandatory. All 212 canonical skills now have validated typed contracts. Clients that use the optional MCP catalog can retrieve the narrowest applicable context bundle, understand exactly why each module was or was not selected, and reproduce the bundle from its content fingerprint.
+AgentCounsel v0.4.0 adds a deterministic whole-matter planning layer on top of the 212 typed legal skills released in v0.3.0. The new Matter Plan v1 format turns selected playbooks and matter packs into validated dependency graphs with typed artifact handoffs, explicit attorney gates, parallel review lanes, lazy context loading, and privacy-conscious receipts. It plans work; it does not execute an AI model or decide legal strategy.
 
 ## Highlights
 
-### Deterministic selective context
+### Four typed legal matter graphs
 
-Skill Specification v2 now supports:
+The first pilots cover:
 
-- controlled `string-list` inputs;
-- machine-readable module activation by mode and typed input;
-- `always`, `present`, `equals`, and `contains-any` operators;
-- fail-closed behavior when activation inputs are missing;
-- scenario-specific context budgets; and
-- non-weakening validation that preserves attorney review, source discipline, evidence requirements, and the prohibition on deadline calculation.
+- **Legal Research Memo:** research planning, attorney scope approval, authority synthesis, negative-treatment review, memo drafting, three parallel methodology checks, and final attorney review.
+- **Commercial Contract Review:** core risk review, optional SOW and prior-redline branches, parallel source/assumption/privilege checks, a contract-review gate, and final attorney review.
+- **Litigation Motion Opposition:** research planning and scope approval, authority synthesis, the selectively loaded deep-review opposition workflow, parallel methodology checks, litigation-risk review, and final attorney review.
+- **Privacy Incident Response:** breach-response intake, immediate reportability escalation, parallel chronology, preservation, and policy-gap work, regulatory and external-communication gates, and final attorney review.
 
-The new `get_skill_context` MCP tool returns the canonical core plus only the selected modules. It includes normalized inputs, missing required inputs, unresolved conditions, token-planning estimates, per-file hashes, inherited-rule dependency hashes, a compiled-contract `contract_sha256`, a complete module-selection trace, and a deterministic `bundle_sha256`.
+Together the pilots contain **34 nodes**, including **23 canonical skill nodes**, **11 attorney gates**, and **23 typed artifact identities**.
 
-### Two flagship skills modularized
+### Deterministic graph states and execution waves
 
-The two skills that previously exceeded the repository's large-context threshold were decomposed without weakening their deep-review obligations:
+Every node receives exactly one visible state: `ready`, `blocked`, `unresolved`, `not-selected`, `completed`, `approved`, or `rejected`. Missing non-inferable inputs, artifacts, dependencies, and attorney approvals fail closed. Safely skipped optional branches do not block downstream completion, while unresolved or rejected branches do.
 
-- **Motion Opposition Drafter:** quick triage loads the compact core; standard adds motion deconstruction and opposition drafting; deep review adds the expanded verification module.
-- **Infringement Triage:** standard and deep modes load common factor and output modules, then only the right-specific modules implicated by trademark, copyright, patent, or trade secret inputs. Multi-right matters load multiple modules in stable order.
+The planner computes stable topological order and groups dependency-independent work into parallel waves. It loads Skill Specification v2 context only for genuinely ready nodes. Blocked nodes carry no skill content, avoiding whole-matter prompt inflation.
 
-Measured against the pre-migration baselines:
+### Typed artifact handoffs
 
-| Workflow | Scenario | Estimated context ratio |
-|---|---|---:|
-| Infringement Triage | quick triage | 34.8% |
-| Infringement Triage | standard, single right | 58.0% to 58.3% |
-| Infringement Triage | deep, all rights | 89.1% |
-| Motion Opposition Drafter | quick triage | 38.0% |
-| Motion Opposition Drafter | standard | 58.5% |
-| Motion Opposition Drafter | deep review | 70.0% |
+Plan artifacts are first-class identities with one producer, declared consumers, target skill inputs, sensitivity metadata, and attorney-review requirements. The plan returns handoff manifests rather than copying document content between nodes. Actual legal documents and drafts remain in the user's matter workspace.
 
-These are deterministic one-token-per-four-characters planning estimates. They are not provider token counts, latency measurements, or billing claims.
+### Privacy-conscious, verifiable receipts
 
-### Context budgets are now release gates
+Each plan build can emit a deterministic receipt containing:
 
-Nine generated scenarios are checked on every CI run. A scenario fails when it is incomplete, leaves a required module unresolved, or exceeds its declared ratio. The machine-readable results live in `metadata/selective_context_metrics.json`; the human scorecard lives in `reports/selective-context.md`.
+- plan and human-guidance hashes;
+- node states and reasons;
+- execution waves and budget arithmetic;
+- attorney-gate decisions;
+- artifact lineage and optional caller-supplied content digests;
+- selected skill contract hashes and ready-context fingerprints; and
+- a final receipt SHA-256.
 
-### Platform packs preserve modular resources
+Raw sensitive matter inputs, document text, draft work product, artifact paths, and free-text gate notes are excluded. Verification detects plan, source, contract inventory, context resources, state, lineage, gate, and arithmetic drift. Receipts are deterministic integrity and self-consistency records, not digital signatures or proof of who approved a gate; approval identity and authority remain the caller's responsibility.
 
-ChatGPT, Claude, Gemini, and repo-agent distributions now include custom typed contracts and every resource those contracts may select. Claude ZIP packs use unique flattened filenames for safe Project uploads. Consolidated ChatGPT and Gemini packs explain that logical selection does not physically remove already-uploaded content; true prompt-size reduction requires MCP or another client that sends only the selected bundle.
+### MCP and CLI access
 
-### Complete decision traces
+The MCP catalog adds:
 
-Every declared module receives one deterministic status: `selected`, `not-selected`, or `unresolved`, with a human-readable reason. This makes omissions visible. The bundle fingerprint incorporates the complete compiled-contract fingerprint and inherited-rule hashes, so contract, global-rule, or routing changes remain distinguishable even when the selected Markdown content does not change.
+- `list_matter_plans`
+- `search_matter_plans`
+- `get_matter_plan`
+- `build_matter_plan`
+- `verify_matter_plan_receipt`
 
-### Complete catalog execution packages
+The standard-library CLI supports `list`, `show`, `build`, and `verify` commands with JSON or Markdown output. No model provider, account, database, or third-party runtime is required.
 
-Custom-spec skill pages now show the typed contract, every module's activation rule, and the underlying Markdown resources. **Copy Core Skill** preserves the compact quick-triage path; **Copy Full Package** produces a portable all-resource package for standard or deep work; **Copy One-Off Prompt** includes the complete package automatically. Ordinary skills retain the simpler one-file experience. The catalog states plainly that the portable full package is complete but not context-minimal; exact prompt-size reduction still requires `get_skill_context` or an equivalent selective client.
+### Accessible plan catalog
+
+The static catalog now includes a matter-plan index and one page per pilot. Each page has an accessible dependency SVG, a complete text edge alternative, canonical skill links, clearly labeled attorney gates, artifact and binding tables, raw plan JSON, and copyable CLI commands. No graph visualization dependency was added.
+
+### Adversarial graph evaluation
+
+Sixteen representative lifecycle scenarios exercise missing-input, first-ready-wave, gate-approved continuation, optional-branch, and completed-final states. Eight destructive mutations prove the validators and receipt verifier detect:
+
+- cycle injection;
+- gate bypass;
+- dependency removal;
+- artifact producer substitution;
+- raw sensitive input injected into a receipt;
+- token arithmetic tampering;
+- skill mode substitution; and
+- context attached to a blocked node.
+
+All scenarios stay within declared graph and ready-context budgets.
 
 ## Repository state
 
-- 212 canonical skills across 20 substantive practice areas and three cross-cutting groups.
-- 5 reviewed custom Skill Specification v2 sidecars.
-- 2 physically modularized flagship skills.
-- 9 selective-context scenarios, all complete and within budget.
-- 587 skill eval cases, 18 benchmark cases, 31 router cases, and 14 static cases.
-- 287 generated HTML pages plus `llms.txt` and `llms-full.txt`.
-- No new runtime dependency in the context engine or generators. The optional MCP adapter remains the only third-party Python dependency.
+- 212 canonical legal skills and typed Skill Specification v2 contracts.
+- 4 Matter Plan v1 pilots.
+- 34 plan nodes: 23 skills and 11 attorney gates.
+- 23 typed plan artifacts.
+- 16 lifecycle scenarios and 8/8 detected mutations.
+- 170 standard-library unit tests.
+- 587 existing skill eval cases remain intact.
+- 292 generated catalog pages.
+- No new runtime dependency.
 
-## Safety properties preserved
+## Safety boundaries
 
-- Every output remains draft legal work product requiring attorney review.
+- Matter graphs organize work; they do not determine legal strategy or certify legal correctness.
+- Attorney gates never auto-complete.
 - Required legal inputs are not inferred.
-- Missing module activation inputs fail closed.
-- Legal authority, quotations, facts, and deadlines must not be invented.
-- Deadline calculation remains prohibited.
-- Deep bundles preserve the material workflow and verification obligations extracted from the former monolithic skills.
-- Context fingerprints support audit and replay; they do not certify legal correctness or attorney approval.
+- Legal deadlines are never calculated.
+- Blocked nodes do not load context.
+- Graph validity does not establish that authority is current, a claim is supported, or a draft may be relied upon.
+- Every final artifact remains draft legal work product requiring independent attorney review.
 
 ## Validation
 
-The release gate is:
+The release gate remains:
 
 ```bash
 python scripts/check_all.py
 ```
 
-It validates plugin synchronization, repository structure, the complete unit suite, generated skill and contract registries, selective-context budgets, platform packs, context and health reports, all eval schemas and required candidates, legal-prose safety checks, generated reports, and the static site.
+It now includes 18 stages covering repository structure, 186 unit tests, generated skill and matter registries, selective-context and matter-plan budgets, privacy-conscious receipt verification, adversarial graph mutations, platform packs, 587 skill eval cases, legal-prose checks, and the static site.
 
 ## Open-source research
 
-The architecture was independently implemented after reviewing progressive disclosure and context-selection patterns from Anthropic Skills, LangChain context engineering and Bigtool, the MCP resource/tool separation, OpenAI Agents SDK tracing, Promptfoo's declarative eval discipline, and Microsoft agent-framework interoperability. No source code, prompt text, schema, or examples from those projects were copied. The research classification is recorded in `docs/OSS_BORROWING_MAP.md`.
+Matter Graph v1 was independently implemented after reviewing typed-state and subgraph patterns in LangGraph, typed handoffs and traceability in the OpenAI Agents SDK, deterministic replay concepts from Temporal, state and cache-key concepts from Prefect, asset-lineage concepts from Dagster, and the emerging MCP Tasks surface as a future compatibility target. AgentCounsel imports none of those runtimes and copies no code, schema, prompts, or examples. The research record is in `docs/OSS_BORROWING_MAP.md`.
 
 ## Upgrade notes
 
-Existing plain-Markdown workflows continue to work. Existing Phase 2A specs compile unchanged. MCP clients may adopt `get_skill_context` incrementally. Pack builders should regenerate artifacts because the pack manifest schema is now 1.1 and includes custom specs and selectable resources.
+Existing Markdown skills, platform packs, Skill Specification v2 clients, and `get_skill_context` calls remain compatible. New clients may adopt matter plans incrementally. Run `python scripts/build_matter_plans.py --check` and `python scripts/evaluate_matter_plans.py --check` when adding or editing a plan.

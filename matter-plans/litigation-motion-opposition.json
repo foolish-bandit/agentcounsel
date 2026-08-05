@@ -1,0 +1,487 @@
+{
+  "schema_version": "1.0",
+  "plan_id": "litigation-motion-opposition",
+  "title": "Litigation Motion Opposition",
+  "source_path": "matter-packs/litigation.md",
+  "description": "Scope research, synthesize authority, draft a deep-review opposition, and run parallel record, citation, and assumption checks before filing approval.",
+  "tags": [
+    "litigation",
+    "motion",
+    "opposition"
+  ],
+  "required_inputs": [
+    {
+      "id": "legal-question",
+      "type": "text",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "known-facts",
+      "type": "text",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "jurisdiction",
+      "type": "jurisdiction",
+      "required": true,
+      "may_infer": false,
+      "sensitive": false
+    },
+    {
+      "id": "existing-authorities",
+      "type": "document-set",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "relevant-date",
+      "type": "date",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "time-and-scope",
+      "type": "text",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "motion-record",
+      "type": "document",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "case-theory",
+      "type": "text",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "record-materials",
+      "type": "document-set",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    },
+    {
+      "id": "response-deadline-as-stated",
+      "type": "text",
+      "required": true,
+      "may_infer": false,
+      "sensitive": true
+    }
+  ],
+  "nodes": [
+    {
+      "id": "research-plan",
+      "type": "skill",
+      "skill_id": "legal-research/research-plan",
+      "mode": "standard",
+      "depends_on": [],
+      "condition": {
+        "operator": "always"
+      },
+      "input_bindings": [
+        {
+          "target_input_id": "legal-question-or-task-to-be-researched",
+          "source": {
+            "kind": "matter-input",
+            "id": "legal-question"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "known-facts",
+          "source": {
+            "kind": "matter-input",
+            "id": "known-facts"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "applicable-jurisdiction",
+          "source": {
+            "kind": "matter-input",
+            "id": "jurisdiction"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "any-authority-already-provided",
+          "source": {
+            "kind": "matter-input",
+            "id": "existing-authorities"
+          },
+          "required": true,
+          "transform": "join-text"
+        },
+        {
+          "target_input_id": "time-and-scope-constraints",
+          "source": {
+            "kind": "matter-input",
+            "id": "time-and-scope"
+          },
+          "required": true
+        }
+      ],
+      "produces": [
+        "research-roadmap"
+      ]
+    },
+    {
+      "id": "approve-research-scope",
+      "type": "attorney-gate",
+      "depends_on": [
+        "research-plan"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "gate": {
+        "severity": "required",
+        "instruction": "Attorney approves the opposition research question, jurisdiction, date, and scope.",
+        "required_artifacts": [
+          "research-roadmap"
+        ]
+      },
+      "produces": []
+    },
+    {
+      "id": "authority-synthesis",
+      "type": "skill",
+      "skill_id": "legal-research/authority-synthesis",
+      "mode": "deep-review",
+      "depends_on": [
+        "approve-research-scope"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "input_bindings": [
+        {
+          "target_input_id": "question-presented-the-synthesis-answers",
+          "source": {
+            "kind": "matter-input",
+            "id": "legal-question"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "set-of-authorities-cases-statutes-regulations-secondary-sources-to-be-synthesized",
+          "source": {
+            "kind": "matter-input",
+            "id": "existing-authorities"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "applicable-jurisdiction",
+          "source": {
+            "kind": "matter-input",
+            "id": "jurisdiction"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "relevant-date-for-the-analysis",
+          "source": {
+            "kind": "matter-input",
+            "id": "relevant-date"
+          },
+          "required": true
+        }
+      ],
+      "produces": [
+        "authority-synthesis"
+      ]
+    },
+    {
+      "id": "motion-opposition",
+      "type": "skill",
+      "skill_id": "litigation/motion-opposition-drafter",
+      "mode": "deep-review",
+      "depends_on": [
+        "authority-synthesis"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "input_bindings": [
+        {
+          "target_input_id": "movants-motion-memorandum-and-any-supporting-declarations-or-exhibits",
+          "source": {
+            "kind": "matter-input",
+            "id": "motion-record"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "case-theory-and-the-clients-position-in-opposition",
+          "source": {
+            "kind": "matter-input",
+            "id": "case-theory"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "relevant-record-materials-that-support-the-opposition",
+          "source": {
+            "kind": "matter-input",
+            "id": "record-materials"
+          },
+          "required": true,
+          "transform": "join-text"
+        },
+        {
+          "target_input_id": "response-deadline-as-stated-on-the-docket-or-scheduling-order",
+          "source": {
+            "kind": "matter-input",
+            "id": "response-deadline-as-stated"
+          },
+          "required": true
+        }
+      ],
+      "produces": [
+        "opposition-draft"
+      ]
+    },
+    {
+      "id": "source-validation",
+      "type": "skill",
+      "skill_id": "legal-methodology/source-validation",
+      "mode": "deep-review",
+      "depends_on": [
+        "motion-opposition"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "input_bindings": [
+        {
+          "target_input_id": "draft-legal-work-product-to-check",
+          "source": {
+            "kind": "artifact",
+            "id": "opposition-draft"
+          },
+          "required": true,
+          "transform": "artifact-ref"
+        },
+        {
+          "target_input_id": "cited-sources-authorities-and-underlying-record",
+          "source": {
+            "kind": "matter-input",
+            "id": "record-materials"
+          },
+          "required": true
+        },
+        {
+          "target_input_id": "claims-quotations-and-dates-to-validate",
+          "source": {
+            "kind": "matter-input",
+            "id": "relevant-date"
+          },
+          "required": true
+        }
+      ],
+      "produces": [
+        "source-validation-report"
+      ]
+    },
+    {
+      "id": "citation-integrity-check",
+      "type": "skill",
+      "skill_id": "legal-methodology/citation-integrity-check",
+      "mode": "deep-review",
+      "depends_on": [
+        "motion-opposition"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "input_bindings": [
+        {
+          "target_input_id": "draft-containing-citations-or-authority-backed-propositions",
+          "source": {
+            "kind": "artifact",
+            "id": "opposition-draft"
+          },
+          "required": true,
+          "transform": "artifact-ref"
+        },
+        {
+          "target_input_id": "cited-authorities-or-source-materials-available-for-review",
+          "source": {
+            "kind": "artifact",
+            "id": "authority-synthesis"
+          },
+          "required": true,
+          "transform": "as-document-set"
+        },
+        {
+          "target_input_id": "jurisdiction-court-agency-or-governing-law-context-if-known",
+          "source": {
+            "kind": "matter-input",
+            "id": "jurisdiction"
+          },
+          "required": true
+        }
+      ],
+      "produces": [
+        "citation-integrity-report"
+      ]
+    },
+    {
+      "id": "assumption-audit",
+      "type": "skill",
+      "skill_id": "legal-methodology/assumption-audit",
+      "mode": "deep-review",
+      "depends_on": [
+        "motion-opposition"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "input_bindings": [
+        {
+          "target_input_id": "draft-legal-output-to-audit",
+          "source": {
+            "kind": "artifact",
+            "id": "opposition-draft"
+          },
+          "required": true,
+          "transform": "artifact-ref"
+        },
+        {
+          "target_input_id": "user-provided-facts-source-documents-and-instructions-available-for-comparison",
+          "source": {
+            "kind": "matter-input",
+            "id": "record-materials"
+          },
+          "required": true,
+          "transform": "join-text"
+        },
+        {
+          "target_input_id": "intended-use-audience-jurisdiction-and-client-role-if-known",
+          "source": {
+            "kind": "matter-input",
+            "id": "jurisdiction"
+          },
+          "required": true
+        }
+      ],
+      "produces": [
+        "assumption-audit-report"
+      ]
+    },
+    {
+      "id": "litigation-risk-review",
+      "type": "attorney-gate",
+      "depends_on": [
+        "source-validation",
+        "citation-integrity-check",
+        "assumption-audit"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "gate": {
+        "severity": "required",
+        "instruction": "Attorney reviews record citations, authorities, weak points, procedural posture, and filing risk.",
+        "required_artifacts": [
+          "opposition-draft",
+          "source-validation-report",
+          "citation-integrity-report",
+          "assumption-audit-report"
+        ]
+      },
+      "produces": []
+    },
+    {
+      "id": "final-attorney-review",
+      "type": "attorney-gate",
+      "depends_on": [
+        "litigation-risk-review"
+      ],
+      "condition": {
+        "operator": "always"
+      },
+      "gate": {
+        "severity": "required",
+        "instruction": "Attorney confirms every citation, deadline, argument, and record assertion before filing.",
+        "required_artifacts": [
+          "opposition-draft",
+          "source-validation-report",
+          "citation-integrity-report",
+          "assumption-audit-report"
+        ]
+      },
+      "produces": []
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "research-roadmap",
+      "type": "document",
+      "produced_by": "research-plan",
+      "attorney_review_required": true,
+      "sensitive": true
+    },
+    {
+      "id": "authority-synthesis",
+      "type": "document",
+      "produced_by": "authority-synthesis",
+      "attorney_review_required": true,
+      "sensitive": true
+    },
+    {
+      "id": "opposition-draft",
+      "type": "document",
+      "produced_by": "motion-opposition",
+      "attorney_review_required": true,
+      "sensitive": true
+    },
+    {
+      "id": "source-validation-report",
+      "type": "table",
+      "produced_by": "source-validation",
+      "attorney_review_required": true,
+      "sensitive": true
+    },
+    {
+      "id": "citation-integrity-report",
+      "type": "table",
+      "produced_by": "citation-integrity-check",
+      "attorney_review_required": true,
+      "sensitive": true
+    },
+    {
+      "id": "assumption-audit-report",
+      "type": "table",
+      "produced_by": "assumption-audit",
+      "attorney_review_required": true,
+      "sensitive": true
+    }
+  ],
+  "final_outputs": [
+    "opposition-draft",
+    "source-validation-report",
+    "citation-integrity-report",
+    "assumption-audit-report"
+  ],
+  "budget": {
+    "max_graph_depth": 8,
+    "max_parallel_width": 3,
+    "max_ready_nodes": 3,
+    "max_total_estimated_tokens": 32000
+  }
+}

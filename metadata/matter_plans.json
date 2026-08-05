@@ -1,0 +1,444 @@
+{
+  "schema_version": "1.0",
+  "plan_count": 4,
+  "skill_node_count": 23,
+  "gate_node_count": 11,
+  "artifact_count": 23,
+  "plans": [
+    {
+      "plan_id": "commercial-contract-review",
+      "title": "Commercial Contract Review",
+      "description": "Review a commercial agreement, selectively branch into SOW or redline work, and run parallel quality checks before attorney approval.",
+      "path": "matter-plans/commercial-contract-review.json",
+      "plan_sha256": "da7fc15451b07c1f7c7e5a324b87a2296106768018b0a804cb64c2ba908c24d4",
+      "source_path": "playbooks/commercial-contract-review.md",
+      "source_sha256": "6012cc2ba2748328b5210b69792bc8c542955caa6b77b565dd39021e1cc44035",
+      "tags": [
+        "contracts",
+        "risk-review",
+        "redline"
+      ],
+      "required_inputs": [
+        {
+          "id": "agreement",
+          "type": "document",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "client-role",
+          "type": "document",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "business-context",
+          "type": "document",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "client-playbook",
+          "type": "text",
+          "required": false,
+          "sensitive": true
+        },
+        {
+          "id": "has-sow",
+          "type": "enum",
+          "required": true,
+          "sensitive": false
+        },
+        {
+          "id": "sow",
+          "type": "document",
+          "required": false,
+          "sensitive": true
+        },
+        {
+          "id": "governing-msa",
+          "type": "document",
+          "required": false,
+          "sensitive": true
+        },
+        {
+          "id": "has-prior-redline",
+          "type": "enum",
+          "required": true,
+          "sensitive": false
+        },
+        {
+          "id": "redline-materials",
+          "type": "document",
+          "required": false,
+          "sensitive": true
+        },
+        {
+          "id": "priority-issues",
+          "type": "text",
+          "required": false,
+          "sensitive": true
+        },
+        {
+          "id": "review-date",
+          "type": "date",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "jurisdiction",
+          "type": "jurisdiction",
+          "required": true,
+          "sensitive": false
+        },
+        {
+          "id": "distribution-plan",
+          "type": "text",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "matter-context",
+          "type": "document",
+          "required": true,
+          "sensitive": true
+        }
+      ],
+      "node_count": 8,
+      "skill_node_count": 6,
+      "gate_node_count": 2,
+      "artifact_count": 6,
+      "practice_areas": [
+        "contracts",
+        "legal-methodology"
+      ],
+      "included_skills": [
+        "contracts/contract-risk-review",
+        "contracts/redline-summary",
+        "contracts/sow-review",
+        "legal-methodology/assumption-audit",
+        "legal-methodology/privilege-confidentiality-check",
+        "legal-methodology/source-validation"
+      ],
+      "graph_depth": 4,
+      "max_parallel_width": 5,
+      "budget_limits": {
+        "max_graph_depth": 4,
+        "max_parallel_width": 5,
+        "max_ready_nodes": 5,
+        "max_total_estimated_tokens": 30000
+      },
+      "validation_status": "valid"
+    },
+    {
+      "plan_id": "legal-research-memo",
+      "title": "Legal Research Memo",
+      "description": "Plan, synthesize, treatment-check, draft, and independently review an authority-grounded legal research memo.",
+      "path": "matter-plans/legal-research-memo.json",
+      "plan_sha256": "598b31339d908e8ce43952d17334fb06bf9bdc0a712608ec07fdc713e59061f7",
+      "source_path": "playbooks/legal-research-memo.md",
+      "source_sha256": "7551968ddbc5198cf57f442a6d8c0122b2b4876561ec5bc7580c360ec8a8167a",
+      "tags": [
+        "legal-research",
+        "memo",
+        "citations"
+      ],
+      "required_inputs": [
+        {
+          "id": "legal-question",
+          "type": "text",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "known-facts",
+          "type": "object",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "jurisdiction",
+          "type": "jurisdiction",
+          "required": true,
+          "sensitive": false
+        },
+        {
+          "id": "existing-authorities",
+          "type": "document-set",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "relevant-date",
+          "type": "date",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "time-and-scope",
+          "type": "text",
+          "required": true,
+          "sensitive": true
+        }
+      ],
+      "node_count": 9,
+      "skill_node_count": 7,
+      "gate_node_count": 2,
+      "artifact_count": 7,
+      "practice_areas": [
+        "legal-methodology",
+        "legal-research"
+      ],
+      "included_skills": [
+        "legal-methodology/assumption-audit",
+        "legal-methodology/citation-integrity-check",
+        "legal-methodology/source-validation",
+        "legal-research/authority-synthesis",
+        "legal-research/legal-research-memo",
+        "legal-research/negative-treatment-check",
+        "legal-research/research-plan"
+      ],
+      "graph_depth": 7,
+      "max_parallel_width": 3,
+      "budget_limits": {
+        "max_graph_depth": 7,
+        "max_parallel_width": 3,
+        "max_ready_nodes": 3,
+        "max_total_estimated_tokens": 28000
+      },
+      "validation_status": "valid"
+    },
+    {
+      "plan_id": "litigation-motion-opposition",
+      "title": "Litigation Motion Opposition",
+      "description": "Scope research, synthesize authority, draft a deep-review opposition, and run parallel record, citation, and assumption checks before filing approval.",
+      "path": "matter-plans/litigation-motion-opposition.json",
+      "plan_sha256": "d1b3a6acc67e5dabe9b8fc558771dcb007134542301734f198003061590c0288",
+      "source_path": "matter-packs/litigation.md",
+      "source_sha256": "2acade8df4d52e87f94d94f60c89ff2c426e8562d5a4c4704390738ea672c4d3",
+      "tags": [
+        "litigation",
+        "motion",
+        "opposition"
+      ],
+      "required_inputs": [
+        {
+          "id": "legal-question",
+          "type": "text",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "known-facts",
+          "type": "text",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "jurisdiction",
+          "type": "jurisdiction",
+          "required": true,
+          "sensitive": false
+        },
+        {
+          "id": "existing-authorities",
+          "type": "document-set",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "relevant-date",
+          "type": "date",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "time-and-scope",
+          "type": "text",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "motion-record",
+          "type": "document",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "case-theory",
+          "type": "text",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "record-materials",
+          "type": "document-set",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "response-deadline-as-stated",
+          "type": "text",
+          "required": true,
+          "sensitive": true
+        }
+      ],
+      "node_count": 9,
+      "skill_node_count": 6,
+      "gate_node_count": 3,
+      "artifact_count": 6,
+      "practice_areas": [
+        "legal-methodology",
+        "legal-research",
+        "litigation"
+      ],
+      "included_skills": [
+        "legal-methodology/assumption-audit",
+        "legal-methodology/citation-integrity-check",
+        "legal-methodology/source-validation",
+        "legal-research/authority-synthesis",
+        "legal-research/research-plan",
+        "litigation/motion-opposition-drafter"
+      ],
+      "graph_depth": 7,
+      "max_parallel_width": 3,
+      "budget_limits": {
+        "max_graph_depth": 8,
+        "max_parallel_width": 3,
+        "max_ready_nodes": 3,
+        "max_total_estimated_tokens": 32000
+      },
+      "validation_status": "valid"
+    },
+    {
+      "plan_id": "privacy-incident-response",
+      "title": "Privacy Incident Response",
+      "description": "Organize breach facts, force immediate reportability review, and run parallel chronology, preservation, and policy work before communication approval.",
+      "path": "matter-plans/privacy-incident-response.json",
+      "plan_sha256": "81b2f63a08915c30955cf4b559691a6b7982cdb9bbf9f3f386b04fa871de5a46",
+      "source_path": "matter-packs/privacy.md",
+      "source_sha256": "d3320bb4b17b01604d6dcbb10cb15d21d5a67c54d3c5a052e089114c1d75c4f3",
+      "tags": [
+        "privacy",
+        "incident",
+        "breach",
+        "preservation"
+      ],
+      "required_inputs": [
+        {
+          "id": "incident-summary",
+          "type": "text",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "discovery-date",
+          "type": "date",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "affected-data",
+          "type": "text",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "privilege-posture-text",
+          "type": "text",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "incident-description",
+          "type": "object",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "trigger-dates",
+          "type": "object",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "privilege-posture",
+          "type": "object",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "incident-records",
+          "type": "document-set",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "chronology-date-range",
+          "type": "date",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "preservation-trigger-date",
+          "type": "date",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "preservation-scope",
+          "type": "text",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "custodians-and-systems",
+          "type": "text",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "published-policy",
+          "type": "document",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "actual-practices",
+          "type": "text",
+          "required": true,
+          "sensitive": true
+        },
+        {
+          "id": "processing-context",
+          "type": "document",
+          "required": true,
+          "sensitive": true
+        }
+      ],
+      "node_count": 8,
+      "skill_node_count": 4,
+      "gate_node_count": 4,
+      "artifact_count": 4,
+      "practice_areas": [
+        "litigation",
+        "privacy"
+      ],
+      "included_skills": [
+        "litigation/legal-hold",
+        "litigation/litigation-chronology",
+        "privacy/breach-response-workflow",
+        "privacy/privacy-policy-gap-review"
+      ],
+      "graph_depth": 5,
+      "max_parallel_width": 3,
+      "budget_limits": {
+        "max_graph_depth": 5,
+        "max_parallel_width": 3,
+        "max_ready_nodes": 3,
+        "max_total_estimated_tokens": 30000
+      },
+      "validation_status": "valid"
+    }
+  ]
+}

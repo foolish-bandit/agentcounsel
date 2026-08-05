@@ -156,3 +156,15 @@ The Manufact GitHub App must have access to the repository before the initial de
 7. Call `get_skill` only when the canonical core workflow itself is needed outside the selective execution flow.
 8. Use `get_core_rules` when the client has not already loaded AgentCounsel's global safety rules.
 9. Require qualified attorney review and adoption before reliance.
+
+## Typed matter-plan tools
+
+Matter Plan v1 organizes recurring multi-skill work without executing legal analysis. The MCP service exposes:
+
+- `list_matter_plans()` — compact validated plan cards.
+- `search_matter_plans(query, limit)` — deterministic lexical plan discovery.
+- `get_matter_plan(plan_id)` — the complete declarative graph.
+- `build_matter_plan(plan_id, matter_inputs, available_artifacts, gate_decisions, node_ids)` — resolve ready, blocked, unresolved, completed, skipped, approved, and rejected nodes. Only ready skill nodes receive selective context.
+- `verify_matter_plan_receipt(receipt)` — verify plan, source, graph state, artifact lineage, contracts, loaded resources, and budget arithmetic.
+
+These tools are planning and audit surfaces. They do not call a model, execute connectors, calculate deadlines, approve an attorney gate, or decide legal strategy. A gate remains blocked until its dependencies and required artifacts are satisfied and the caller supplies an explicit `approved` or `rejected` decision. Receipt exports omit raw sensitive matter inputs. Receipts are deterministic integrity records, not digital signatures or proof of the identity or authority of the person who supplied a gate decision; callers must authenticate approvals externally.

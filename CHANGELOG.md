@@ -6,6 +6,25 @@ All notable changes to AgentCounsel are recorded in this file. The format follow
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-08-04
+
+### Added
+
+- **Matter Plan Specification v1:** recurring multi-skill legal matters can now be represented as validated directed acyclic graphs whose skill nodes reference canonical Skill Specification v2 contracts and whose attorney-review checkpoints are explicit graph nodes.
+- **Four pilot matter graphs:** legal research memo, commercial contract review, litigation motion opposition, and privacy incident response. Together they contain 34 nodes, 23 canonical skill nodes, 11 attorney gates, and 23 typed artifact identities.
+- **Deterministic planning and lazy context:** every node resolves to `ready`, `blocked`, `unresolved`, `not-selected`, `completed`, `approved`, or `rejected`; independent nodes are grouped into parallel waves; and only ready nodes load selective skill context.
+- **Typed artifact handoffs and lineage:** plans declare artifact producers, consumers, target skill inputs, review requirements, and content-independent identities rather than passing opaque conversation history.
+- **Privacy-conscious plan receipts:** receipts hash plans, human guidance, skill contracts, selected resources, states, gates, lineage, and budget arithmetic while excluding raw sensitive matter inputs. Strict verification detects drift and tampering.
+- **Matter-plan MCP and CLI surfaces:** deterministic search, inspection, build, and receipt verification are available through the local catalog and `scripts/matter_plan_cli.py`.
+- **Accessible graph catalog:** four plan pages render dependency SVGs with text alternatives, canonical skill links, attorney-gate labels, artifact tables, raw JSON, and copyable CLI commands without a graph-library dependency.
+- **Adversarial plan evaluation:** 16 lifecycle scenarios and 8 destructive mutations now gate cycles, dependency removal, gate bypass, producer swaps, raw-input receipt injection, arithmetic tampering, mode changes, and blocked-node context leakage.
+
+### Changed
+
+- The generated metadata surface now includes `metadata/matter_plans.json` and `metadata/matter_plan_evals.json`; the full local and GitHub validation mirrors include graph registry, budget, receipt, and mutation checks.
+- Selective context is promoted to a stable substrate. Matter-plan authoring beyond the four reviewed pilots remains pre-1.0 and requires deliberate practitioner review.
+- Distribution manifests are synchronized at `0.4.0`.
+
 ## [0.3.0] - 2026-08-04
 
 ### Added
