@@ -480,3 +480,16 @@ details[open] summary { margin-bottom: 0.4rem; }
 .pack-detail .label { font-weight: 600; color: var(--accent); margin-right: 0.25rem; }
 .pack-skill-list { columns: 2; font-size: 0.92rem; }
 @media (max-width: 640px) { .pack-skill-list { columns: 1; } }
+
+/* Matter Plan v1 dependency graphs */
+.matter-graph-scroll { overflow-x: auto; padding: .75rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+.matter-graph { display: block; max-width: none; }
+.matter-edge { fill: none; stroke: var(--muted); stroke-width: 2; }
+.matter-edge + .matter-node { position: relative; }
+.matter-node rect { fill: var(--surface); stroke: var(--border); stroke-width: 2; }
+.matter-node.gate-node rect { stroke-dasharray: 7 4; }
+.matter-node text { font-size: 13px; font-weight: 700; fill: var(--text); }
+.matter-node .node-subtitle { font-size: 10px; font-weight: 400; fill: var(--muted); }
+.graph-edge-list { columns: 2; column-gap: 2rem; }
+.matter-plan-grid .card { display: block; }
+@media (max-width: 700px) { .graph-edge-list { columns: 1; } }

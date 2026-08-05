@@ -82,6 +82,16 @@ Run it from anywhere; the script locates the repository root relative to its own
 - An index file with no skill paths to validate.
 - A plugin skill folder that is not part of the curated bundle or the maintained set.
 
+**Typed matter plans**
+
+- Every `matter-plans/*.json` file conforms to Matter Plan Specification v1 and references a real playbook or matter pack.
+- Every skill node references a canonical skill, enabled execution mode, and valid target inputs.
+- Dependencies are acyclic; artifact producers and handoffs are unambiguous; exactly one terminal attorney gate closes the graph; every final output is upstream of that gate.
+- Missing inputs and attorney approvals fail closed, blocked nodes load no skill context, and declared graph-depth, width, ready-node, and context budgets are enforced.
+- `metadata/matter_plans.json` and `reports/matter-plans.md` match the source plans.
+- Sixteen lifecycle scenarios produce valid privacy-conscious receipts, and eight destructive mutations are detected by `scripts/evaluate_matter_plans.py`.
+- Receipts exclude raw sensitive matter inputs and artifact paths, require complete nested inventories, and detect plan, source, contract, gate, state, lineage, resource-fingerprint, and arithmetic drift. They are integrity records, not digital signatures or identity attestations.
+
 ## What it does not check
 
 The script validates structure and consistency — not legal accuracy. It cannot tell whether a skill's workflow is sound, whether its content is correct, or whether its legal framing is appropriate for a given matter. Substantive review by a qualified, licensed legal professional, together with each skill's Attorney Verification Checklist, remains essential. See `CONTRIBUTING.md` and the `core/` operating rules.

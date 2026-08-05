@@ -13,14 +13,16 @@ attorney review** — never legal advice.
 |---|---|
 | Skill | One workflow that produces one type of draft output. |
 | **Playbook** | A recipe for running a recurring task type — adds default questions, risk-tolerance settings, required sources, and required quality checks on top of a skill. |
-| Matter pack | An ordered sequence of skills for a matter type. |
+| Matter pack | Human-readable recommended skill sequences for a broader matter type. |
+| Matter plan | A validated graph companion for a supported recurring matter, with typed handoffs, parallel lanes, and attorney gates. |
 | Matter workspace | The organizing file/folder for one live matter. |
 | Review panel | A multi-pass supervised review of a draft. |
 
 Use a playbook when the same task recurs (for example, "we review NDAs the same
 way every week") and you want a consistent, repeatable approach. Use a single
-skill for a one-off; use a matter workspace when the work is multi-step and
-ongoing.
+skill for a one-off; use a matter plan when a supported recurring matter needs
+machine-readable dependencies and gates; use a matter workspace when the work is
+multi-step and ongoing and actual documents or outputs must persist.
 
 ## Available playbooks
 
@@ -62,6 +64,7 @@ required quality checks reference the `skills/legal-methodology/` quality layer;
 the source/citation expectations use the classification vocabulary in
 `docs/SOURCE_VALIDATION.md`. Playbooks are plain Markdown with no backend.
 
-See `WORKFLOW_ROUTER.md` for how a vague request routes to a playbook, and
-`docs/MATTER_WORKSPACES.md` for how a playbook's outputs are organized in a
-matter workspace.
+See `WORKFLOW_ROUTER.md` for how a vague request routes to a playbook,
+`matter-plans/README.md` for how selected playbooks acquire a typed graph
+companion, and `docs/MATTER_WORKSPACES.md` for how actual outputs are organized
+in a matter workspace.

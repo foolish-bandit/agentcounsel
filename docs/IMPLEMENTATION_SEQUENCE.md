@@ -211,3 +211,11 @@ Status: shipped. Every canonical skill compiles to Skill Specification v2, and c
 Status: shipped in v0.3.0. The two former large-context skills were decomposed into compact cores and Markdown modules. Selection is declarative, fail-closed, and fully traced. The MCP catalog returns reproducible bundles, generated scorecards enforce nine context scenarios in CI, and platform packs preserve every custom contract and selectable resource.
 
 Next candidates should be chosen from generated context and health metrics, not from file size alone. A future migration should require a concrete scenario matrix, content-preservation tests, and measurable routine-context reduction before splitting another skill.
+
+## Phase 3: Typed Matter Graphs
+
+Status: shipped in v0.4.0. Four recurring legal matters now compile from declarative JSON sidecars into validated directed acyclic graphs. Skill nodes reference canonical Skill Specification v2 contracts; attorney-review gates are explicit graph nodes; artifacts have typed producers and consumers; conditions fail closed; and only the current ready wave loads selective skill context.
+
+The first pilots cover legal research memos, commercial contract review, litigation motion opposition, and privacy incident response. Together they contain 34 nodes, 23 skill nodes, 11 attorney gates, and 23 typed artifacts. Sixteen lifecycle scenarios and eight destructive mutations enforce state transitions, gate integrity, artifact lineage, receipt privacy, and budget arithmetic in CI.
+
+The next platform phase should attach claim-to-evidence ledgers to matter-plan artifacts. That work should map draft claims to supplied sources and verification status without turning graph validity into a claim of substantive legal correctness.

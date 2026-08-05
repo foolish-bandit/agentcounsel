@@ -15,21 +15,22 @@ needs it.
 **New to AgentCounsel?** You only need the first row of the table below — a
 one-off skill (or the practice-area pack you installed from
 [QUICKSTART.md](../QUICKSTART.md), which routes to skills for you). Ignore
-matter packs, workspaces, playbooks, and review panels until you have run a few
+matter packs, matter plans, workspaces, playbooks, and review panels until you have run a few
 skills; they will make much more sense then.
 
 For mapping a specific "I need to do X" request to a skill, use
 [`../WORKFLOW_ROUTER.md`](../WORKFLOW_ROUTER.md). This page is about choosing the
 *shape* of the work.
 
-## The seven surfaces
+## The eight surfaces
 
 | Surface | Use it when | Example | Where it lives |
 |---|---|---|---|
 | One-off skill | You have one self-contained task and want one draft output. | "Review this NDA." | `skills/<area>/<skill>/SKILL.md` |
 | Quality check | A draft already exists and you want to audit its prose, citations, sources, assumptions, or format. | "Polish this paragraph"; "check these citations." | `skills/legal-methodology/<check>/SKILL.md` |
 | Practice-area pack | You run several tasks in one practice area on a given platform (Claude, ChatGPT, Gemini, Cursor, Codex). | "Set up our contracts team in Claude." | [`../metadata/packs.json`](../metadata/packs.json) |
-| Matter pack | A recurring matter *type* needs an ordered sequence of skills. | "Run our standard M&A diligence sequence." | [`../matter-packs/`](../matter-packs/) |
+| Matter pack | You need human-readable guidance for an ordered sequence of skills. | "Show our standard M&A diligence sequence." | [`../matter-packs/`](../matter-packs/) |
+| Matter plan | A supported recurring matter needs a validated dependency graph, typed handoffs, parallel lanes, and explicit attorney gates. | "Build the current legal-research memo plan state." | [`../matter-plans/`](../matter-plans/) |
 | Matter workspace | Work spans multiple documents, deadlines, or skill runs and context must persist. | "Open a deal that will run for months." | [`../matter-workspaces/_template/`](../matter-workspaces/_template/) (init via [`../scripts/init_matter_workspace.py`](../scripts/init_matter_workspace.py)) |
 | Playbook | You run the *same* task type the same way every time and want a repeatable recipe. | "We review NDAs the same way weekly." | [`../playbooks/`](../playbooks/) |
 | Review panel | A high-risk draft needs several review lenses before the attorney. | "Run a full multi-pass review before signing." | [`../review-panels/`](../review-panels/) |
@@ -51,9 +52,9 @@ Walk these questions in order and stop at the first that fits.
 5. **Does the work span many documents, deadlines, or skill runs that must share
    context?** Use a **matter workspace**. See
    [`MATTER_WORKSPACES.md`](MATTER_WORKSPACES.md).
-6. **Is this a recurring multi-step matter *type* with an ordered skill
-   sequence?** Use a **matter pack** in [`../matter-packs/`](../matter-packs/).
-7. **Are you standing up a whole practice area on a platform?** Use a
+6. **Is this a recurring multi-step matter *type* where you only need the human sequence?** Use a **matter pack** in [`../matter-packs/`](../matter-packs/).
+7. **Does a supported matter need machine-readable dependencies, handoffs, gates, and current ready nodes?** Use a **matter plan** in [`../matter-plans/`](../matter-plans/). A plan organizes work but does not execute legal analysis.
+8. **Are you standing up a whole practice area on a platform?** Use a
    **practice-area pack** plus a **practice profile**. See
    [`../metadata/packs.json`](../metadata/packs.json) and
    [`../practice-profiles/`](../practice-profiles/).
@@ -121,6 +122,16 @@ skills, core rules, and quality checks for a platform; a **practice profile**
 configuration; and a **playbook** in [`../playbooks/`](../playbooks/) for each
 recurring task type the team runs the same way.
 
+
+### "I need to coordinate a multi-step research memo"
+
+Use the `legal-research-memo` **matter plan** when you need the current ready
+wave, typed artifact handoffs, and an explicit attorney scope-approval gate.
+Inspect it with `python scripts/matter_plan_cli.py show legal-research-memo
+--markdown`, then build its state from declared inputs. Keep the actual research
+roadmap, authorities, memo, and review reports in a matter workspace. The plan
+loads context only for ready nodes and never approves its own attorney gates.
+
 ### "I want to use AgentCounsel in Cursor or Codex"
 
 Use the repo-agent setup. Point your agent at
@@ -133,5 +144,5 @@ tools and plugin hosts, see
 
 Whichever surface you choose, the output is the same kind of thing: draft legal
 work product that a qualified, licensed attorney reviews and adopts. Quality
-checks, packs, matter workspaces, playbooks, and review panels make that review
+checks, packs, matter plans, matter workspaces, playbooks, and review panels make that review
 easier and more auditable — they never make it optional.

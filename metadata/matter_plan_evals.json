@@ -1,0 +1,304 @@
+{
+  "schema_version": "1.0",
+  "plan_count": 4,
+  "scenario_count": 16,
+  "mutation_count": 8,
+  "detected_mutation_count": 8,
+  "all_scenarios_within_budget": true,
+  "all_receipts_valid": true,
+  "all_mutations_detected": true,
+  "scenarios": [
+    {
+      "plan_id": "commercial-contract-review",
+      "scenario_id": "completed-final",
+      "node_state_counts": {
+        "approved": 2,
+        "completed": 4,
+        "not-selected": 2
+      },
+      "ready_node_ids": [],
+      "execution_wave_count": 0,
+      "ready_context_tokens": 0,
+      "max_total_estimated_tokens": 30000,
+      "within_budget": true,
+      "receipt_valid": true
+    },
+    {
+      "plan_id": "commercial-contract-review",
+      "scenario_id": "first-gate-approved",
+      "node_state_counts": {
+        "approved": 1,
+        "blocked": 1,
+        "completed": 4,
+        "not-selected": 2
+      },
+      "ready_node_ids": [],
+      "execution_wave_count": 0,
+      "ready_context_tokens": 0,
+      "max_total_estimated_tokens": 30000,
+      "within_budget": true,
+      "receipt_valid": true
+    },
+    {
+      "plan_id": "commercial-contract-review",
+      "scenario_id": "first-ready-wave",
+      "node_state_counts": {
+        "blocked": 5,
+        "not-selected": 2,
+        "ready": 1
+      },
+      "ready_node_ids": [
+        "contract-risk-review"
+      ],
+      "execution_wave_count": 1,
+      "ready_context_tokens": 5457,
+      "max_total_estimated_tokens": 30000,
+      "within_budget": true,
+      "receipt_valid": true
+    },
+    {
+      "plan_id": "commercial-contract-review",
+      "scenario_id": "missing-inputs",
+      "node_state_counts": {
+        "blocked": 5,
+        "unresolved": 3
+      },
+      "ready_node_ids": [],
+      "execution_wave_count": 0,
+      "ready_context_tokens": 0,
+      "max_total_estimated_tokens": 30000,
+      "within_budget": true,
+      "receipt_valid": true
+    },
+    {
+      "plan_id": "legal-research-memo",
+      "scenario_id": "completed-final",
+      "node_state_counts": {
+        "approved": 2,
+        "completed": 7
+      },
+      "ready_node_ids": [],
+      "execution_wave_count": 0,
+      "ready_context_tokens": 0,
+      "max_total_estimated_tokens": 28000,
+      "within_budget": true,
+      "receipt_valid": true
+    },
+    {
+      "plan_id": "legal-research-memo",
+      "scenario_id": "first-gate-approved",
+      "node_state_counts": {
+        "approved": 1,
+        "blocked": 6,
+        "completed": 1,
+        "ready": 1
+      },
+      "ready_node_ids": [
+        "authority-synthesis"
+      ],
+      "execution_wave_count": 1,
+      "ready_context_tokens": 3738,
+      "max_total_estimated_tokens": 28000,
+      "within_budget": true,
+      "receipt_valid": true
+    },
+    {
+      "plan_id": "legal-research-memo",
+      "scenario_id": "first-ready-wave",
+      "node_state_counts": {
+        "blocked": 8,
+        "ready": 1
+      },
+      "ready_node_ids": [
+        "research-plan"
+      ],
+      "execution_wave_count": 1,
+      "ready_context_tokens": 2757,
+      "max_total_estimated_tokens": 28000,
+      "within_budget": true,
+      "receipt_valid": true
+    },
+    {
+      "plan_id": "legal-research-memo",
+      "scenario_id": "missing-inputs",
+      "node_state_counts": {
+        "blocked": 8,
+        "unresolved": 1
+      },
+      "ready_node_ids": [],
+      "execution_wave_count": 0,
+      "ready_context_tokens": 0,
+      "max_total_estimated_tokens": 28000,
+      "within_budget": true,
+      "receipt_valid": true
+    },
+    {
+      "plan_id": "litigation-motion-opposition",
+      "scenario_id": "completed-final",
+      "node_state_counts": {
+        "approved": 3,
+        "completed": 6
+      },
+      "ready_node_ids": [],
+      "execution_wave_count": 0,
+      "ready_context_tokens": 0,
+      "max_total_estimated_tokens": 32000,
+      "within_budget": true,
+      "receipt_valid": true
+    },
+    {
+      "plan_id": "litigation-motion-opposition",
+      "scenario_id": "first-gate-approved",
+      "node_state_counts": {
+        "approved": 1,
+        "blocked": 6,
+        "completed": 1,
+        "ready": 1
+      },
+      "ready_node_ids": [
+        "authority-synthesis"
+      ],
+      "execution_wave_count": 1,
+      "ready_context_tokens": 3738,
+      "max_total_estimated_tokens": 32000,
+      "within_budget": true,
+      "receipt_valid": true
+    },
+    {
+      "plan_id": "litigation-motion-opposition",
+      "scenario_id": "first-ready-wave",
+      "node_state_counts": {
+        "blocked": 8,
+        "ready": 1
+      },
+      "ready_node_ids": [
+        "research-plan"
+      ],
+      "execution_wave_count": 1,
+      "ready_context_tokens": 2757,
+      "max_total_estimated_tokens": 32000,
+      "within_budget": true,
+      "receipt_valid": true
+    },
+    {
+      "plan_id": "litigation-motion-opposition",
+      "scenario_id": "missing-inputs",
+      "node_state_counts": {
+        "blocked": 8,
+        "unresolved": 1
+      },
+      "ready_node_ids": [],
+      "execution_wave_count": 0,
+      "ready_context_tokens": 0,
+      "max_total_estimated_tokens": 32000,
+      "within_budget": true,
+      "receipt_valid": true
+    },
+    {
+      "plan_id": "privacy-incident-response",
+      "scenario_id": "completed-final",
+      "node_state_counts": {
+        "approved": 4,
+        "completed": 4
+      },
+      "ready_node_ids": [],
+      "execution_wave_count": 0,
+      "ready_context_tokens": 0,
+      "max_total_estimated_tokens": 30000,
+      "within_budget": true,
+      "receipt_valid": true
+    },
+    {
+      "plan_id": "privacy-incident-response",
+      "scenario_id": "first-gate-approved",
+      "node_state_counts": {
+        "approved": 1,
+        "blocked": 3,
+        "completed": 1,
+        "ready": 3
+      },
+      "ready_node_ids": [
+        "legal-hold",
+        "litigation-chronology",
+        "privacy-policy-gap-review"
+      ],
+      "execution_wave_count": 1,
+      "ready_context_tokens": 12035,
+      "max_total_estimated_tokens": 30000,
+      "within_budget": true,
+      "receipt_valid": true
+    },
+    {
+      "plan_id": "privacy-incident-response",
+      "scenario_id": "first-ready-wave",
+      "node_state_counts": {
+        "blocked": 7,
+        "ready": 1
+      },
+      "ready_node_ids": [
+        "breach-response"
+      ],
+      "execution_wave_count": 1,
+      "ready_context_tokens": 5700,
+      "max_total_estimated_tokens": 30000,
+      "within_budget": true,
+      "receipt_valid": true
+    },
+    {
+      "plan_id": "privacy-incident-response",
+      "scenario_id": "missing-inputs",
+      "node_state_counts": {
+        "blocked": 7,
+        "unresolved": 1
+      },
+      "ready_node_ids": [],
+      "execution_wave_count": 0,
+      "ready_context_tokens": 0,
+      "max_total_estimated_tokens": 30000,
+      "within_budget": true,
+      "receipt_valid": true
+    }
+  ],
+  "mutations": [
+    {
+      "mutation_id": "artifact-producer-swap",
+      "detected": true,
+      "signal": "validator: artifact research-memo producer does not match node draft-research-memo"
+    },
+    {
+      "mutation_id": "blocked-node-context-leak",
+      "detected": true,
+      "signal": "blocked node carried context: approve-research-scope"
+    },
+    {
+      "mutation_id": "cycle-injection",
+      "detected": true,
+      "signal": "validator: graph contains a cycle involving: approve-research-scope, assumption-audit, authority-synthesis, citation-integrity-check, draft-research-memo, final-attorney-review, negative-treatment-check, research-plan, source-validation"
+    },
+    {
+      "mutation_id": "dependency-removal",
+      "detected": true,
+      "signal": "registered plan hash mismatch"
+    },
+    {
+      "mutation_id": "gate-bypass",
+      "detected": true,
+      "signal": "validator: matter plan must have exactly one terminal attorney gate"
+    },
+    {
+      "mutation_id": "raw-input-receipt-injection",
+      "detected": true,
+      "signal": "unexpected receipt field(s): raw_inputs"
+    },
+    {
+      "mutation_id": "skill-mode-swap",
+      "detected": true,
+      "signal": "validator: node research-plan uses unknown mode turbo"
+    },
+    {
+      "mutation_id": "token-arithmetic-tamper",
+      "detected": true,
+      "signal": "budget or token arithmetic mismatch"
+    }
+  ]
+}

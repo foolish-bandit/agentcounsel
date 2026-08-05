@@ -47,6 +47,12 @@ jobs:
       - name: Check selective context metrics and budgets
         run: python scripts/generate_selective_context_metrics.py --check
 
+      - name: Check matter-plan registry and budgets
+        run: python scripts/build_matter_plans.py --check
+
+      - name: Evaluate matter plans and mutation sensitivity
+        run: python scripts/evaluate_matter_plans.py --check
+
       - name: Check platform pack manifest is up to date
         run: python scripts/build_platform_packs.py --check
 

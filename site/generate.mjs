@@ -468,6 +468,7 @@ ${searchHead}</head>
     <a href="${r}concepts/index.html">How it works</a>
     <a href="${r}skill-index.html">Skill index</a>
     <a href="${r}index.html#practice-areas">Practice areas</a>
+    <a href="${r}matter-plans/index.html">Matter plans</a>
     <a href="${r}packs/index.html">Packs</a>
     <a href="${r}platforms/index.html">Platform setup</a>
     <a href="${r}llms.txt">llms.txt</a>
@@ -490,6 +491,7 @@ ${body}
         <li><a href="${r}index.html">Home</a></li>
         <li><a href="${r}skill-index.html">Skill index</a></li>
         <li><a href="${r}index.html#practice-areas">Practice areas</a></li>
+        <li><a href="${r}matter-plans/index.html">Matter plans</a></li>
       </ul>
     </div>
     <div>
@@ -1309,6 +1311,143 @@ function buildLlmsFull(skills, byArea) {
   return txt;
 }
 
+
+// --- matter plans ----------------------------------------------------------
+
+function loadMatterPlans() {
+  const registryPath = join(REPO_ROOT, 'metadata', 'matter_plans.json');
+  if (!existsSync(registryPath)) return { schema_version: '1.0', plan_count: 0, plans: [] };
+  const registry = JSON.parse(readFileSync(registryPath, 'utf8'));
+  registry.plans = (registry.plans || []).map((card) => ({
+    ...card,
+    plan: JSON.parse(readFileSync(join(REPO_ROOT, card.path), 'utf8')),
+    raw: readFileSync(join(REPO_ROOT, card.path), 'utf8'),
+  }));
+  return registry;
+}
+
+function matterPlanDepths(plan) {
+  const byId = Object.fromEntries(plan.nodes.map((node) => [node.id, node]));
+  const remaining = new Set(plan.nodes.map((node) => node.id));
+  const depths = {};
+  while (remaining.size) {
+    let progressed = false;
+    for (const id of Array.from(remaining).sort()) {
+      const deps = byId[id].depends_on || [];
+      if (deps.every((dep) => Object.prototype.hasOwnProperty.call(depths, dep))) {
+        depths[id] = deps.length ? 1 + Math.max(...deps.map((dep) => depths[dep])) : 0;
+        remaining.delete(id);
+        progressed = true;
+      }
+    }
+    if (!progressed) throw new Error('Matter plan graph is cyclic: ' + plan.plan_id);
+  }
+  return depths;
+}
+
+function matterGraph(plan) {
+  const depths = matterPlanDepths(plan);
+  const columns = {};
+  for (const node of plan.nodes) (columns[depths[node.id]] = columns[depths[node.id]] || []).push(node);
+  for (const key of Object.keys(columns)) columns[key].sort((a, b) => a.id.localeCompare(b.id));
+  const maxDepth = Math.max(...Object.values(depths), 0);
+  const maxRows = Math.max(...Object.values(columns).map((items) => items.length), 1);
+  const nodeW = 190, nodeH = 62, xGap = 58, yGap = 34, pad = 28;
+  const width = pad * 2 + (maxDepth + 1) * nodeW + maxDepth * xGap;
+  const height = pad * 2 + maxRows * nodeH + Math.max(0, maxRows - 1) * yGap;
+  const positions = {};
+  for (const [depthText, nodes] of Object.entries(columns)) {
+    const depth = Number(depthText);
+    nodes.forEach((node, index) => {
+      positions[node.id] = { x: pad + depth * (nodeW + xGap), y: pad + index * (nodeH + yGap) };
+    });
+  }
+  let edges = '';
+  const edgeText = [];
+  for (const node of plan.nodes) {
+    for (const dep of node.depends_on || []) {
+      const from = positions[dep], to = positions[node.id];
+      const x1 = from.x + nodeW, y1 = from.y + nodeH / 2;
+      const x2 = to.x, y2 = to.y + nodeH / 2;
+      const mid = (x1 + x2) / 2;
+      edges += `<path class="matter-edge" d="M ${x1} ${y1} C ${mid} ${y1}, ${mid} ${y2}, ${x2} ${y2}" marker-end="url(#arrow)"></path>`;
+      edgeText.push(`${dep} → ${node.id}`);
+    }
+  }
+  let nodesSvg = '';
+  for (const node of plan.nodes) {
+    const pos = positions[node.id];
+    const gate = node.type === 'attorney-gate';
+    const label = gate ? 'Attorney gate' : node.skill_id;
+    nodesSvg += `<g class="matter-node ${gate ? 'gate-node' : 'skill-node'}">
+<rect x="${pos.x}" y="${pos.y}" width="${nodeW}" height="${nodeH}" rx="10"></rect>
+<text x="${pos.x + 12}" y="${pos.y + 25}">${esc(node.id)}</text>
+<text class="node-subtitle" x="${pos.x + 12}" y="${pos.y + 46}">${esc(label)}</text>
+</g>`;
+  }
+  const alt = edgeText.length ? edgeText.join('; ') : 'No dependency edges.';
+  return `<div class="matter-graph-scroll">
+<svg class="matter-graph" role="img" aria-labelledby="graph-title graph-desc" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">
+<title id="graph-title">Dependency graph for ${esc(plan.title)}</title>
+<desc id="graph-desc">${esc(alt)}</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z"></path></marker></defs>
+${edges}${nodesSvg}
+</svg></div>
+<h3>Text alternative: dependency edges</h3>
+<ul class="graph-edge-list">${edgeText.length ? edgeText.map((edge) => `<li>${esc(edge)}</li>`).join('') : '<li>No dependency edges.</li>'}</ul>`;
+}
+
+function conditionText(condition) {
+  if (!condition || condition.operator === 'always') return 'Always';
+  if (condition.operator === 'equals') return `${condition.input_id} equals ${condition.value}`;
+  if (condition.operator === 'contains-any') return `${condition.input_id} contains any of ${(condition.values || []).join(', ')}`;
+  if (condition.operator === 'present') return `${condition.input_id} is present`;
+  if (condition.operator === 'artifact-present') return `artifact ${condition.artifact_id} is present`;
+  if (condition.operator === 'gate-approved') return `gate ${condition.gate_id} is approved`;
+  return condition.operator;
+}
+
+function buildMatterPlanIndex(registry) {
+  const cards = registry.plans.map((card) => `<a class="card" href="${card.plan_id}.html">
+<h2>${esc(card.title)}</h2>
+<p>${esc(card.description)}</p>
+<p class="count">${card.node_count} nodes · ${card.gate_node_count} attorney gate${card.gate_node_count === 1 ? '' : 's'} · depth ${card.graph_depth}</p>
+</a>`).join('\n');
+  const body = `<nav class="breadcrumb"><a href="../index.html">Home</a> / <span>Matter plans</span></nav>
+<h1>Typed matter plans</h1>
+<p class="lead">Validated multi-skill dependency graphs with typed handoffs, explicit attorney gates, lazy context loading, and verifiable receipts.</p>
+${REVIEW_NOTICE}
+<div class="grid matter-plan-grid">${cards}</div>`;
+  return page({ title: 'Matter plans', depth: 1, desc: 'Typed, attorney-supervised legal matter graphs.', body });
+}
+
+function buildMatterPlanPage(card) {
+  const plan = card.plan;
+  let nodeRows = '';
+  for (const node of plan.nodes) {
+    const identity = node.type === 'skill'
+      ? `<a href="../skills/${esc(node.skill_id)}.html"><code>${esc(node.skill_id)}</code></a>`
+      : `<strong>Attorney gate: ${esc(node.id)}</strong>`;
+    nodeRows += `<tr><td><code>${esc(node.id)}</code></td><td>${identity}</td><td>${esc((node.depends_on || []).join(', ') || 'none')}</td><td>${esc(conditionText(node.condition))}</td><td>${esc((node.produces || []).join(', ') || 'none')}</td></tr>`;
+  }
+  let artifacts = '';
+  for (const artifact of plan.artifacts) {
+    artifacts += `<tr><td><code>${esc(artifact.id)}</code></td><td>${esc(artifact.type)}</td><td><code>${esc(artifact.produced_by)}</code></td><td>${artifact.attorney_review_required ? 'yes' : 'no'}</td></tr>`;
+  }
+  const cli = `python scripts/matter_plan_cli.py build ${plan.plan_id} --inputs inputs.json --markdown`;
+  const body = `<nav class="breadcrumb"><a href="../index.html">Home</a> / <a href="index.html">Matter plans</a> / <span>${esc(plan.title)}</span></nav>
+<h1>${esc(plan.title)}</h1>
+<p class="lead">${esc(plan.description)}</p>
+<p class="path">Human guidance: <code>${esc(plan.source_path)}</code> · Plan: <code>${esc(card.path)}</code></p>
+${REVIEW_NOTICE}
+<section><h2>Dependency graph</h2>${matterGraph(plan)}</section>
+<section><h2>Nodes, gates, and handoffs</h2><table><thead><tr><th>Node</th><th>Skill or gate</th><th>Depends on</th><th>Condition</th><th>Produces</th></tr></thead><tbody>${nodeRows}</tbody></table></section>
+<section><h2>Artifacts</h2><table><thead><tr><th>Artifact</th><th>Type</th><th>Producer</th><th>Attorney review</th></tr></thead><tbody>${artifacts}</tbody></table></section>
+<section><h2>Complexity limits</h2><ul><li>Maximum graph depth: ${plan.budget.max_graph_depth}</li><li>Maximum parallel width: ${plan.budget.max_parallel_width}</li><li>Maximum ready nodes: ${plan.budget.max_ready_nodes}</li><li>Maximum ready-wave context: ${plan.budget.max_total_estimated_tokens.toLocaleString()} estimated tokens</li></ul></section>
+<section><h2>Use locally</h2><pre class="code"><code>${esc(cli)}</code></pre><button class="btn" type="button" data-copy="matter-plan-json">Copy plan JSON</button><pre id="matter-plan-json" class="raw">${esc(card.raw)}</pre></section>`;
+  return page({ title: plan.title, depth: 1, desc: plan.description, body });
+}
+
 // --- write ----------------------------------------------------------------
 
 function write(relPath, content) {
@@ -1325,6 +1464,7 @@ function main() {
   const skills = loadSkills();
   skills.sort((a, b) => a.name.localeCompare(b.name));
   const metaByPath = loadSkillMeta();
+  const matterPlans = loadMatterPlans();
   const byArea = {};
   for (const s of skills) (byArea[s.area] = byArea[s.area] || []).push(s);
   for (const area of Object.keys(byArea)) {
@@ -1365,6 +1505,13 @@ function main() {
     const ex = examples[s.area + '/' + s.slug];
     if (!ex) continue;
     write(ex.htmlRel, buildExamplePage(s, ex));
+    count++;
+  }
+
+  write('matter-plans/index.html', buildMatterPlanIndex(matterPlans));
+  count++;
+  for (const card of matterPlans.plans) {
+    write('matter-plans/' + card.plan_id + '.html', buildMatterPlanPage(card));
     count++;
   }
 

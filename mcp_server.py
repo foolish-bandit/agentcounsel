@@ -84,6 +84,48 @@ def get_skill_context(
 
 
 @mcp.tool()
+def list_matter_plans() -> list[dict[str, Any]]:
+    """List validated typed matter plans without executing legal work."""
+    return CATALOG.list_matter_plans()
+
+
+@mcp.tool()
+def search_matter_plans(query: str, limit: int = 10) -> list[dict[str, Any]]:
+    """Search recurring multi-skill legal matter plans."""
+    return CATALOG.search_matter_plans(query, limit=limit)
+
+
+@mcp.tool()
+def get_matter_plan(plan_id: str) -> dict[str, Any]:
+    """Return one complete typed matter graph and its attorney gates."""
+    return CATALOG.get_matter_plan(plan_id)
+
+
+@mcp.tool()
+def build_matter_plan(
+    plan_id: str,
+    matter_inputs: dict[str, Any] | None = None,
+    available_artifacts: dict[str, dict[str, Any]] | None = None,
+    gate_decisions: dict[str, str] | None = None,
+    node_ids: list[str] | None = None,
+) -> dict[str, Any]:
+    """Plan the next legal-work waves; this does not execute any legal analysis."""
+    return CATALOG.build_matter_plan(
+        plan_id,
+        matter_inputs=matter_inputs,
+        available_artifacts=available_artifacts,
+        gate_decisions=gate_decisions,
+        node_ids=node_ids,
+    )
+
+
+@mcp.tool()
+def verify_matter_plan_receipt(receipt: dict[str, Any]) -> dict[str, Any]:
+    """Verify graph, lineage, gate, contract, context, and budget integrity."""
+    return CATALOG.verify_matter_plan_receipt(receipt)
+
+
+@mcp.tool()
 def get_skill(skill_id: str) -> dict[str, Any]:
     """Return the complete Markdown workflow for one AgentCounsel skill."""
     return CATALOG.get_skill(skill_id)

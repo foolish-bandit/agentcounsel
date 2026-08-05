@@ -306,3 +306,17 @@ current skills, packs, and quality checks.
 See `docs/AGENT_COMMANDS.md` for the recommended order to run these after editing
 different parts of the repository, and `VALIDATION.md` for the full list of
 checks `validate_repo.py` performs.
+
+## Matter-plan CLI
+
+`scripts/matter_plan_cli.py` provides a local, standard-library-only interface to typed matter graphs:
+
+```bash
+python scripts/matter_plan_cli.py list
+python scripts/matter_plan_cli.py show legal-research-memo
+python scripts/matter_plan_cli.py build legal-research-memo --inputs inputs.json
+python scripts/matter_plan_cli.py build commercial-contract-review --inputs inputs.json --markdown
+python scripts/matter_plan_cli.py verify receipt.json
+```
+
+`--artifacts` accepts a JSON object keyed by plan artifact ID with an optional lowercase SHA-256 `digest`. Artifact content and file paths remain in the matter workspace and are never accepted through this planning interface. `--gates` accepts explicit `approved` or `rejected` decisions only after the gate's dependencies and required artifacts are satisfied. `--nodes` may restrict context loading to a comma-separated subset of already-ready nodes, but cannot bypass dependencies, conditions, or attorney gates. Use `--receipt-output` to write the privacy-conscious receipt separately from the full runtime result.

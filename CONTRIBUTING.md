@@ -12,6 +12,7 @@ AgentCounsel is **Markdown-first** and **safety-first**. Contributions are evalu
 - Improvements to existing skills and templates.
 - Better templates, clearer wording, and structural fixes.
 - Typed `SPEC.json` overlays that materially improve validation, gating, evidence traceability, or selective context loading.
+- Typed matter plans for reviewed recurring matters with explicit handoffs, gates, scenarios, and privacy boundaries.
 - Adapter improvements that keep adapters thin.
 
 ## Hard requirements for every skill
@@ -52,11 +53,12 @@ A skill will not be merged unless it meets all of these.
 
 The library is more than skills. Each artifact type has a home and a regeneration step. After any change, run the validation sequence below and commit any regenerated files. Per-script detail is in [`docs/CLI.md`](docs/CLI.md); the commands to run after each kind of edit are in [`docs/AGENT_COMMANDS.md`](docs/AGENT_COMMANDS.md).
 
-- **Metadata.** Do not hand-edit `metadata/index.json`, `metadata/router.json`, `metadata/skill_specs.json`, or `metadata/packs.json` — they are generated. Edit a skill's YAML frontmatter and optional `SPEC.json`, then run `python scripts/build_skill_index.py`, `python scripts/build_skill_specs.py`, and `python scripts/build_platform_packs.py`.
+- **Metadata.** Do not hand-edit `metadata/index.json`, `metadata/router.json`, `metadata/skill_specs.json`, `metadata/matter_plans.json`, `metadata/matter_plan_evals.json`, or `metadata/packs.json` — they are generated. Edit a skill's YAML frontmatter and optional `SPEC.json`, then run `python scripts/build_skill_index.py`, `python scripts/build_skill_specs.py`, and `python scripts/build_platform_packs.py`.
 - **Typed skill contract.** `SPEC.json` is an optional declarative overlay beside `SKILL.md`. All legacy skills compile safely without one. Use a sidecar only to refine types, modes, gates, evidence requirements, modules, or quality checks. The compiler in `scripts/skill_spec_v2.py` rejects weakened safety controls and unresolved module paths.
 - **Quality check.** Quality checks are skills under `skills/legal-methodology/` following the same eight-section structure. Register a new one in `build_skill_index.py`'s quality-check map and `build_platform_packs.py` so it is recognized, and add it to the recommended checks of the skills that need it.
 - **Eval.** Add a `*.eval.yaml` under `evals/skills/` (one per skill, filename matching the skill slug), `evals/router/`, or `evals/static/`, following the schema in `evals/README.md`. Run `python scripts/check_evals.py`, then `python scripts/run_evals.py --strict --quiet`, then `python scripts/generate_eval_report.py` to refresh `reports/eval-coverage.md`.
 - **Playbook.** Add a `playbooks/<task>.md` with the twelve required sections in order (see `docs/PLAYBOOKS.md`), ending in the Final Attorney-Review Gate. Reference real skill paths and `skills/legal-methodology/` quality checks.
+- **Matter plan.** Add `matter-plans/<plan-id>.json` only for a recurring matter with reviewed human guidance in a playbook or matter pack. Follow `matter-plans/README.md` and Matter Plan Specification v1. Every plan must be acyclic, end behind an explicit attorney gate, declare one producer per artifact, fail closed on missing inputs and approvals, and include lifecycle scenarios plus destructive mutation coverage. Never put client facts or draft contents in a plan file. Run `python scripts/build_matter_plans.py` and `python scripts/evaluate_matter_plans.py`.
 - **Review panel.** Add a `review-panels/<panel>.md` with the ten required sections (see `docs/REVIEW_PANELS.md`). State clearly that review passes are review passes — not autonomous agents and not lawyers.
 - **Pack.** Packs are generated, not hand-written. Adding skills, playbooks, or review panels that reference a practice area automatically flows into that area's pack; run `python scripts/build_platform_packs.py` and commit `metadata/packs.json`.
 
@@ -70,6 +72,9 @@ A contribution is not done until these pass (CI runs the same set):
 python scripts/validate_repo.py
 python scripts/build_skill_index.py --check
 python scripts/build_skill_specs.py --check
+python scripts/generate_selective_context_metrics.py --check
+python scripts/build_matter_plans.py --check
+python scripts/evaluate_matter_plans.py --check
 python scripts/build_platform_packs.py --check
 python scripts/generate_context_metrics.py --check
 python scripts/generate_skill_health_report.py --check

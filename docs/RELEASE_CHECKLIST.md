@@ -2,8 +2,8 @@
 
 A deterministic, offline checklist for cutting an AgentCounsel release. Everything
 here uses the Python standard library and one Node script — no network calls, no
-API keys. Replace `vX.Y.Z` with the version you are cutting (the first public
-release is `v0.3.0`).
+API keys. Replace `vX.Y.Z` with the version you are cutting. The current
+release is `v0.4.0`.
 
 ## 1. Regenerate derived artifacts
 
@@ -12,6 +12,10 @@ them and must be refreshed and committed. See [`CLI.md`](CLI.md).
 
 ```
 python scripts/build_skill_index.py            # metadata/index.json, metadata/router.json
+python scripts/build_skill_specs.py            # metadata/skill_specs.json
+python scripts/generate_selective_context_metrics.py
+python scripts/build_matter_plans.py            # metadata/matter_plans.json, reports/matter-plans.md
+python scripts/evaluate_matter_plans.py         # metadata/matter_plan_evals.json, reports/matter-plan-evals.md
 python scripts/build_platform_packs.py         # metadata/packs.json, dist/
 python scripts/generate_eval_report.py         # reports/eval-coverage.md
 python scripts/generate_skill_improvement_prompts.py
@@ -27,6 +31,10 @@ All must pass (CI runs the same set on every push):
 ```
 python scripts/validate_repo.py
 python scripts/build_skill_index.py --check
+python scripts/build_skill_specs.py --check
+python scripts/generate_selective_context_metrics.py --check
+python scripts/build_matter_plans.py --check
+python scripts/evaluate_matter_plans.py --check
 python scripts/build_platform_packs.py --check
 python scripts/check_evals.py
 python scripts/run_evals.py --strict --quiet
@@ -49,6 +57,8 @@ commit the result, and re-run.
 - [ ] `CHANGELOG.md` has a dated section for this version and a fresh
       `## [Unreleased]` above it.
 - [ ] `docs/PROJECT_STATUS.md` is honest about what is stable vs. experimental.
+- [ ] `metadata/matter_plans.json`, `metadata/matter_plan_evals.json`, and both matter-plan reports are current.
+- [ ] Every pilot graph ends behind an explicit attorney gate; blocked nodes contain no skill context; generated receipts contain no raw sensitive matter inputs.
 - [ ] Overclaim scan: no affirmative "legal advice", "AI lawyer", "verified law",
       "guaranteed citation verification", "autonomous legal agent", "replaces
       attorney review", or "production-ready legal advice" phrasing anywhere in
@@ -72,8 +82,8 @@ or `ai-lawyer`).
 ## 6. Tag and push the release
 
 ```
-git tag -a v0.3.0 -m "AgentCounsel v0.3.0: deterministic selective context"
-git push origin v0.3.0
+git tag -a v0.4.0 -m "AgentCounsel v0.4.0: typed matter graphs"
+git push origin v0.4.0
 ```
 
 (Do not force-push tags. If a tag is wrong, delete and recreate it deliberately.)
@@ -81,8 +91,8 @@ git push origin v0.3.0
 ## 7. Draft the GitHub release
 
 1. Go to the repository's **Releases** → **Draft a new release**.
-2. Choose the `v0.3.0` tag.
-3. Title: `AgentCounsel v0.3.0: Deterministic selective context`.
+2. Choose the `v0.4.0` tag.
+3. Title: `AgentCounsel v0.4.0: Typed Matter Graphs`.
 4. Paste the body of [`../RELEASE_NOTES.md`](../RELEASE_NOTES.md) (or summarize it
    and link to the file).
 5. Keep the safety framing in the description: draft legal work product for

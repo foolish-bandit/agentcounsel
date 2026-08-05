@@ -18,6 +18,7 @@ flowchart TD
     quality["Quality checks<br/>skills/legal-methodology/"]
     packs["Platform packs<br/>metadata/packs.json"]
     matterpacks["Matter packs<br/>matter-packs/"]
+    matterplans["Matter plans<br/>matter-plans/"]
     workspaces["Matter workspaces<br/>matter-workspaces/"]
     playbooks["Playbooks<br/>playbooks/"]
     panels["Review panels<br/>review-panels/"]
@@ -35,7 +36,10 @@ flowchart TD
     packs -->|bundle| skills
     packs -->|bundle| quality
     packs -->|bundle| core
-    matterpacks -->|sequence| skills
+    matterpacks -->|human sequence| skills
+    matterplans -->|typed graph of| skills
+    matterplans -->|requires| attorney
+    matterplans -->|records artifacts in| workspaces
     workspaces -->|organize outputs of| skills
     workspaces -->|store results of| quality
     evals -->|validate| skills
@@ -65,6 +69,11 @@ If the diagram above does not render, this is what it says:
 - **Packs bundle skills + core + quality checks.** A platform pack assembles the
   relevant skills, core rules, and quality checks for a given platform; a matter
   pack sequences skills for a recurring matter type.
+- **Matter plans compile selected recurring matters.** A matter plan is a typed
+  DAG companion to a playbook or matter pack. It validates dependencies, artifact
+  handoffs, conditional branches, parallel waves, and explicit attorney gates.
+  It plans work and loads context for ready nodes; it does not execute legal
+  analysis or make an attorney decision.
 - **Matter workspaces organize outputs.** A workspace carries a matter's facts,
   sources, deadlines, and the drafts produced by every skill and quality check
   run within it, so context persists across steps.
@@ -82,9 +91,10 @@ If the diagram above does not render, this is what it says:
 | Quality checks | [`../skills/legal-methodology/`](../skills/legal-methodology/) |
 | Platform packs | [`../metadata/packs.json`](../metadata/packs.json) |
 | Matter packs | [`../matter-packs/`](../matter-packs/) |
+| Matter plans | [`../matter-plans/`](../matter-plans/), [`../metadata/matter_plans.json`](../metadata/matter_plans.json) |
 | Matter workspaces | [`../matter-workspaces/`](../matter-workspaces/) |
 | Playbooks | [`../playbooks/`](../playbooks/) |
 | Review panels | [`../review-panels/`](../review-panels/) |
 | Evals | [`../evals/`](../evals/) |
-| Generated metadata | [`../metadata/index.json`](../metadata/index.json), [`../metadata/router.json`](../metadata/router.json), [`../metadata/packs.json`](../metadata/packs.json) |
+| Generated metadata | [`../metadata/index.json`](../metadata/index.json), [`../metadata/router.json`](../metadata/router.json), [`../metadata/matter_plans.json`](../metadata/matter_plans.json), [`../metadata/matter_plan_evals.json`](../metadata/matter_plan_evals.json), [`../metadata/packs.json`](../metadata/packs.json) |
 | Workflow router | [`../WORKFLOW_ROUTER.md`](../WORKFLOW_ROUTER.md) |

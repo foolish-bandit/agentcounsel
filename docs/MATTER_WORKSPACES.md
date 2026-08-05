@@ -126,8 +126,9 @@ template for a matter and produces a populated draft.
   records the outputs of running one.
 - **Review panels** (`review-panels/`) run a draft through multiple supervised
   review passes; record the result in `quality_checks/`.
-- **Matter packs** (`matter-packs/`) sequence skills for a matter type; a
-  workspace organizes the outputs.
+- **Matter packs** (`matter-packs/`) describe recommended skill sequences for a matter type; a workspace organizes the outputs.
+- **Matter plans** (`matter-plans/`) compile selected recurring matters into typed dependencies, artifact identities, parallel waves, and attorney gates. A workspace stores the actual content of the artifacts that a plan references. Plan receipts intentionally exclude that sensitive content.
+
 - **Practice profiles** (`practice-profiles/`) configure agent behavior; the
   workspace records which profile is in use.
 
